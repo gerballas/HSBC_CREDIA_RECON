@@ -11,8 +11,8 @@
   DTS:LocaleID="1032"
   DTS:ObjectName="Reconciliation"
   DTS:PackageType="5"
-  DTS:VersionBuild="3"
-  DTS:VersionGUID="{10E2A65C-2C7A-4CDF-A664-882B0DD535B9}">
+  DTS:VersionBuild="4"
+  DTS:VersionGUID="{0AF240BA-7484-47AB-932B-1249F06C98F3}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:Variables />
@@ -45,6 +45,24 @@
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\Script Task"
+      DTS:CreationName="Microsoft.ScriptTask"
+      DTS:Description="Script Task"
+      DTS:DTSID="{7ACE03B4-F842-48A1-B469-D7DAA61FC04E}"
+      DTS:ExecutableType="Microsoft.ScriptTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Script Task"
+      DTS:ThreadHint="1">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <ScriptProject
+          Name="ST_44bcedfcbf864235ba742135efbba7c7"
+          VSTAMajorVersion="16"
+          VSTAMinorVersion="0"
+          Language="CSharp" />
       </DTS:ObjectData>
     </DTS:Executable>
   </DTS:Executables>
@@ -112,6 +130,10 @@
             <EdgeLabelCollection />
           </EdgeLayout.Labels>
         </EdgeLayout>
+        <NodeLayout
+          Size="133.333333333334,42.6666666666667"
+          Id="Package\Script Task"
+          TopLeft="138.124997941777,230.473687494561" />
       </GraphLayout>
     </LayoutInfo>
   </Package>
