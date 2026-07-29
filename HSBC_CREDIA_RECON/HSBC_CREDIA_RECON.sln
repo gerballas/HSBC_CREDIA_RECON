@@ -5,6 +5,11 @@ VisualStudioVersion = 16.0.37206.5
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{C9674DCB-5085-4A16-B785-4C70DD1589BD}") = "HSBC_CREDIA_RECON", "HSBC_CREDIA_RECON\HSBC_CREDIA_RECON.dtproj", "{F42898B6-0882-4312-9738-0F4D335A75D2}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scripts", "scripts", "{C9CC8EDD-4274-44AC-AC2D-7786DE93EC30}"
+	ProjectSection(SolutionItems) = preProject
+		Customer.sql = Customer.sql
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Development|Default = Development|Default
