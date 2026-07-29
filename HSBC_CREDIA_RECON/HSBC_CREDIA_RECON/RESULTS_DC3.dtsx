@@ -11,8 +11,8 @@
   DTS:LocaleID="1032"
   DTS:ObjectName="RESULTS_DC3"
   DTS:PackageType="5"
-  DTS:VersionBuild="53"
-  DTS:VersionGUID="{35EB0F97-74F5-4213-95BD-C9206807C984}">
+  DTS:VersionBuild="54"
+  DTS:VersionGUID="{8A426FFB-5D8B-4BAF-BA72-D46FE00E97E6}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:ConnectionManagers>
@@ -367,7 +367,7 @@
                 <property
                   dataType="System.String"
                   description="Specifies the name of the database object used to open a rowset."
-                  name="OpenRowset"></property>
+                  name="OpenRowset">[RECON].[RESULTS_DC3]</property>
                 <property
                   dataType="System.String"
                   description="Specifies the variable that contains the name of the database object used to open a rowset."
@@ -393,7 +393,7 @@
                   dataType="System.Int32"
                   description="Specifies the mode used to access the database."
                   name="AccessMode"
-                  typeConverter="AccessMode">2</property>
+                  typeConverter="AccessMode">0</property>
                 <property
                   dataType="System.String"
                   description="The mappings between the parameters in the SQL command and variables."
@@ -402,8 +402,8 @@
               <connections>
                 <connection
                   refId="Package\csv_results_dc3\OLE DB Source.Connections[OleDbConnection]"
-                  connectionManagerID="{B3B108BF-3075-460F-A54E-D4E17CA9FF88}:invalid"
-                  connectionManagerRefId="{B3B108BF-3075-460F-A54E-D4E17CA9FF88}:invalid"
+                  connectionManagerID="{6821A5EC-D23A-4EAE-A8D7-C1BFCD7DE798}:external"
+                  connectionManagerRefId="Project.ConnectionManagers[10.15.12.37.MLT_DW_EDW]"
                   description="The OLE DB runtime connection used to access the database."
                   name="OleDbConnection" />
               </connections>
@@ -549,7 +549,7 @@
                     <externalMetadataColumn
                       refId="Package\csv_results_dc3\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[CHECK_NAME]"
                       dataType="wstr"
-                      length="200"
+                      length="500"
                       name="CHECK_NAME" />
                     <externalMetadataColumn
                       refId="Package\csv_results_dc3\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[TABLE_NAME]"
@@ -584,7 +584,7 @@
                     <externalMetadataColumn
                       refId="Package\csv_results_dc3\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[RESULT_TXT]"
                       dataType="wstr"
-                      length="200"
+                      length="2000"
                       name="RESULT_TXT" />
                     <externalMetadataColumn
                       refId="Package\csv_results_dc3\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[EXPECTED]"
@@ -619,7 +619,7 @@
                     <outputColumn
                       refId="Package\csv_results_dc3\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[CHECK_NAME]"
                       dataType="wstr"
-                      length="200"
+                      length="500"
                       lineageId="Package\csv_results_dc3\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[CHECK_NAME]"
                       name="CHECK_NAME" />
                     <outputColumn
@@ -661,7 +661,7 @@
                     <outputColumn
                       refId="Package\csv_results_dc3\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[RESULT_TXT]"
                       dataType="wstr"
-                      length="200"
+                      length="2000"
                       lineageId="Package\csv_results_dc3\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[RESULT_TXT]"
                       name="RESULT_TXT" />
                     <outputColumn
@@ -718,7 +718,7 @@
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
-          SQLTask:Connection="{B3B108BF-3075-460F-A54E-D4E17CA9FF88}"
+          SQLTask:Connection="{6821A5EC-D23A-4EAE-A8D7-C1BFCD7DE798}"
           SQLTask:SqlStatementSource="IF EXISTS (SELECT 1 FROM sys.tables WHERE name = 'RESULTS_DC3' AND schema_id = SCHEMA_ID('RECON'))&#xA;&#xA;BEGIN&#xA;    TRUNCATE TABLE RECON.RESULTS_DC3;&#xA;END&#xA;&#xA;IF NOT EXISTS (SELECT 1 FROM sys.tables WHERE name = 'RESULTS_DC3' AND schema_id = SCHEMA_ID('RECON'))&#xA;&#xA;BEGIN&#xA;    CREATE TABLE RECON.RESULTS_DC3 &#xA;(&#xA;        DQ_TYPE                 NVARCHAR(50)     NOT NULL,&#xA;&#xA;        DQ_CATEGORY     NVARCHAR(100)   NOT NULL,&#xA;&#xA;        CHECK_NAME    NVARCHAR(500)   NULL,&#xA;&#xA;        TABLE_NAME     NVARCHAR(100)   NULL,&#xA;&#xA;        FAILED_RECORDS      BIGINT          NULL,&#xA;&#xA;        TOTAL_RECORDS        BIGINT          NULL,&#xA;&#xA;        FAILURE_PCT        DECIMAL(10,2)   NULL,&#xA;&#xA;        CHECK_ID             NVARCHAR(20)    NULL,&#xA;&#xA;        RESULT_NUM         DECIMAL(20,2)   NULL,&#xA;&#xA;        RESULT_TXT       NVARCHAR(2000)   NULL,&#xA;&#xA;        EXPECTED               DECIMAL(20,2)   NULL,&#xA;&#xA;        DQ_STATUS          NVARCHAR(20)    NULL&#xA;    );&#xA;END" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
       </DTS:ObjectData>
     </DTS:Executable>
@@ -10355,18 +10355,18 @@ ORDER BY y.dq_category, y.check_id;</property>
         </EdgeLayout>
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint 1]"
-          TopLeft="556.666661699613,490.374272325656">
+          TopLeft="556.666661699613,491.040938992323">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="0,58.152052659114"
+              EndConnector="0,57.4853859924473"
               Start="0,0"
-              End="0,50.652052659114">
+              End="0,49.9853859924473">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,50.652052659114" />
+                    End="0,49.9853859924473" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -10382,7 +10382,7 @@ ORDER BY y.dq_category, y.check_id;</property>
     design-time-name="Package\csv_results_dc3">
     <LayoutInfo>
       <GraphLayout
-        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mssgm="clr-namespace:Microsoft.SqlServer.Graph.Model;assembly=Microsoft.SqlServer.Graph">
+        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
         <NodeLayout
           Size="132,42.6666666666667"
           Id="Package\csv_results_dc3\OLE DB Source"
@@ -10410,9 +10410,7 @@ ORDER BY y.dq_category, y.check_id;</property>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <mssgm:EdgeLabel
-              BoundingBox="0,0,0,0"
-              RelativePosition="Any" />
+            <EdgeLabelCollection />
           </EdgeLayout.Labels>
         </EdgeLayout>
       </GraphLayout>
@@ -10423,6 +10421,11 @@ ORDER BY y.dq_category, y.check_id;</property>
     <Properties>
       <Property>
         <Name>DataSourceViewID</Name>
+      </Property>
+      <Property>
+        <Name>TableInfoObjectType</Name>
+        <Value
+          type="q2:string">Table</Value>
       </Property>
     </Properties>
   </PipelineComponentMetadata>
