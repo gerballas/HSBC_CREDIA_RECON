@@ -1,7 +1,7 @@
 ﻿-- =============================================================================
 -- CM_NCIS_Customers_vs_HUB_ME01_Validation_v1.sql
 -- HSBC Malta Core Banking Migration · Deloitte IQA · EIM ID 240825
--- MODULE: ME01_HUB — Column Match (CM) checks: NCIS_Customers (PROFITS-side
+-- MODULE: ME01_HUB — Column Match (CM) checks: NCIS_Customers (PROFITS-side000000
 -- extract, per 01_CUSTOMER.sql) vs. HUB_MT_SSCUSTP / SSGHCLP / SSINCIP / SSNICIP
 -- source fields, per Data Dictionary 21_606_240825_ME01_HUB_v1_0_DDAMO_v1.17
 -- =============================================================================
