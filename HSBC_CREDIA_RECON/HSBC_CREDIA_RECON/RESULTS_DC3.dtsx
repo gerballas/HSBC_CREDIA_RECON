@@ -11,8 +11,8 @@
   DTS:LocaleID="1032"
   DTS:ObjectName="RESULTS_DC3"
   DTS:PackageType="5"
-  DTS:VersionBuild="52"
-  DTS:VersionGUID="{4B9ED702-9CA4-4C64-B657-DC3909E1546C}">
+  DTS:VersionBuild="53"
+  DTS:VersionGUID="{35EB0F97-74F5-4213-95BD-C9206807C984}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:ConnectionManagers>
@@ -7771,8 +7771,8 @@ ORDER BY y.dq_category, y.check_id;</property>
                   <connections>
                     <connection
                       refId="Package\RESULTS_DC3\ME20_HIE DQC\DATACUT3_RESULTS_ME20_HIE DQC.Connections[OleDbConnection]"
-                      connectionManagerID="{B3B108BF-3075-460F-A54E-D4E17CA9FF88}:invalid"
-                      connectionManagerRefId="{B3B108BF-3075-460F-A54E-D4E17CA9FF88}:invalid"
+                      connectionManagerID="{6821A5EC-D23A-4EAE-A8D7-C1BFCD7DE798}:external"
+                      connectionManagerRefId="Project.ConnectionManagers[10.15.12.37.MLT_DW_EDW]"
                       description="The OLE DB runtime connection used to access the database."
                       name="OleDbConnection" />
                   </connections>
@@ -8663,8 +8663,8 @@ ORDER BY y.dq_category, y.check_id;</property>
                   <connections>
                     <connection
                       refId="Package\RESULTS_DC3\ME20_HIE DQC\Oracle Source.Connections[ORACLEConnection]"
-                      connectionManagerID="{396CFA57-D27A-4E9D-A399-E19F94462786}:invalid"
-                      connectionManagerRefId="{396CFA57-D27A-4E9D-A399-E19F94462786}:invalid"
+                      connectionManagerID="{D60A8650-8A94-4F36-ACFC-5A8EEC93F9E2}:external"
+                      connectionManagerRefId="Project.ConnectionManagers[MALTA]"
                       description="The ORACLE runtime connection used to access the database."
                       name="ORACLEConnection" />
                   </connections>
@@ -9011,8 +9011,8 @@ ORDER BY y.dq_category, y.check_id;</property>
                   <connections>
                     <connection
                       refId="Package\RESULTS_DC3\ME36_TREATS DQC\DATACUT3_RESULTS_ME36_TREATS DQC.Connections[OleDbConnection]"
-                      connectionManagerID="{B3B108BF-3075-460F-A54E-D4E17CA9FF88}:invalid"
-                      connectionManagerRefId="{B3B108BF-3075-460F-A54E-D4E17CA9FF88}:invalid"
+                      connectionManagerID="{6821A5EC-D23A-4EAE-A8D7-C1BFCD7DE798}:external"
+                      connectionManagerRefId="Project.ConnectionManagers[10.15.12.37.MLT_DW_EDW]"
                       description="The OLE DB runtime connection used to access the database."
                       name="OleDbConnection" />
                   </connections>
@@ -9093,7 +9093,7 @@ ORDER BY y.dq_category, y.check_id;</property>
                         <externalMetadataColumn
                           refId="Package\RESULTS_DC3\ME36_TREATS DQC\DATACUT3_RESULTS_ME36_TREATS DQC.Inputs[OLE DB Destination Input].ExternalColumns[CHECK_NAME]"
                           dataType="wstr"
-                          length="200"
+                          length="500"
                           name="CHECK_NAME" />
                         <externalMetadataColumn
                           refId="Package\RESULTS_DC3\ME36_TREATS DQC\DATACUT3_RESULTS_ME36_TREATS DQC.Inputs[OLE DB Destination Input].ExternalColumns[TABLE_NAME]"
@@ -9133,7 +9133,7 @@ ORDER BY y.dq_category, y.check_id;</property>
                         <externalMetadataColumn
                           refId="Package\RESULTS_DC3\ME36_TREATS DQC\DATACUT3_RESULTS_ME36_TREATS DQC.Inputs[OLE DB Destination Input].ExternalColumns[RESULT_TXT]"
                           dataType="wstr"
-                          length="200"
+                          length="2000"
                           name="RESULT_TXT" />
                         <externalMetadataColumn
                           refId="Package\RESULTS_DC3\ME36_TREATS DQC\DATACUT3_RESULTS_ME36_TREATS DQC.Inputs[OLE DB Destination Input].ExternalColumns[EXPECTED]"
@@ -9820,8 +9820,8 @@ ORDER BY y.dq_category, y.check_id;</property>
                   <connections>
                     <connection
                       refId="Package\RESULTS_DC3\ME36_TREATS DQC\Oracle Source.Connections[ORACLEConnection]"
-                      connectionManagerID="{396CFA57-D27A-4E9D-A399-E19F94462786}:invalid"
-                      connectionManagerRefId="{396CFA57-D27A-4E9D-A399-E19F94462786}:invalid"
+                      connectionManagerID="{D60A8650-8A94-4F36-ACFC-5A8EEC93F9E2}:external"
+                      connectionManagerRefId="Project.ConnectionManagers[MALTA]"
                       description="The ORACLE runtime connection used to access the database."
                       name="ORACLEConnection" />
                   </connections>
@@ -10615,40 +10615,28 @@ ORDER BY y.dq_category, y.check_id;</property>
         <NodeLayout
           Size="244,42.6666666666667"
           Id="Package\RESULTS_DC3\ME13_DECEASED_DQC\DATACUT3_RESULTS_ME13_DECEASED_DQC"
-          TopLeft="395.089280944584,62.7205535095422" />
+          TopLeft="473.089280944584,68.7205535095422" />
         <EdgeLayout
           Id="Package\RESULTS_DC3\ME13_DECEASED_DQC.Paths[Oracle Source Output]"
-          TopLeft="309.666666666667,96.3333333333333">
+          TopLeft="309.666666666667,93.1936100881044">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="85.4226142779173,-12.2794464904578"
+              EndConnector="163.422614277917,0"
               Start="0,0"
-              End="77.9226142779173,-12.2794464904578">
+              End="155.922614277917,0">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="38.7113071389586,0" />
-                  <mssgle:CubicBezierSegment
-                    Point1="38.7113071389586,0"
-                    Point2="42.7113071389586,0"
-                    Point3="42.7113071389586,-4" />
-                  <mssgle:LineSegment
-                    End="42.7113071389586,-8.2794464904578" />
-                  <mssgle:CubicBezierSegment
-                    Point1="42.7113071389586,-8.2794464904578"
-                    Point2="42.7113071389586,-12.2794464904578"
-                    Point3="46.7113071389586,-12.2794464904578" />
-                  <mssgle:LineSegment
-                    End="77.9226142779173,-12.2794464904578" />
+                    End="155.922614277917,0" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
             <mssgm:EdgeLabel
-              BoundingBox="34.7113071389586,1,16,16"
+              BoundingBox="69.9613071389587,5,16,16"
               RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
@@ -10680,7 +10668,7 @@ ORDER BY y.dq_category, y.check_id;</property>
     design-time-name="Package\RESULTS_DC3\ME20_HIE DQC">
     <LayoutInfo>
       <GraphLayout
-        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mssgm="clr-namespace:Microsoft.SqlServer.Graph.Model;assembly=Microsoft.SqlServer.Graph">
+        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
         <NodeLayout
           Size="126.666666666667,42.6666666666667"
           Id="Package\RESULTS_DC3\ME20_HIE DQC\Oracle Source"
@@ -10688,41 +10676,27 @@ ORDER BY y.dq_category, y.check_id;</property>
         <NodeLayout
           Size="213.333333333334,42.6666666666667"
           Id="Package\RESULTS_DC3\ME20_HIE DQC\DATACUT3_RESULTS_ME20_HIE DQC"
-          TopLeft="468.071420508836,69.6666666666667" />
+          TopLeft="420.071420508836,78.6666666666667" />
         <EdgeLayout
           Id="Package\RESULTS_DC3\ME20_HIE DQC.Paths[Oracle Source Output]"
-          TopLeft="302.666666666667,100.333333333333">
+          TopLeft="302.666666666667,100.166666666667">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="165.404753842169,-9.33333333333329"
+              EndConnector="117.404753842169,0"
               Start="0,0"
-              End="157.904753842169,-9.33333333333329">
+              End="109.904753842169,0">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="78.7023769210846,0" />
-                  <mssgle:CubicBezierSegment
-                    Point1="78.7023769210846,0"
-                    Point2="82.7023769210846,0"
-                    Point3="82.7023769210846,-4" />
-                  <mssgle:LineSegment
-                    End="82.7023769210846,-5.33333333333329" />
-                  <mssgle:CubicBezierSegment
-                    Point1="82.7023769210846,-5.33333333333329"
-                    Point2="82.7023769210846,-9.33333333333329"
-                    Point3="86.7023769210846,-9.33333333333329" />
-                  <mssgle:LineSegment
-                    End="157.904753842169,-9.33333333333329" />
+                    End="109.904753842169,0" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <mssgm:EdgeLabel
-              BoundingBox="0,0,0,0"
-              RelativePosition="Any" />
+            <EdgeLabelCollection />
           </EdgeLayout.Labels>
         </EdgeLayout>
       </GraphLayout>
@@ -10753,7 +10727,7 @@ ORDER BY y.dq_category, y.check_id;</property>
     design-time-name="Package\RESULTS_DC3\ME36_TREATS DQC">
     <LayoutInfo>
       <GraphLayout
-        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mssgm="clr-namespace:Microsoft.SqlServer.Graph.Model;assembly=Microsoft.SqlServer.Graph">
+        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
         <NodeLayout
           Size="126.666666666667,42.6666666666667"
           Id="Package\RESULTS_DC3\ME36_TREATS DQC\Oracle Source"
@@ -10781,9 +10755,7 @@ ORDER BY y.dq_category, y.check_id;</property>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <mssgm:EdgeLabel
-              BoundingBox="0,0,0,0"
-              RelativePosition="Any" />
+            <EdgeLabelCollection />
           </EdgeLayout.Labels>
         </EdgeLayout>
       </GraphLayout>
