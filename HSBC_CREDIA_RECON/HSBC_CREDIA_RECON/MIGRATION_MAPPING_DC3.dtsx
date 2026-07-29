@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+﻿<?xml version="1.0"?>
 <DTS:Executable xmlns:DTS="www.microsoft.com/SqlServer/Dts"
   DTS:refId="Package"
   DTS:CreationDate="7/9/2026 10:22:18 AM"
@@ -11,8 +11,8 @@
   DTS:LocaleID="1032"
   DTS:ObjectName="MIGRATION_MAPPING_DC3"
   DTS:PackageType="5"
-  DTS:VersionBuild="14"
-  DTS:VersionGUID="{4A69B70C-E450-4394-BC78-17E1F13C36C8}">
+  DTS:VersionBuild="15"
+  DTS:VersionGUID="{AF7C7E61-6305-4427-AD8A-28474865FC2E}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:Variables />
@@ -30,7 +30,7 @@
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
-          SQLTask:Connection="{B3B108BF-3075-460F-A54E-D4E17CA9FF88}"
+          SQLTask:Connection="{6821A5EC-D23A-4EAE-A8D7-C1BFCD7DE798}"
           SQLTask:SqlStatementSource="IF EXISTS (SELECT 1 FROM sys.tables WHERE name = 'MIGRATION_MAPPING_DC3' AND schema_id = SCHEMA_ID('RECON'))&#xA;&#xA;BEGIN&#xA;    EXEC('TRUNCATE TABLE RECON.MIGRATION_MAPPING_DC3');&#xA;END&#xA;&#xA;IF NOT EXISTS (SELECT 1 FROM sys.tables WHERE name = 'MIGRATION_MAPPING_DC3' AND schema_id = SCHEMA_ID('RECON'))&#xA;BEGIN&#xA;    CREATE TABLE RECON.MIGRATION_MAPPING_DC3 (&#xA;        ID              INT IDENTITY(1,1) PRIMARY KEY,&#xA;        MAPPING_FIELD   NVARCHAR(100)   NULL,&#xA;        HUB_VALUE       NVARCHAR(100)   NULL,&#xA;        PROFITS_VALUE   NVARCHAR(100)   NULL&#xA;    );&#xA;END" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
       </DTS:ObjectData>
     </DTS:Executable>
@@ -107,7 +107,7 @@
               <connections>
                 <connection
                   refId="Package\MIGRATION_MAPPING_DC3\OLE DB Destination.Connections[OleDbConnection]"
-                  connectionManagerID="{B3B108BF-3075-460F-A54E-D4E17CA9FF88}:external"
+                  connectionManagerID="{6821A5EC-D23A-4EAE-A8D7-C1BFCD7DE798}:external"
                   connectionManagerRefId="Project.ConnectionManagers[10.15.12.37.MLT_DW_EDW]"
                   description="The OLE DB runtime connection used to access the database."
                   name="OleDbConnection" />
@@ -505,8 +505,8 @@ SELECT CAST('TD_MATURITY_INST' AS NVARCHAR2(100)) AS MAPPING_FIELD,
               <connections>
                 <connection
                   refId="Package\MIGRATION_MAPPING_DC3\Oracle Source.Connections[ORACLEConnection]"
-                  connectionManagerID="{E40B6805-A280-4F5C-A864-393E6FE7C0A8}:external"
-                  connectionManagerRefId="Project.ConnectionManagers[PRE]"
+                  connectionManagerID="{ECA91632-834F-4B2F-85DF-6CA637347F58}:external"
+                  connectionManagerRefId="Project.ConnectionManagers[PRE Connection Manager]"
                   description="The ORACLE runtime connection used to access the database."
                   name="ORACLEConnection" />
               </connections>
@@ -676,25 +676,25 @@ SELECT CAST('TD_MATURITY_INST' AS NVARCHAR2(100)) AS MAPPING_FIELD,
         <NodeLayout
           Size="126.666666666667,42.6666666666667"
           Id="Package\MIGRATION_MAPPING_DC3\Oracle Source"
-          TopLeft="112,51" />
+          TopLeft="112,50.3157894608056" />
         <NodeLayout
           Size="145.333333333334,42.6666666666667"
           Id="Package\MIGRATION_MAPPING_DC3\OLE DB Destination"
           TopLeft="303,50" />
         <EdgeLayout
           Id="Package\MIGRATION_MAPPING_DC3.Paths[Oracle Source Output]"
-          TopLeft="238.666666666667,71.8333333333333">
+          TopLeft="238.666666666667,71.4912280637361">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="64.3333333333334,0"
+              EndConnector="64.3333333333333,0"
               Start="0,0"
-              End="56.8333333333334,0">
+              End="56.8333333333333,0">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="56.8333333333334,0" />
+                    End="56.8333333333333,0" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>

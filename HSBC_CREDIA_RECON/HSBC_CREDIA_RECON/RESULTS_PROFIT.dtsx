@@ -11,8 +11,8 @@
   DTS:LocaleID="1032"
   DTS:ObjectName="RESULTS_PROFIT"
   DTS:PackageType="5"
-  DTS:VersionBuild="23"
-  DTS:VersionGUID="{C850F440-D6C5-45EF-BFA6-5D0D68BB9E16}">
+  DTS:VersionBuild="24"
+  DTS:VersionGUID="{D803D2E8-FAEC-4A79-B582-83FCB7166E13}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:Variables />
@@ -389,13 +389,13 @@ ORDER BY C.CATEGORY, C.CHECK_ID</property>
                       dataType="System.Int32"
                       description="The mode used to access the database."
                       name="AccessMode"
-                      typeConverter="AccessMode">1</property>
+                      typeConverter="AccessMode">0</property>
                   </properties>
                   <connections>
                     <connection
                       refId="Package\Sequence Container\Data Flow Task\Customers.Connections[ORACLEConnection]"
-                      connectionManagerID="{E40B6805-A280-4F5C-A864-393E6FE7C0A8}:invalid"
-                      connectionManagerRefId="{E40B6805-A280-4F5C-A864-393E6FE7C0A8}:invalid"
+                      connectionManagerID="{D60A8650-8A94-4F36-ACFC-5A8EEC93F9E2}:external"
+                      connectionManagerRefId="Project.ConnectionManagers[MALTA]"
                       description="The ORACLE runtime connection used to access the database."
                       name="ORACLEConnection" />
                   </connections>
@@ -656,8 +656,8 @@ ORDER BY C.CATEGORY, C.CHECK_ID</property>
                   <connections>
                     <connection
                       refId="Package\Sequence Container\Data Flow Task\OLE DB Destination 1.Connections[OleDbConnection]"
-                      connectionManagerID="{B3B108BF-3075-460F-A54E-D4E17CA9FF88}:invalid"
-                      connectionManagerRefId="{B3B108BF-3075-460F-A54E-D4E17CA9FF88}:invalid"
+                      connectionManagerID="{6821A5EC-D23A-4EAE-A8D7-C1BFCD7DE798}:external"
+                      connectionManagerRefId="Project.ConnectionManagers[10.15.12.37.MLT_DW_EDW]"
                       description="The OLE DB runtime connection used to access the database."
                       name="OleDbConnection" />
                   </connections>
@@ -890,8 +890,8 @@ ORDER BY C.CATEGORY, C.CHECK_ID</property>
                   <connections>
                     <connection
                       refId="Package\Sequence Container\Data Flow Task 1\OLE DB Destination.Connections[OleDbConnection]"
-                      connectionManagerID="{B3B108BF-3075-460F-A54E-D4E17CA9FF88}:invalid"
-                      connectionManagerRefId="{B3B108BF-3075-460F-A54E-D4E17CA9FF88}:invalid"
+                      connectionManagerID="{6821A5EC-D23A-4EAE-A8D7-C1BFCD7DE798}:external"
+                      connectionManagerRefId="Project.ConnectionManagers[10.15.12.37.MLT_DW_EDW]"
                       description="The OLE DB runtime connection used to access the database."
                       name="OleDbConnection" />
                   </connections>
@@ -1204,13 +1204,13 @@ ORDER BY C.CATEGORY, C.CHECK_ID</property>
                       dataType="System.Int32"
                       description="The mode used to access the database."
                       name="AccessMode"
-                      typeConverter="AccessMode">1</property>
+                      typeConverter="AccessMode">0</property>
                   </properties>
                   <connections>
                     <connection
                       refId="Package\Sequence Container\Data Flow Task 1\Oracle Source 1.Connections[ORACLEConnection]"
-                      connectionManagerID="{E40B6805-A280-4F5C-A864-393E6FE7C0A8}:invalid"
-                      connectionManagerRefId="{E40B6805-A280-4F5C-A864-393E6FE7C0A8}:invalid"
+                      connectionManagerID="{D60A8650-8A94-4F36-ACFC-5A8EEC93F9E2}:external"
+                      connectionManagerRefId="Project.ConnectionManagers[MALTA]"
                       description="The ORACLE runtime connection used to access the database."
                       name="ORACLEConnection" />
                   </connections>
@@ -1496,8 +1496,8 @@ ORDER BY C.CATEGORY, C.CHECK_ID</property>
                   <connections>
                     <connection
                       refId="Package\Sequence Container\Data Flow Task 2\OLE DB Destination 1.Connections[OleDbConnection]"
-                      connectionManagerID="{B3B108BF-3075-460F-A54E-D4E17CA9FF88}:invalid"
-                      connectionManagerRefId="{B3B108BF-3075-460F-A54E-D4E17CA9FF88}:invalid"
+                      connectionManagerID="{6821A5EC-D23A-4EAE-A8D7-C1BFCD7DE798}:external"
+                      connectionManagerRefId="Project.ConnectionManagers[10.15.12.37.MLT_DW_EDW]"
                       description="The OLE DB runtime connection used to access the database."
                       name="OleDbConnection" />
                   </connections>
@@ -1952,13 +1952,13 @@ ORDER BY C.CATEGORY, C.CHECK_ID</property>
                       dataType="System.Int32"
                       description="The mode used to access the database."
                       name="AccessMode"
-                      typeConverter="AccessMode">1</property>
+                      typeConverter="AccessMode">0</property>
                   </properties>
                   <connections>
                     <connection
                       refId="Package\Sequence Container\Data Flow Task 2\Oracle Source.Connections[ORACLEConnection]"
-                      connectionManagerID="{E40B6805-A280-4F5C-A864-393E6FE7C0A8}:invalid"
-                      connectionManagerRefId="{E40B6805-A280-4F5C-A864-393E6FE7C0A8}:invalid"
+                      connectionManagerID="{D60A8650-8A94-4F36-ACFC-5A8EEC93F9E2}:external"
+                      connectionManagerRefId="Project.ConnectionManagers[MALTA]"
                       description="The ORACLE runtime connection used to access the database."
                       name="ORACLEConnection" />
                   </connections>
@@ -2362,6 +2362,11 @@ ORDER BY C.CATEGORY, C.CHECK_ID</property>
       <Property>
         <Name>DataSourceViewID</Name>
       </Property>
+      <Property>
+        <Name>TableInfoObjectType</Name>
+        <Value
+          type="q2:string">Table</Value>
+      </Property>
     </Properties>
   </PipelineComponentMetadata>
   <PipelineComponentMetadata
@@ -2383,13 +2388,13 @@ ORDER BY C.CATEGORY, C.CHECK_ID</property>
       <GraphLayout
         Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
         <NodeLayout
-          Size="156,42.6666666666667"
-          Id="Package\Sequence Container\Data Flow Task 1\Oracle Source 1"
-          TopLeft="123,112" />
-        <NodeLayout
           Size="174.666666666667,42.6666666666667"
           Id="Package\Sequence Container\Data Flow Task 1\OLE DB Destination"
           TopLeft="434,113" />
+        <NodeLayout
+          Size="156,42.6666666666667"
+          Id="Package\Sequence Container\Data Flow Task 1\Oracle Source 1"
+          TopLeft="123,112" />
         <EdgeLayout
           Id="Package\Sequence Container\Data Flow Task 1.Paths[Oracle Source Output]"
           TopLeft="279,133.833333333333">
@@ -2434,6 +2439,11 @@ ORDER BY C.CATEGORY, C.CHECK_ID</property>
       <Property>
         <Name>DataSourceViewID</Name>
       </Property>
+      <Property>
+        <Name>TableInfoObjectType</Name>
+        <Value
+          type="q2:string">Table</Value>
+      </Property>
     </Properties>
   </PipelineComponentMetadata>
   <TaskHost
@@ -2442,13 +2452,13 @@ ORDER BY C.CATEGORY, C.CHECK_ID</property>
       <GraphLayout
         Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
         <NodeLayout
-          Size="148,44"
-          Id="Package\Sequence Container\Data Flow Task 2\Oracle Source"
-          TopLeft="187,94" />
-        <NodeLayout
           Size="184,42.6666666666667"
           Id="Package\Sequence Container\Data Flow Task 2\OLE DB Destination 1"
           TopLeft="444,102" />
+        <NodeLayout
+          Size="148,44"
+          Id="Package\Sequence Container\Data Flow Task 2\Oracle Source"
+          TopLeft="187,94" />
         <EdgeLayout
           Id="Package\Sequence Container\Data Flow Task 2.Paths[Oracle Source Output]"
           TopLeft="335,119.666666666667">
@@ -2492,6 +2502,11 @@ ORDER BY C.CATEGORY, C.CHECK_ID</property>
     <Properties>
       <Property>
         <Name>DataSourceViewID</Name>
+      </Property>
+      <Property>
+        <Name>TableInfoObjectType</Name>
+        <Value
+          type="q2:string">Table</Value>
       </Property>
     </Properties>
   </PipelineComponentMetadata>
