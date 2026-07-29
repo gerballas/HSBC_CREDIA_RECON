@@ -11,8 +11,8 @@
   DTS:LocaleID="1032"
   DTS:ObjectName="Reconciliation"
   DTS:PackageType="5"
-  DTS:VersionBuild="5"
-  DTS:VersionGUID="{9B15D0CC-DC95-473B-91E4-8ECC3AFDA133}">
+  DTS:VersionBuild="6"
+  DTS:VersionGUID="{8E8948DE-6C7D-4987-9D98-E6F568643645}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:Variables />
