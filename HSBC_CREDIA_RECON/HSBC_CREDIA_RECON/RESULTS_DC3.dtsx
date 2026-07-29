@@ -11,8 +11,8 @@
   DTS:LocaleID="1032"
   DTS:ObjectName="RESULTS_DC3"
   DTS:PackageType="5"
-  DTS:VersionBuild="51"
-  DTS:VersionGUID="{CDD832DA-4DF8-4A29-A721-73E234B201B8}">
+  DTS:VersionBuild="52"
+  DTS:VersionGUID="{4B9ED702-9CA4-4C64-B657-DC3909E1546C}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:ConnectionManagers>
@@ -805,8 +805,8 @@
                   <connections>
                     <connection
                       refId="Package\RESULTS_DC3\DQC100\DATACUT3_RESULTS_DQC100.Connections[OleDbConnection]"
-                      connectionManagerID="{B3B108BF-3075-460F-A54E-D4E17CA9FF88}:invalid"
-                      connectionManagerRefId="{B3B108BF-3075-460F-A54E-D4E17CA9FF88}:invalid"
+                      connectionManagerID="{6821A5EC-D23A-4EAE-A8D7-C1BFCD7DE798}:external"
+                      connectionManagerRefId="Project.ConnectionManagers[10.15.12.37.MLT_DW_EDW]"
                       description="The OLE DB runtime connection used to access the database."
                       name="OleDbConnection" />
                   </connections>
@@ -2122,8 +2122,8 @@ ORDER BY y.dq_category, y.failure_pct DESC NULLS LAST;</property>
                   <connections>
                     <connection
                       refId="Package\RESULTS_DC3\DQC100\DQC100.Connections[ORACLEConnection]"
-                      connectionManagerID="{396CFA57-D27A-4E9D-A399-E19F94462786}:invalid"
-                      connectionManagerRefId="{396CFA57-D27A-4E9D-A399-E19F94462786}:invalid"
+                      connectionManagerID="{D60A8650-8A94-4F36-ACFC-5A8EEC93F9E2}:external"
+                      connectionManagerRefId="Project.ConnectionManagers[MALTA]"
                       description="The ORACLE runtime connection used to access the database."
                       name="ORACLEConnection" />
                   </connections>
@@ -2474,8 +2474,8 @@ ORDER BY y.dq_category, y.failure_pct DESC NULLS LAST;</property>
                   <connections>
                     <connection
                       refId="Package\RESULTS_DC3\DQC300\DATACUT3_RESULTS_DQC300.Connections[OleDbConnection]"
-                      connectionManagerID="{B3B108BF-3075-460F-A54E-D4E17CA9FF88}:invalid"
-                      connectionManagerRefId="{B3B108BF-3075-460F-A54E-D4E17CA9FF88}:invalid"
+                      connectionManagerID="{6821A5EC-D23A-4EAE-A8D7-C1BFCD7DE798}:external"
+                      connectionManagerRefId="Project.ConnectionManagers[10.15.12.37.MLT_DW_EDW]"
                       description="The OLE DB runtime connection used to access the database."
                       name="OleDbConnection" />
                   </connections>
@@ -2586,7 +2586,7 @@ ORDER BY y.dq_category, y.failure_pct DESC NULLS LAST;</property>
                         <externalMetadataColumn
                           refId="Package\RESULTS_DC3\DQC300\DATACUT3_RESULTS_DQC300.Inputs[OLE DB Destination Input].ExternalColumns[CHECK_NAME]"
                           dataType="wstr"
-                          length="200"
+                          length="500"
                           name="CHECK_NAME" />
                         <externalMetadataColumn
                           refId="Package\RESULTS_DC3\DQC300\DATACUT3_RESULTS_DQC300.Inputs[OLE DB Destination Input].ExternalColumns[TABLE_NAME]"
@@ -2626,7 +2626,7 @@ ORDER BY y.dq_category, y.failure_pct DESC NULLS LAST;</property>
                         <externalMetadataColumn
                           refId="Package\RESULTS_DC3\DQC300\DATACUT3_RESULTS_DQC300.Inputs[OLE DB Destination Input].ExternalColumns[RESULT_TXT]"
                           dataType="wstr"
-                          length="200"
+                          length="2000"
                           name="RESULT_TXT" />
                         <externalMetadataColumn
                           refId="Package\RESULTS_DC3\DQC300\DATACUT3_RESULTS_DQC300.Inputs[OLE DB Destination Input].ExternalColumns[EXPECTED]"
@@ -2684,14 +2684,14 @@ ORDER BY y.dq_category, y.failure_pct DESC NULLS LAST;</property>
                       UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor, Microsoft.DataTransformationServices.Controls, Version=16.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91">SELECT
     CAST('ME01_HUB_DQC300' AS NVARCHAR2(50))   AS DQ_TYPE,
     CAST(y.dq_category AS NVARCHAR2(100))       AS DQ_CATEGORY,
-    CAST(y.check_name  AS NVARCHAR2(200))      AS CHECK_NAME,
+    CAST(y.check_name  AS NVARCHAR2(500))      AS CHECK_NAME,
     CAST(NULL AS NVARCHAR2(100))               AS TABLE_NAME,
     CAST(NULL AS NUMBER)                       AS FAILED_RECORDS,
     CAST(y.result_num AS NUMBER)               AS TOTAL_RECORDS,
     CAST(NULL AS NUMBER)                       AS FAILURE_PCT,
     CAST(y.check_id AS NVARCHAR2(20))          AS CHECK_ID,
     CAST(y.result_num AS NUMBER(20,2))         AS RESULT_NUM,
-    CAST(y.result_txt AS NVARCHAR2(1000))       AS RESULT_TXT,
+    CAST(y.result_txt AS NVARCHAR2(2000))       AS RESULT_TXT,
     CAST(y.expected AS NUMBER(20,2))           AS EXPECTED,
     CAST(
         CASE
@@ -3242,22 +3242,22 @@ SELECT 'DT-001' AS check_id, 'DOB out of range: SSINCIP (ZKDTBR)' AS check_name,
        COUNT(*) AS RESULT_NUM, CAST(NULL AS VARCHAR2(200)) AS RESULT_TXT, CAST(NULL AS NUMBER) AS EXPECTED
   FROM DATACUT3.HUB_MT_SSINCIP
  WHERE ZKDTBR IS NOT NULL
-   AND (ZKDTBR &lt; DATE '1900-01-01' OR ZKDTBR &gt; SYSDATE)
+   AND (ZKDTBR &lt; DATE '1900-01-01' OR ZKDTBR &gt; DATE '2026-06-15')
 UNION ALL
 -- DT-002 | Future Date of Birth
 SELECT 'DT-002', 'Future DOB: SSINCIP (ZKDTBR)', COUNT(*), NULL, NULL
   FROM DATACUT3.HUB_MT_SSINCIP
- WHERE ZKDTBR &gt; SYSDATE
+ WHERE ZKDTBR &gt; DATE '2026-06-15'
 UNION ALL
 -- DT-003 | Age &lt; 18 years
 SELECT 'DT-003', 'Underage customers (&lt;18yrs): SSINCIP', COUNT(*), NULL, NULL
   FROM DATACUT3.HUB_MT_SSINCIP
- WHERE ZKDTBR &gt; ADD_MONTHS(SYSDATE, -216)
+ WHERE ZKDTBR &gt; ADD_MONTHS(DATE '2026-06-15', -216)
 UNION ALL
 -- DT-004 | Age &gt; 120 years
 SELECT 'DT-004', 'Impossible age &gt;120yrs: SSINCIP (ZKDTBR)', COUNT(*), NULL, NULL
   FROM DATACUT3.HUB_MT_SSINCIP
- WHERE ZKDTBR &lt; ADD_MONTHS(SYSDATE, -1440)
+ WHERE ZKDTBR &lt; ADD_MONTHS(DATE '2026-06-15', -1440)
 UNION ALL
 -- DT-005 | Invalid month in DOB — MOOT: ZKDTBR is a real DATE, Oracle cannot
 -- store an invalid month in a DATE column. Disabled rather than fake a result.
@@ -3271,17 +3271,17 @@ UNION ALL
 -- DT-007 | Invalid Account Opening Date — DFDTAO is DATE
 SELECT 'DT-007', 'Invalid Acct Open Date: DDACMSP (DFDTAO)', COUNT(*), NULL, NULL
   FROM DATACUT3.HUB_MT_DDACMSP
- WHERE DFDTAO IS NOT NULL AND (DFDTAO &lt; DATE '1969-01-01' OR DFDTAO &gt; SYSDATE)
+ WHERE DFDTAO IS NOT NULL AND (DFDTAO &lt; DATE '1969-01-01' OR DFDTAO &gt; DATE '2026-06-15')
 UNION ALL
 -- DT-008 | Future Account Opening Date
 SELECT 'DT-008', 'Future Acct Open Date: DDACMSP (DFDTAO)', COUNT(*), NULL, NULL
   FROM DATACUT3.HUB_MT_DDACMSP
- WHERE DFDTAO &gt; SYSDATE
+ WHERE DFDTAO &gt; DATE '2026-06-15'
 UNION ALL
 -- DT-009 | Invalid Loan Opening Date — PODTAO is DATE
 SELECT 'DT-009', 'Invalid Loan Open Date: LSACMSP (PODTAO)', COUNT(*), NULL, NULL
   FROM DATACUT3.HUB_MT_LSACMSP
- WHERE PODTAO IS NOT NULL AND (PODTAO &lt; DATE '1969-01-01' OR PODTAO &gt; SYSDATE)
+ WHERE PODTAO IS NOT NULL AND (PODTAO &lt; DATE '1969-01-01' OR PODTAO &gt; DATE '2026-06-15')
 UNION ALL
 -- DT-010 | Loan Commitment Date before Opening Date — POCTDT is DATE too,
 -- both sides already DATE so the original direct comparison was already fine
@@ -3292,7 +3292,7 @@ UNION ALL
 -- DT-011 | Invalid TD Account Opening Date — TDDTAO is DATE
 SELECT 'DT-011', 'Invalid TD Open Date: TDACMSP (TDDTAO)', COUNT(*), NULL, NULL
   FROM DATACUT3.HUB_MT_TDACMSP
- WHERE TDDTAO IS NOT NULL AND (TDDTAO &lt; DATE '1969-01-01' OR TDDTAO &gt; SYSDATE)
+ WHERE TDDTAO IS NOT NULL AND (TDDTAO &lt; DATE '1969-01-01' OR TDDTAO &gt; DATE '2026-06-15')
 UNION ALL
 -- DT-012 | Placeholder date sentinel — TODO: confirm the actual sentinel DATE
 -- value used post-migration for "missing" dates (old NUMBER sentinel was 0).
@@ -3313,7 +3313,7 @@ UNION ALL
 -- DT-014 | Invalid CDD Last Review Date — CMCLDR is DATE
 SELECT 'DT-014', 'Invalid CDD Last Review Date: SSCDDMP (CMCLDR)', COUNT(*), NULL, NULL
   FROM DATACUT3.HUB_MT_SSCDDMP
- WHERE CMCLDR IS NOT NULL AND (CMCLDR &lt; DATE '1990-01-01' OR CMCLDR &gt; SYSDATE)
+ WHERE CMCLDR IS NOT NULL AND (CMCLDR &lt; DATE '1990-01-01' OR CMCLDR &gt; DATE '2026-06-15')
 UNION ALL
 -- DT-015 | CDD Expiry before Last Review — both DATE, original was already fine
 SELECT 'DT-015', 'CDD Expiry &lt; Last Review: SSCDDMP (CMCEYD/CMCLDR)', COUNT(*), NULL, NULL
@@ -3323,57 +3323,57 @@ UNION ALL
 -- DT-016 | Invalid Blacklist Date Added — V7DTAD is DATE
 SELECT 'DT-016', 'Invalid Blacklist Date Added: SSBKLSP (V7DTAD)', COUNT(*), NULL, NULL
   FROM DATACUT3.HUB_MT_SSBKLSP
- WHERE V7DTAD IS NOT NULL AND (V7DTAD &lt; DATE '1990-01-01' OR V7DTAD &gt; SYSDATE)
+ WHERE V7DTAD IS NOT NULL AND (V7DTAD &lt; DATE '1990-01-01' OR V7DTAD &gt; DATE '2026-06-15')
 UNION ALL
 -- DT-017 | Blacklist Expiry already past — V7BLEX is DATE
 SELECT 'DT-017', 'Blacklist Expiry in Past: SSBKLSP (V7BLEX)', COUNT(*), NULL, NULL
   FROM DATACUT3.HUB_MT_SSBKLSP
- WHERE V7BLEX IS NOT NULL AND V7BLEX &lt; SYSDATE
+ WHERE V7BLEX IS NOT NULL AND V7BLEX &lt; DATE '2026-06-15'
 UNION ALL
 -- DT-018 | Invalid FATCA Self-Certification Date — CTSFDT confirmed NUMBER, UNCHANGED
 SELECT 'DT-018', 'Invalid Self-Cert Date: SSCTXPP (CTSFDT)', COUNT(*), NULL, NULL
   FROM DATACUT3.HUB_MT_SSCTXPP
- WHERE CTSFDT IS NOT NULL AND (CTSFDT &lt; 20100101 OR CTSFDT &gt; TO_NUMBER(TO_CHAR(SYSDATE, 'YYYYMMDD')))
+ WHERE CTSFDT IS NOT NULL AND (CTSFDT &lt; 20100101 OR CTSFDT &gt; TO_NUMBER(TO_CHAR(DATE '2026-06-15', 'YYYYMMDD')))
 UNION ALL
 -- DT-019 | Last CDD Update after Today — CMDLUP is DATE
 SELECT 'DT-019', 'CDD Last Update &gt; Today: SSCDDMP (CMDLUP)', COUNT(*), NULL, NULL
   FROM DATACUT3.HUB_MT_SSCDDMP
- WHERE CMDLUP &gt; SYSDATE
+ WHERE CMDLUP &gt; DATE '2026-06-15'
 UNION ALL
 -- DT-020 | Loan Commitment Date &gt; Today + 30 years — POCTDT is DATE
 SELECT 'DT-020', 'Loan Commitment &gt; Today+30yrs: LSACMSP (POCTDT)', COUNT(*), NULL, NULL
   FROM DATACUT3.HUB_MT_LSACMSP
- WHERE POCTDT IS NOT NULL AND POCTDT &gt; ADD_MONTHS(SYSDATE, 360)
+ WHERE POCTDT IS NOT NULL AND POCTDT &gt; ADD_MONTHS(DATE '2026-06-15', 360)
 UNION ALL
 -- DT-021 | Invalid Cashier Order Capture Date — ORCPDT is DATE
 SELECT 'DT-021', 'Invalid Capture Date: ORCOMSP (ORCPDT)', COUNT(*), NULL, NULL
   FROM DATACUT3.HUB_MT_ORCOMSP
- WHERE ORCPDT IS NOT NULL AND (ORCPDT &lt; DATE '1969-01-01' OR ORCPDT &gt; SYSDATE)
+ WHERE ORCPDT IS NOT NULL AND (ORCPDT &lt; DATE '1969-01-01' OR ORCPDT &gt; DATE '2026-06-15')
 UNION ALL
 -- DT-022 | Invalid ID Filed Date — LCIDDT is DATE
 SELECT 'DT-022', 'Invalid Date ID Filed: SS@ICIP (LCIDDT)', COUNT(*), NULL, NULL
   FROM DATACUT3."HUB_MT_SS@ICIP"
- WHERE LCIDDT IS NOT NULL AND (LCIDDT &lt; DATE '1950-01-01' OR LCIDDT &gt; SYSDATE)
+ WHERE LCIDDT IS NOT NULL AND (LCIDDT &lt; DATE '1950-01-01' OR LCIDDT &gt; DATE '2026-06-15')
 UNION ALL
 -- DT-023 | Tax Classification Valid-From &gt; Today + 1yr — CTTVFD confirmed NUMBER, UNCHANGED
 SELECT 'DT-023', 'Tax Valid-From &gt; Today+1yr: SSCTXPP (CTTVFD)', COUNT(*), NULL, NULL
   FROM DATACUT3.HUB_MT_SSCTXPP
- WHERE CTTVFD IS NOT NULL AND CTTVFD &gt; TO_NUMBER(TO_CHAR(ADD_MONTHS(SYSDATE, 12), 'YYYYMMDD'))
+ WHERE CTTVFD IS NOT NULL AND CTTVFD &gt; TO_NUMBER(TO_CHAR(ADD_MONTHS(DATE '2026-06-15', 12), 'YYYYMMDD'))
 UNION ALL
 -- DT-024 | Invalid DD Interest Rate History Start Date — DRSTDT is DATE
 SELECT 'DT-024', 'Invalid IR History Date: DDIRHFP (DRSTDT)', COUNT(*), NULL, NULL
   FROM DATACUT3.HUB_MT_DDIRHFP
- WHERE DRSTDT IS NOT NULL AND (DRSTDT &lt; DATE '1969-01-01' OR DRSTDT &gt; ADD_MONTHS(SYSDATE, 12))
+ WHERE DRSTDT IS NOT NULL AND (DRSTDT &lt; DATE '1969-01-01' OR DRSTDT &gt; ADD_MONTHS(DATE '2026-06-15', 12))
 UNION ALL
 -- DT-025 | Invalid LS Interest Rate History End Date — LIEEDT is DATE
 SELECT 'DT-025', 'Invalid IR History Date: LSIRHFP (LIEEDT)', COUNT(*), NULL, NULL
   FROM DATACUT3.HUB_MT_LSIRHFP
- WHERE LIEEDT IS NOT NULL AND (LIEEDT &lt; DATE '1969-01-01' OR LIEEDT &gt; ADD_MONTHS(SYSDATE, 12))
+ WHERE LIEEDT IS NOT NULL AND (LIEEDT &lt; DATE '1969-01-01' OR LIEEDT &gt; ADD_MONTHS(DATE '2026-06-15', 12))
 UNION ALL
 -- DT-026 | Blacklist Last Update after Today — V7DLUP is DATE
 SELECT 'DT-026', 'Blacklist Last Update &gt; Today: SSBKLSP (V7DLUP)', COUNT(*), NULL, NULL
   FROM DATACUT3.HUB_MT_SSBKLSP
- WHERE V7DLUP IS NOT NULL AND V7DLUP &gt; SYSDATE
+ WHERE V7DLUP IS NOT NULL AND V7DLUP &gt; DATE '2026-06-15'
 UNION ALL
 -- DT-027 | DD Account Opened Before 1969 — DFDTAO is DATE
 SELECT 'DT-027', 'Acct Opened Before 1969: DDACMSP (DFDTAO)', COUNT(*), NULL, NULL
@@ -3383,7 +3383,7 @@ UNION ALL
 -- DT-028 | Invalid Business Register Start Date — FNSTDT is DATE
 SELECT 'DT-028', 'Invalid Biz Register Start Date: FN@BRGP (FNSTDT)', COUNT(*), NULL, NULL
   FROM DATACUT3."HUB_MT_FN@BRGP"
- WHERE FNSTDT IS NOT NULL AND (FNSTDT &lt; DATE '1900-01-01' OR FNSTDT &gt; SYSDATE)
+ WHERE FNSTDT IS NOT NULL AND (FNSTDT &lt; DATE '1900-01-01' OR FNSTDT &gt; DATE '2026-06-15')
       ) x
     UNION ALL
     SELECT 'CAT-05 NUMERIC INTEGRITY' AS dq_category, x.check_id, x.check_name, x.result_num, x.result_txt, x.expected
@@ -4445,14 +4445,14 @@ SELECT 'AML-001' AS check_id, 'Overdue CDD Reviews: SSCDDMP (CMCEYD)' AS check_n
 	   CAST(COUNT(*) AS NUMBER) AS RESULT_NUM, CAST(NULL AS VARCHAR2(200)) AS RESULT_TXT, CAST(NULL AS NUMBER) AS EXPECTED
   FROM DATACUT3.HUB_MT_SSCDDMP
  WHERE CMCEYD IS NOT NULL 
-   AND CMCEYD &lt; TRUNC(SYSDATE)
+   AND CMCEYD &lt; TRUNC(DATE '2026-06-15')
 UNION ALL
 -- AML-002 | High-Risk without 12-month Review [FIXED FOR NATIVE DATE COMPARE]
 SELECT 'AML-002', 'High-Risk without 12-month Review: SSCDDMP (CMCLDR)',
 	   CAST(COUNT(*) AS NUMBER), CAST(NULL AS VARCHAR2(200)), CAST(NULL AS NUMBER)
   FROM DATACUT3.HUB_MT_SSCDDMP
  WHERE CMRSKC IN ('H', 'HIGH', '3')
-   AND (CMCLDR IS NULL OR CMCLDR &lt; ADD_MONTHS(TRUNC(SYSDATE), -12))
+   AND (CMCLDR IS NULL OR CMCLDR &lt; ADD_MONTHS(TRUNC(DATE '2026-06-15'), -12))
 UNION ALL
 -- AML-003 | KYC Standard Distribution
 SELECT 'AML-003', 'KYC Standard Distribution: SSCDDMP (CMKYCS)',
@@ -4583,7 +4583,7 @@ SELECT 'PY-005' AS check_id, 'SEPA Invalid Transaction Date SDTRDT: EUDTSDDP' AS
 	   COUNT(*) AS RESULT_NUM, CAST(NULL AS VARCHAR2(200)) AS RESULT_TXT, CAST(NULL AS NUMBER) AS EXPECTED
   FROM DATACUT3.HUB_MT_EUDTSDDP
  WHERE SDTRDT IS NOT NULL
-   AND (SDTRDT &lt; TO_DATE('19700101', 'YYYYMMDD') OR SDTRDT &gt; ADD_MONTHS(TRUNC(SYSDATE), 12))
+   AND (SDTRDT &lt; TO_DATE('19700101', 'YYYYMMDD') OR SDTRDT &gt; ADD_MONTHS(TRUNC(DATE '2026-06-15'), 12))
 UNION ALL
 -- PY-006 | Malta High Value Payment Users Count – SS@HUSP  (expected: ~278)
 SELECT 'PY-006' AS check_id, 'High Value Payment Users: SS@HUSP' AS check_name,
@@ -4926,7 +4926,7 @@ SELECT 'BR-008' AS check_id, 'Invalid Biz Register Start Date: FN@BRGP (FNSTDT)'
   FROM DATACUT3."HUB_MT_FN@BRGP"
  WHERE FNSTDT IS NOT NULL
    AND (FNSTDT &lt; TO_DATE('19000101', 'YYYYMMDD')
-	OR  FNSTDT &gt; TRUNC(SYSDATE))
+	OR  FNSTDT &gt; TRUNC(DATE '2026-06-15'))
       ) x
     UNION ALL
     SELECT 'CAT-19 DUPLICATE DETECTION' AS dq_category, x.check_id, x.check_name, x.result_num, x.result_txt, x.expected
@@ -5289,8 +5289,8 @@ ORDER BY y.dq_category, y.check_id;</property>
                   <connections>
                     <connection
                       refId="Package\RESULTS_DC3\DQC300\DQC_300.Connections[ORACLEConnection]"
-                      connectionManagerID="{396CFA57-D27A-4E9D-A399-E19F94462786}:invalid"
-                      connectionManagerRefId="{396CFA57-D27A-4E9D-A399-E19F94462786}:invalid"
+                      connectionManagerID="{D60A8650-8A94-4F36-ACFC-5A8EEC93F9E2}:external"
+                      connectionManagerRefId="Project.ConnectionManagers[MALTA]"
                       description="The ORACLE runtime connection used to access the database."
                       name="ORACLEConnection" />
                   </connections>
@@ -5400,7 +5400,7 @@ ORDER BY y.dq_category, y.check_id;</property>
                         <externalMetadataColumn
                           refId="Package\RESULTS_DC3\DQC300\DQC_300.Outputs[Oracle Source Output].ExternalColumns[CHECK_NAME]"
                           dataType="wstr"
-                          length="200"
+                          length="500"
                           name="CHECK_NAME" />
                         <externalMetadataColumn
                           refId="Package\RESULTS_DC3\DQC300\DQC_300.Outputs[Oracle Source Output].ExternalColumns[TABLE_NAME]"
@@ -5433,7 +5433,7 @@ ORDER BY y.dq_category, y.check_id;</property>
                         <externalMetadataColumn
                           refId="Package\RESULTS_DC3\DQC300\DQC_300.Outputs[Oracle Source Output].ExternalColumns[RESULT_TXT]"
                           dataType="wstr"
-                          length="1000"
+                          length="2000"
                           name="RESULT_TXT" />
                         <externalMetadataColumn
                           refId="Package\RESULTS_DC3\DQC300\DQC_300.Outputs[Oracle Source Output].ExternalColumns[EXPECTED]"
@@ -5471,7 +5471,7 @@ ORDER BY y.dq_category, y.check_id;</property>
                           refId="Package\RESULTS_DC3\DQC300\DQC_300.Outputs[Oracle Source Error Output].Columns[CHECK_NAME]"
                           dataType="wstr"
                           externalMetadataColumnId="Package\RESULTS_DC3\DQC300\DQC_300.Outputs[Oracle Source Output].ExternalColumns[CHECK_NAME]"
-                          length="200"
+                          length="500"
                           lineageId="Package\RESULTS_DC3\DQC300\DQC_300.Outputs[Oracle Source Error Output].Columns[CHECK_NAME]"
                           name="CHECK_NAME" />
                         <outputColumn
@@ -5518,7 +5518,7 @@ ORDER BY y.dq_category, y.check_id;</property>
                           refId="Package\RESULTS_DC3\DQC300\DQC_300.Outputs[Oracle Source Error Output].Columns[RESULT_TXT]"
                           dataType="wstr"
                           externalMetadataColumnId="Package\RESULTS_DC3\DQC300\DQC_300.Outputs[Oracle Source Output].ExternalColumns[RESULT_TXT]"
-                          length="1000"
+                          length="2000"
                           lineageId="Package\RESULTS_DC3\DQC300\DQC_300.Outputs[Oracle Source Error Output].Columns[RESULT_TXT]"
                           name="RESULT_TXT" />
                         <outputColumn
@@ -5637,8 +5637,8 @@ ORDER BY y.dq_category, y.check_id;</property>
                   <connections>
                     <connection
                       refId="Package\RESULTS_DC3\ME04_ATM_DQC\DATACUT3_RESULTS_ME04_ATM_DQC.Connections[OleDbConnection]"
-                      connectionManagerID="{B3B108BF-3075-460F-A54E-D4E17CA9FF88}:invalid"
-                      connectionManagerRefId="{B3B108BF-3075-460F-A54E-D4E17CA9FF88}:invalid"
+                      connectionManagerID="{6821A5EC-D23A-4EAE-A8D7-C1BFCD7DE798}:external"
+                      connectionManagerRefId="Project.ConnectionManagers[10.15.12.37.MLT_DW_EDW]"
                       description="The OLE DB runtime connection used to access the database."
                       name="OleDbConnection" />
                   </connections>
@@ -5749,7 +5749,7 @@ ORDER BY y.dq_category, y.check_id;</property>
                         <externalMetadataColumn
                           refId="Package\RESULTS_DC3\ME04_ATM_DQC\DATACUT3_RESULTS_ME04_ATM_DQC.Inputs[OLE DB Destination Input].ExternalColumns[CHECK_NAME]"
                           dataType="wstr"
-                          length="200"
+                          length="500"
                           name="CHECK_NAME" />
                         <externalMetadataColumn
                           refId="Package\RESULTS_DC3\ME04_ATM_DQC\DATACUT3_RESULTS_ME04_ATM_DQC.Inputs[OLE DB Destination Input].ExternalColumns[TABLE_NAME]"
@@ -5789,7 +5789,7 @@ ORDER BY y.dq_category, y.check_id;</property>
                         <externalMetadataColumn
                           refId="Package\RESULTS_DC3\ME04_ATM_DQC\DATACUT3_RESULTS_ME04_ATM_DQC.Inputs[OLE DB Destination Input].ExternalColumns[RESULT_TXT]"
                           dataType="wstr"
-                          length="200"
+                          length="2000"
                           name="RESULT_TXT" />
                         <externalMetadataColumn
                           refId="Package\RESULTS_DC3\ME04_ATM_DQC\DATACUT3_RESULTS_ME04_ATM_DQC.Inputs[OLE DB Destination Input].ExternalColumns[EXPECTED]"
@@ -6408,8 +6408,8 @@ ORDER BY y.dq_category, y.check_id;</property>
                   <connections>
                     <connection
                       refId="Package\RESULTS_DC3\ME04_ATM_DQC\Oracle Source.Connections[ORACLEConnection]"
-                      connectionManagerID="{396CFA57-D27A-4E9D-A399-E19F94462786}:invalid"
-                      connectionManagerRefId="{396CFA57-D27A-4E9D-A399-E19F94462786}:invalid"
+                      connectionManagerID="{D60A8650-8A94-4F36-ACFC-5A8EEC93F9E2}:external"
+                      connectionManagerRefId="Project.ConnectionManagers[MALTA]"
                       description="The ORACLE runtime connection used to access the database."
                       name="ORACLEConnection" />
                   </connections>
@@ -10489,7 +10489,7 @@ ORDER BY y.dq_category, y.check_id;</property>
     design-time-name="Package\RESULTS_DC3\DQC300">
     <LayoutInfo>
       <GraphLayout
-        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mssgm="clr-namespace:Microsoft.SqlServer.Graph.Model;assembly=Microsoft.SqlServer.Graph">
+        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
         <NodeLayout
           Size="189.333333333334,42.6666666666667"
           Id="Package\RESULTS_DC3\DQC300\DATACUT3_RESULTS_DQC300"
@@ -10517,9 +10517,7 @@ ORDER BY y.dq_category, y.check_id;</property>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <mssgm:EdgeLabel
-              BoundingBox="0,0,0,0"
-              RelativePosition="Any" />
+            <EdgeLabelCollection />
           </EdgeLayout.Labels>
         </EdgeLayout>
       </GraphLayout>
@@ -10550,7 +10548,7 @@ ORDER BY y.dq_category, y.check_id;</property>
     design-time-name="Package\RESULTS_DC3\ME04_ATM_DQC">
     <LayoutInfo>
       <GraphLayout
-        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mssgm="clr-namespace:Microsoft.SqlServer.Graph.Model;assembly=Microsoft.SqlServer.Graph">
+        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
         <NodeLayout
           Size="282.666666666667,42.6666666666667"
           Id="Package\RESULTS_DC3\ME04_ATM_DQC\DATACUT3_RESULTS_ME04_ATM_DQC"
@@ -10578,9 +10576,7 @@ ORDER BY y.dq_category, y.check_id;</property>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <mssgm:EdgeLabel
-              BoundingBox="0,0,0,0"
-              RelativePosition="Any" />
+            <EdgeLabelCollection />
           </EdgeLayout.Labels>
         </EdgeLayout>
       </GraphLayout>
