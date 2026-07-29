@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+﻿<?xml version="1.0"?>
 <DTS:Executable xmlns:DTS="www.microsoft.com/SqlServer/Dts"
   DTS:refId="Package"
   DTS:CreationDate="7/28/2026 10:35:05 AM"
@@ -11,8 +11,8 @@
   DTS:LocaleID="1032"
   DTS:ObjectName="RESULTS_PROFIT"
   DTS:PackageType="5"
-  DTS:VersionBuild="22"
-  DTS:VersionGUID="{C947F1C3-4CC5-4FDF-BDA1-6941270E465D}">
+  DTS:VersionBuild="23"
+  DTS:VersionGUID="{C850F440-D6C5-45EF-BFA6-5D0D68BB9E16}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:Variables />
@@ -30,7 +30,7 @@
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
-          SQLTask:Connection="{B3B108BF-3075-460F-A54E-D4E17CA9FF88}"
+          SQLTask:Connection="{6821A5EC-D23A-4EAE-A8D7-C1BFCD7DE798}"
           SQLTask:SqlStatementSource="IF EXISTS (SELECT 1 FROM sys.tables WHERE name = 'RESULTS_PROFIT' AND schema_id = SCHEMA_ID('RECON'))&#xA;BEGIN&#xA;    EXEC('TRUNCATE TABLE RECON.RESULTS_PROFIT');&#xA;END&#xA;CREATE TABLE RECON.RESULTS_PROFIT (&#xA;    CHECK_TYPE      VARCHAR(50)    NULL,&#xA;    CHECK_ID        VARCHAR(20)    NULL,&#xA;    CHECK_NAME      VARCHAR(500)   NULL,&#xA;    CATEGORY        VARCHAR(20)    NULL,&#xA;    RESULT_NUM      DECIMAL(18,0)  NULL,&#xA;    RESULT_TOTAL    DECIMAL(18,0)  NULL,&#xA;    RESULT_TXT      VARCHAR(200)   NULL,&#xA;    STATUS          VARCHAR(10)    NULL&#xA;);" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
       </DTS:ObjectData>
     </DTS:Executable>
@@ -394,8 +394,8 @@ ORDER BY C.CATEGORY, C.CHECK_ID</property>
                   <connections>
                     <connection
                       refId="Package\Sequence Container\Data Flow Task\Customers.Connections[ORACLEConnection]"
-                      connectionManagerID="{E40B6805-A280-4F5C-A864-393E6FE7C0A8}:external"
-                      connectionManagerRefId="Project.ConnectionManagers[PRE]"
+                      connectionManagerID="{E40B6805-A280-4F5C-A864-393E6FE7C0A8}:invalid"
+                      connectionManagerRefId="{E40B6805-A280-4F5C-A864-393E6FE7C0A8}:invalid"
                       description="The ORACLE runtime connection used to access the database."
                       name="ORACLEConnection" />
                   </connections>
@@ -656,8 +656,8 @@ ORDER BY C.CATEGORY, C.CHECK_ID</property>
                   <connections>
                     <connection
                       refId="Package\Sequence Container\Data Flow Task\OLE DB Destination 1.Connections[OleDbConnection]"
-                      connectionManagerID="{B3B108BF-3075-460F-A54E-D4E17CA9FF88}:external"
-                      connectionManagerRefId="Project.ConnectionManagers[10.15.12.37.MLT_DW_EDW]"
+                      connectionManagerID="{B3B108BF-3075-460F-A54E-D4E17CA9FF88}:invalid"
+                      connectionManagerRefId="{B3B108BF-3075-460F-A54E-D4E17CA9FF88}:invalid"
                       description="The OLE DB runtime connection used to access the database."
                       name="OleDbConnection" />
                   </connections>
@@ -890,8 +890,8 @@ ORDER BY C.CATEGORY, C.CHECK_ID</property>
                   <connections>
                     <connection
                       refId="Package\Sequence Container\Data Flow Task 1\OLE DB Destination.Connections[OleDbConnection]"
-                      connectionManagerID="{B3B108BF-3075-460F-A54E-D4E17CA9FF88}:external"
-                      connectionManagerRefId="Project.ConnectionManagers[10.15.12.37.MLT_DW_EDW]"
+                      connectionManagerID="{B3B108BF-3075-460F-A54E-D4E17CA9FF88}:invalid"
+                      connectionManagerRefId="{B3B108BF-3075-460F-A54E-D4E17CA9FF88}:invalid"
                       description="The OLE DB runtime connection used to access the database."
                       name="OleDbConnection" />
                   </connections>
@@ -1209,8 +1209,8 @@ ORDER BY C.CATEGORY, C.CHECK_ID</property>
                   <connections>
                     <connection
                       refId="Package\Sequence Container\Data Flow Task 1\Oracle Source 1.Connections[ORACLEConnection]"
-                      connectionManagerID="{E40B6805-A280-4F5C-A864-393E6FE7C0A8}:external"
-                      connectionManagerRefId="Project.ConnectionManagers[PRE]"
+                      connectionManagerID="{E40B6805-A280-4F5C-A864-393E6FE7C0A8}:invalid"
+                      connectionManagerRefId="{E40B6805-A280-4F5C-A864-393E6FE7C0A8}:invalid"
                       description="The ORACLE runtime connection used to access the database."
                       name="ORACLEConnection" />
                   </connections>
@@ -1496,8 +1496,8 @@ ORDER BY C.CATEGORY, C.CHECK_ID</property>
                   <connections>
                     <connection
                       refId="Package\Sequence Container\Data Flow Task 2\OLE DB Destination 1.Connections[OleDbConnection]"
-                      connectionManagerID="{B3B108BF-3075-460F-A54E-D4E17CA9FF88}:external"
-                      connectionManagerRefId="Project.ConnectionManagers[10.15.12.37.MLT_DW_EDW]"
+                      connectionManagerID="{B3B108BF-3075-460F-A54E-D4E17CA9FF88}:invalid"
+                      connectionManagerRefId="{B3B108BF-3075-460F-A54E-D4E17CA9FF88}:invalid"
                       description="The OLE DB runtime connection used to access the database."
                       name="OleDbConnection" />
                   </connections>
@@ -1957,8 +1957,8 @@ ORDER BY C.CATEGORY, C.CHECK_ID</property>
                   <connections>
                     <connection
                       refId="Package\Sequence Container\Data Flow Task 2\Oracle Source.Connections[ORACLEConnection]"
-                      connectionManagerID="{E40B6805-A280-4F5C-A864-393E6FE7C0A8}:external"
-                      connectionManagerRefId="Project.ConnectionManagers[PRE]"
+                      connectionManagerID="{E40B6805-A280-4F5C-A864-393E6FE7C0A8}:invalid"
+                      connectionManagerRefId="{E40B6805-A280-4F5C-A864-393E6FE7C0A8}:invalid"
                       description="The ORACLE runtime connection used to access the database."
                       name="ORACLEConnection" />
                   </connections>
@@ -2226,6 +2226,10 @@ ORDER BY C.CATEGORY, C.CHECK_ID</property>
           Size="162.666666666667,42.6666666666667"
           Id="Package\Sequence Container\Data Flow Task 1"
           TopLeft="261.083327217649,31.3333378193672" />
+        <NodeLayout
+          Size="162.666666666667,42.6666666666667"
+          Id="Package\Sequence Container\Data Flow Task 2"
+          TopLeft="458.999990935127,27.4561450086253" />
         <EdgeLayout
           Id="Package\Sequence Container.PrecedenceConstraints[Constraint]"
           TopLeft="188.666666666667,51.0000022430169">
@@ -2248,10 +2252,6 @@ ORDER BY C.CATEGORY, C.CHECK_ID</property>
             <EdgeLabelCollection />
           </EdgeLayout.Labels>
         </EdgeLayout>
-        <NodeLayout
-          Size="162.666666666667,42.6666666666667"
-          Id="Package\Sequence Container\Data Flow Task 2"
-          TopLeft="458.999990935127,27.4561450086253" />
         <EdgeLayout
           Id="Package\Sequence Container.PrecedenceConstraints[Constraint 1]"
           TopLeft="423.749993884315,50.7280747473296">
@@ -2416,14 +2416,6 @@ ORDER BY C.CATEGORY, C.CHECK_ID</property>
     </LayoutInfo>
   </TaskHost>
   <PipelineComponentMetadata
-    design-time-name="Package\Sequence Container\Data Flow Task 1\Oracle Source 1">
-    <Properties>
-      <Property>
-        <Name>DataSourceViewID</Name>
-      </Property>
-    </Properties>
-  </PipelineComponentMetadata>
-  <PipelineComponentMetadata
     design-time-name="Package\Sequence Container\Data Flow Task 1\OLE DB Destination">
     <Properties>
       <Property>
@@ -2433,6 +2425,14 @@ ORDER BY C.CATEGORY, C.CHECK_ID</property>
         <Name>TableInfoObjectType</Name>
         <Value
           type="q2:string">Table</Value>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+  <PipelineComponentMetadata
+    design-time-name="Package\Sequence Container\Data Flow Task 1\Oracle Source 1">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
       </Property>
     </Properties>
   </PipelineComponentMetadata>
@@ -2475,14 +2475,6 @@ ORDER BY C.CATEGORY, C.CHECK_ID</property>
     </LayoutInfo>
   </TaskHost>
   <PipelineComponentMetadata
-    design-time-name="Package\Sequence Container\Data Flow Task 2\Oracle Source">
-    <Properties>
-      <Property>
-        <Name>DataSourceViewID</Name>
-      </Property>
-    </Properties>
-  </PipelineComponentMetadata>
-  <PipelineComponentMetadata
     design-time-name="Package\Sequence Container\Data Flow Task 2\OLE DB Destination 1">
     <Properties>
       <Property>
@@ -2492,6 +2484,14 @@ ORDER BY C.CATEGORY, C.CHECK_ID</property>
         <Name>TableInfoObjectType</Name>
         <Value
           type="q2:string">Table</Value>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+  <PipelineComponentMetadata
+    design-time-name="Package\Sequence Container\Data Flow Task 2\Oracle Source">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
       </Property>
     </Properties>
   </PipelineComponentMetadata>

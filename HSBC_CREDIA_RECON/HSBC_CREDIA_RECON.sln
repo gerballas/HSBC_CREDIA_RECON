@@ -20,6 +20,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "RESULTS_DC3", "RESULTS_DC3"
 		..\..\..\..\Documents\DATACUT3\QUALITY SCIRPTS\ME36_TREATS DQC.sql = ..\..\..\..\Documents\DATACUT3\QUALITY SCIRPTS\ME36_TREATS DQC.sql
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "RESULTS_PROFIT", "RESULTS_PROFIT", "{95C3E71E-FB1A-4DE1-9B9A-0B2950CB8F6A}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\..\..\Documents\RESULTS_PROFIT\CUSTOMER_ADRESSES.sql = ..\..\..\..\Documents\RESULTS_PROFIT\CUSTOMER_ADRESSES.sql
+		..\..\..\..\Documents\RESULTS_PROFIT\CUSTOMERS.sql = ..\..\..\..\Documents\RESULTS_PROFIT\CUSTOMERS.sql
+		..\..\..\..\Documents\RESULTS_PROFIT\DEPOSITS.sql = ..\..\..\..\Documents\RESULTS_PROFIT\DEPOSITS.sql
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Development|Default = Development|Default
@@ -33,6 +40,7 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{0C14E794-24F7-40B6-842E-158470AEE5F7} = {C9CC8EDD-4274-44AC-AC2D-7786DE93EC30}
+		{95C3E71E-FB1A-4DE1-9B9A-0B2950CB8F6A} = {C9CC8EDD-4274-44AC-AC2D-7786DE93EC30}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3B1DA900-122A-46DB-B427-2D91CB725764}
