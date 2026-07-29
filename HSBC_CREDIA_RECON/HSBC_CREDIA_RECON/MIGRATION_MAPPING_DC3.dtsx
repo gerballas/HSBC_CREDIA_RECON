@@ -1,0 +1,731 @@
+<?xml version="1.0"?>
+<DTS:Executable xmlns:DTS="www.microsoft.com/SqlServer/Dts"
+  DTS:refId="Package"
+  DTS:CreationDate="7/9/2026 10:22:18 AM"
+  DTS:CreationName="Microsoft.Package"
+  DTS:CreatorComputerName="MLTERMSRV"
+  DTS:CreatorName="BOAHQ\lampirni_p"
+  DTS:DTSID="{D8FF98CC-1481-4A7A-A896-4C6D1C6CDB8B}"
+  DTS:ExecutableType="Microsoft.Package"
+  DTS:LastModifiedProductVersion="16.0.5467.0"
+  DTS:LocaleID="1032"
+  DTS:ObjectName="MIGRATION_MAPPING_DC3"
+  DTS:PackageType="5"
+  DTS:VersionBuild="14"
+  DTS:VersionGUID="{4A69B70C-E450-4394-BC78-17E1F13C36C8}">
+  <DTS:Property
+    DTS:Name="PackageFormatVersion">8</DTS:Property>
+  <DTS:Variables />
+  <DTS:Executables>
+    <DTS:Executable
+      DTS:refId="Package\Execute SQL Task"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:Description="Execute SQL Task"
+      DTS:DTSID="{C7E35BAE-9522-4433-9944-6C3BAB4224AB}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Execute SQL Task"
+      DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2022; © 2022 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{B3B108BF-3075-460F-A54E-D4E17CA9FF88}"
+          SQLTask:SqlStatementSource="IF EXISTS (SELECT 1 FROM sys.tables WHERE name = 'MIGRATION_MAPPING_DC3' AND schema_id = SCHEMA_ID('RECON'))&#xA;&#xA;BEGIN&#xA;    EXEC('TRUNCATE TABLE RECON.MIGRATION_MAPPING_DC3');&#xA;END&#xA;&#xA;IF NOT EXISTS (SELECT 1 FROM sys.tables WHERE name = 'MIGRATION_MAPPING_DC3' AND schema_id = SCHEMA_ID('RECON'))&#xA;BEGIN&#xA;    CREATE TABLE RECON.MIGRATION_MAPPING_DC3 (&#xA;        ID              INT IDENTITY(1,1) PRIMARY KEY,&#xA;        MAPPING_FIELD   NVARCHAR(100)   NULL,&#xA;        HUB_VALUE       NVARCHAR(100)   NULL,&#xA;        PROFITS_VALUE   NVARCHAR(100)   NULL&#xA;    );&#xA;END" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\MIGRATION_MAPPING_DC3"
+      DTS:CreationName="Microsoft.Pipeline"
+      DTS:Description="Data Flow Task"
+      DTS:DTSID="{9117E3F3-3162-4829-9C33-E89484A9C2DA}"
+      DTS:ExecutableType="Microsoft.Pipeline"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="MIGRATION_MAPPING_DC3"
+      DTS:TaskContact="Performs high-performance data extraction, transformation and loading;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <pipeline
+          version="1">
+          <components>
+            <component
+              refId="Package\MIGRATION_MAPPING_DC3\OLE DB Destination"
+              componentClassID="Microsoft.OLEDBDestination"
+              contactInfo="OLE DB Destination;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;4"
+              description="OLE DB Destination"
+              name="OLE DB Destination"
+              usesDispositions="true"
+              version="4">
+              <properties>
+                <property
+                  dataType="System.Int32"
+                  description="The number of seconds before a command times out.  A value of 0 indicates an infinite time-out."
+                  name="CommandTimeout">0</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the name of the database object used to open a rowset."
+                  name="OpenRowset">[RECON].[MIGRATION_MAPPING_DC3]</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the variable that contains the name of the database object used to open a rowset."
+                  name="OpenRowsetVariable"></property>
+                <property
+                  dataType="System.String"
+                  description="The SQL command to be executed."
+                  name="SqlCommand"
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor"></property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the column code page to use when code page information is unavailable from the data source."
+                  name="DefaultCodePage">1253</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Forces the use of the DefaultCodePage property value when describing character data."
+                  name="AlwaysUseDefaultCodePage">false</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the mode used to access the database."
+                  name="AccessMode"
+                  typeConverter="AccessMode">3</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Indicates whether the values supplied for identity columns will be copied to the destination. If false, values for identity columns will be auto-generated at the destination. Applies only if fast load is turned on."
+                  name="FastLoadKeepIdentity">false</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Indicates whether the columns containing null will have null inserted in the destination. If false, columns containing null will have their default values inserted at the destination. Applies only if fast load is turned on."
+                  name="FastLoadKeepNulls">false</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies options to be used with fast load.  Applies only if fast load is turned on."
+                  name="FastLoadOptions">TABLOCK,ROWS_PER_BATCH = 200000</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies when commits are issued during data insertion.  A value of 0 specifies that one commit will be issued at the end of data insertion.  Applies only if fast load is turned on."
+                  name="FastLoadMaxInsertCommitSize">2147483647</property>
+              </properties>
+              <connections>
+                <connection
+                  refId="Package\MIGRATION_MAPPING_DC3\OLE DB Destination.Connections[OleDbConnection]"
+                  connectionManagerID="{B3B108BF-3075-460F-A54E-D4E17CA9FF88}:external"
+                  connectionManagerRefId="Project.ConnectionManagers[10.15.12.37.MLT_DW_EDW]"
+                  description="The OLE DB runtime connection used to access the database."
+                  name="OleDbConnection" />
+              </connections>
+              <inputs>
+                <input
+                  refId="Package\MIGRATION_MAPPING_DC3\OLE DB Destination.Inputs[OLE DB Destination Input]"
+                  errorOrTruncationOperation="Insert"
+                  errorRowDisposition="FailComponent"
+                  hasSideEffects="true"
+                  name="OLE DB Destination Input">
+                  <inputColumns>
+                    <inputColumn
+                      refId="Package\MIGRATION_MAPPING_DC3\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[MAPPING_FIELD]"
+                      cachedDataType="wstr"
+                      cachedLength="100"
+                      cachedName="MAPPING_FIELD"
+                      externalMetadataColumnId="Package\MIGRATION_MAPPING_DC3\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[MAPPING_FIELD]"
+                      lineageId="Package\MIGRATION_MAPPING_DC3\Oracle Source.Outputs[Oracle Source Output].Columns[MAPPING_FIELD]" />
+                    <inputColumn
+                      refId="Package\MIGRATION_MAPPING_DC3\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[HUB_VALUE]"
+                      cachedDataType="wstr"
+                      cachedLength="100"
+                      cachedName="HUB_VALUE"
+                      externalMetadataColumnId="Package\MIGRATION_MAPPING_DC3\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[HUB_VALUE]"
+                      lineageId="Package\MIGRATION_MAPPING_DC3\Oracle Source.Outputs[Oracle Source Output].Columns[HUB_VALUE]" />
+                    <inputColumn
+                      refId="Package\MIGRATION_MAPPING_DC3\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[PROFITS_VALUE]"
+                      cachedDataType="wstr"
+                      cachedLength="100"
+                      cachedName="PROFITS_VALUE"
+                      externalMetadataColumnId="Package\MIGRATION_MAPPING_DC3\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[PROFITS_VALUE]"
+                      lineageId="Package\MIGRATION_MAPPING_DC3\Oracle Source.Outputs[Oracle Source Output].Columns[PROFITS_VALUE]" />
+                  </inputColumns>
+                  <externalMetadataColumns
+                    isUsed="True">
+                    <externalMetadataColumn
+                      refId="Package\MIGRATION_MAPPING_DC3\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ID]"
+                      dataType="i4"
+                      name="ID" />
+                    <externalMetadataColumn
+                      refId="Package\MIGRATION_MAPPING_DC3\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[MAPPING_FIELD]"
+                      dataType="wstr"
+                      length="100"
+                      name="MAPPING_FIELD" />
+                    <externalMetadataColumn
+                      refId="Package\MIGRATION_MAPPING_DC3\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[HUB_VALUE]"
+                      dataType="wstr"
+                      length="100"
+                      name="HUB_VALUE" />
+                    <externalMetadataColumn
+                      refId="Package\MIGRATION_MAPPING_DC3\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[PROFITS_VALUE]"
+                      dataType="wstr"
+                      length="100"
+                      name="PROFITS_VALUE" />
+                  </externalMetadataColumns>
+                </input>
+              </inputs>
+              <outputs>
+                <output
+                  refId="Package\MIGRATION_MAPPING_DC3\OLE DB Destination.Outputs[OLE DB Destination Error Output]"
+                  exclusionGroup="1"
+                  isErrorOut="true"
+                  name="OLE DB Destination Error Output"
+                  synchronousInputId="Package\MIGRATION_MAPPING_DC3\OLE DB Destination.Inputs[OLE DB Destination Input]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\MIGRATION_MAPPING_DC3\OLE DB Destination.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\MIGRATION_MAPPING_DC3\OLE DB Destination.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\MIGRATION_MAPPING_DC3\OLE DB Destination.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\MIGRATION_MAPPING_DC3\OLE DB Destination.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+            <component
+              refId="Package\MIGRATION_MAPPING_DC3\Oracle Source"
+              componentClassID="Microsoft.SSISOracleSrc"
+              contactInfo="Oracle Source;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;1"
+              description="Oracle Source"
+              name="Oracle Source"
+              usesDispositions="true"
+              version="1">
+              <properties>
+                <property
+                  dataType="System.String"
+                  description="The name of the table to be fetched."
+                  expressionType="Notify"
+                  name="TableName"></property>
+                <property
+                  dataType="System.String"
+                  description="The SQL command to be executed."
+                  expressionType="Notify"
+                  name="SqlCommand"
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor, Microsoft.DataTransformationServices.Controls, Version=16.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91">SELECT CAST('CUSTOMER_CODE' AS NVARCHAR2(100)) AS MAPPING_FIELD,
+       CAST(A.CUSTOMER_CODE AS NVARCHAR2(100)) AS HUB_VALUE,
+       CAST(A.PRFT_CUST_ID AS NVARCHAR2(100)) AS PROFITS_VALUE
+  FROM CREDIA_UAT1.MG_CUSTOMER_INTER A
+ WHERE ROW_STATUS = 1
+
+UNION ALL
+
+SELECT CAST(PARAMETER_TYPE AS NVARCHAR2(100)) AS MAPPING_FIELD,
+       CAST(OLD_VALUE AS NVARCHAR2(100)) AS HUB_VALUE,
+       CAST(NVL(TO_CHAR(NEW_VALUE), NEW_TEXT_VALUE) AS NVARCHAR2(100)) AS PROFITS_VALUE
+  FROM CREDIA_UAT1.MG_PARAM_PARAMETER mpp
+
+UNION ALL
+
+SELECT CAST('UNIT' AS NVARCHAR2(100)) AS MAPPING_FIELD,
+       CAST(HUB_UNIT AS NVARCHAR2(100)) AS HUB_VALUE,
+       CAST(PRFT_TYPE AS NVARCHAR2(100)) AS PROFITS_VALUE
+  FROM (
+        SELECT '2'  HUB_UNIT, '2'  PRFT_TYPE FROM DUAL UNION ALL
+        SELECT '6'  HUB_UNIT, '6'  PRFT_TYPE FROM DUAL UNION ALL
+        SELECT '7'  HUB_UNIT, '7'  PRFT_TYPE FROM DUAL UNION ALL
+        SELECT '8'  HUB_UNIT, '8'  PRFT_TYPE FROM DUAL UNION ALL
+        SELECT '9'  HUB_UNIT, '9'  PRFT_TYPE FROM DUAL UNION ALL
+        SELECT '11' HUB_UNIT, '11' PRFT_TYPE FROM DUAL UNION ALL
+        SELECT '12' HUB_UNIT, '12' PRFT_TYPE FROM DUAL UNION ALL
+        SELECT '13' HUB_UNIT, '13' PRFT_TYPE FROM DUAL UNION ALL
+        SELECT '16' HUB_UNIT, '16' PRFT_TYPE FROM DUAL UNION ALL
+        SELECT '23' HUB_UNIT, '23' PRFT_TYPE FROM DUAL UNION ALL
+        SELECT '25' HUB_UNIT, '25' PRFT_TYPE FROM DUAL UNION ALL
+        SELECT '26' HUB_UNIT, '26' PRFT_TYPE FROM DUAL UNION ALL
+        SELECT '27' HUB_UNIT, '27' PRFT_TYPE FROM DUAL UNION ALL
+        SELECT '33' HUB_UNIT, '33' PRFT_TYPE FROM DUAL UNION ALL
+        SELECT '37' HUB_UNIT, '37' PRFT_TYPE FROM DUAL UNION ALL
+        SELECT '39' HUB_UNIT, '39' PRFT_TYPE FROM DUAL UNION ALL
+        SELECT '40' HUB_UNIT, '40' PRFT_TYPE FROM DUAL UNION ALL
+        SELECT '42' HUB_UNIT, '42' PRFT_TYPE FROM DUAL UNION ALL
+        SELECT '43' HUB_UNIT, '43' PRFT_TYPE FROM DUAL UNION ALL
+        SELECT '44' HUB_UNIT, '44' PRFT_TYPE FROM DUAL UNION ALL
+        SELECT '47' HUB_UNIT, '47' PRFT_TYPE FROM DUAL UNION ALL
+        SELECT '49' HUB_UNIT, '49' PRFT_TYPE FROM DUAL UNION ALL
+        SELECT '50' HUB_UNIT, '50' PRFT_TYPE FROM DUAL UNION ALL
+        SELECT '54' HUB_UNIT, '54' PRFT_TYPE FROM DUAL UNION ALL
+        SELECT '56' HUB_UNIT, '56' PRFT_TYPE FROM DUAL UNION ALL
+        SELECT '57' HUB_UNIT, '57' PRFT_TYPE FROM DUAL UNION ALL
+        SELECT '58' HUB_UNIT, '58' PRFT_TYPE FROM DUAL UNION ALL
+        SELECT '59' HUB_UNIT, '59' PRFT_TYPE FROM DUAL UNION ALL
+        SELECT '61' HUB_UNIT, '61' PRFT_TYPE FROM DUAL UNION ALL
+        SELECT '64' HUB_UNIT, '64' PRFT_TYPE FROM DUAL UNION ALL
+        SELECT '65' HUB_UNIT, '65' PRFT_TYPE FROM DUAL UNION ALL
+        SELECT '68' HUB_UNIT, '68' PRFT_TYPE FROM DUAL UNION ALL
+        SELECT '71' HUB_UNIT, '71' PRFT_TYPE FROM DUAL UNION ALL
+        SELECT '73' HUB_UNIT, '73' PRFT_TYPE FROM DUAL UNION ALL
+        SELECT '74' HUB_UNIT, '74' PRFT_TYPE FROM DUAL UNION ALL
+        SELECT '75' HUB_UNIT, '75' PRFT_TYPE FROM DUAL UNION ALL
+        SELECT '78' HUB_UNIT, '78' PRFT_TYPE FROM DUAL UNION ALL
+        SELECT '80' HUB_UNIT, '80' PRFT_TYPE FROM DUAL UNION ALL
+        SELECT '81' HUB_UNIT, '81' PRFT_TYPE FROM DUAL UNION ALL
+        SELECT '82' HUB_UNIT, '82' PRFT_TYPE FROM DUAL UNION ALL
+        SELECT '83' HUB_UNIT, '83' PRFT_TYPE FROM DUAL UNION ALL
+        SELECT '84' HUB_UNIT, '84' PRFT_TYPE FROM DUAL UNION ALL
+        SELECT '85' HUB_UNIT, '85' PRFT_TYPE FROM DUAL UNION ALL
+        SELECT '86' HUB_UNIT, '86' PRFT_TYPE FROM DUAL UNION ALL
+        SELECT '87' HUB_UNIT, '87' PRFT_TYPE FROM DUAL UNION ALL
+        SELECT '88' HUB_UNIT, '88' PRFT_TYPE FROM DUAL UNION ALL
+        SELECT '89' HUB_UNIT, '89' PRFT_TYPE FROM DUAL UNION ALL
+        SELECT '90' HUB_UNIT, '90' PRFT_TYPE FROM DUAL
+       ) d
+
+UNION ALL
+
+SELECT CAST('CUST_TYPE' AS NVARCHAR2(100)) AS MAPPING_FIELD,
+       CAST(HUB_TYPE AS NVARCHAR2(100)) AS HUB_VALUE,
+       CAST(PRFT_TYPE AS NVARCHAR2(100)) AS PROFITS_VALUE
+  FROM (SELECT 'I' HUB_TYPE, 1 PRFT_TYPE FROM DUAL
+        UNION ALL
+        SELECT 'N' HUB_TYPE, 2 PRFT_TYPE FROM DUAL) d
+
+/* -- TEMPORARILY DISABLED: HGR_TCACMSP table does not exist yet in CREDIA_UAT1 (confirmed via all_tables check)
+UNION ALL
+
+SELECT DISTINCT CAST('LOAN_PRODUCT' AS NVARCHAR2(100)) AS MAPPING_FIELD,
+       CAST(CDAPTY||'-'||CDCYCD AS NVARCHAR2(100)) AS HUB_VALUE,
+       CAST(
+        CASE
+         WHEN LS.CDAPTY = 'CNM' THEN '44505'
+         WHEN LS.CDAPTY = 'CNF' THEN '44501'
+         WHEN LS.CDAPTY = 'FAG' THEN '44502'
+         WHEN LS.CDAPTY = 'FLN' THEN '42101'
+         WHEN LS.CDAPTY = 'HM1' THEN '43201'
+         WHEN LS.CDAPTY = 'HM3' THEN '43202'
+         WHEN LS.CDAPTY = 'HML' THEN '43203'
+         WHEN LS.CDAPTY = 'HOL' THEN '43204'
+         WHEN LS.CDAPTY = 'PIL' THEN '42102'
+         WHEN LS.CDAPTY = 'PSL' THEN '42103'
+         ELSE 'N/A'
+        END AS NVARCHAR2(100)) AS PROFITS_VALUE
+  FROM CREDIA_UAT1.HGR_TCACMSP LS
+*/
+
+UNION ALL
+
+SELECT CAST('INST_FREQ' AS NVARCHAR2(100)) AS MAPPING_FIELD,
+       CAST(HUB_TYPE AS NVARCHAR2(100)) AS HUB_VALUE,
+       CAST(PRFT_TYPE AS NVARCHAR2(100)) AS PROFITS_VALUE
+  FROM (SELECT 'M' HUB_TYPE, 1 PRFT_TYPE FROM DUAL
+        UNION ALL
+        SELECT 'Q' HUB_TYPE, 3 PRFT_TYPE FROM DUAL
+        UNION ALL
+        SELECT 'Y' HUB_TYPE, 12 PRFT_TYPE FROM DUAL) d
+
+UNION ALL
+
+SELECT CAST('EXTRAIT_FREQ' AS NVARCHAR2(100)) AS MAPPING_FIELD,
+       CAST(HUB_TYPE AS NVARCHAR2(100)) AS HUB_VALUE,
+       CAST(PRFT_TYPE AS NVARCHAR2(100)) AS PROFITS_VALUE
+  FROM (SELECT 'M' HUB_TYPE, 1 PRFT_TYPE FROM DUAL
+        UNION ALL
+        SELECT 'Q' HUB_TYPE, 2 PRFT_TYPE FROM DUAL
+        UNION ALL
+        SELECT 'Y' HUB_TYPE, 4 PRFT_TYPE FROM DUAL) d
+
+UNION ALL
+
+SELECT CAST('LOAN_STATUS' AS NVARCHAR2(100)) AS MAPPING_FIELD,
+       CAST(HUB_TYPE AS NVARCHAR2(100)) AS HUB_VALUE,
+       CAST(PRFT_TYPE AS NVARCHAR2(100)) AS PROFITS_VALUE
+  FROM (SELECT 'N' HUB_TYPE, 'Normal' PRFT_TYPE FROM DUAL
+        UNION ALL
+        SELECT 'Y' HUB_TYPE, 'Overdue' PRFT_TYPE FROM DUAL) d
+
+UNION ALL
+
+SELECT DISTINCT CAST('DEPOSIT_PRODUCT' AS NVARCHAR2(100)) AS MAPPING_FIELD,
+       CAST(
+        CASE P.PRODUCT_ID
+         WHEN 36003 THEN 'CA1'
+         WHEN 36003 THEN 'CA2'
+         WHEN 31000 THEN 'SVO'
+         WHEN 36000 THEN 'CA3'
+         WHEN 36000 THEN 'CA4'
+         WHEN 31600 THEN 'CA5'
+         WHEN 31001 THEN 'CUD'
+         WHEN 31601 THEN 'CUO'
+         WHEN 31002 THEN 'SV7'
+         WHEN 31003 THEN 'SSJ'
+         WHEN 31007 THEN 'CUV'
+         WHEN 31601 THEN 'CUR'
+         WHEN 31004 THEN 'SV5'
+         WHEN 31005 THEN 'SV1'
+         WHEN 31005 THEN 'SV2'
+         WHEN 31007 THEN 'CUT'
+         WHEN 35102 THEN 'CNB'
+         WHEN 31000 THEN 'SVR'
+         WHEN 35102 THEN 'CNA'
+         WHEN 31001 THEN 'CUE'
+         WHEN 31000 THEN 'SSM'
+         WHEN 31000 THEN 'SSN'
+         WHEN 31003 THEN 'SSO'
+         WHEN 36001 THEN 'CA8'
+         WHEN 36002 THEN 'C10'
+         WHEN 31002 THEN 'SVQ'
+         WHEN 31000 THEN 'SSR'
+         WHEN 37000 THEN 'TRC'
+         WHEN 37001 THEN 'TMD'
+         WHEN 37002 THEN 'TDS'
+         WHEN 37003 THEN 'TDN'
+         WHEN 37002 THEN 'TNO'
+         WHEN 37004 THEN 'TIF'
+         WHEN 37004 THEN 'TDI'
+         WHEN 37002 THEN 'TON'
+         WHEN 37002 THEN 'TD6'
+         WHEN 37000 THEN 'TRO'
+        END AS NVARCHAR2(100)) AS HUB_VALUE,
+       CAST(P.PRODUCT_ID AS NVARCHAR2(100)) AS PROFITS_VALUE
+  FROM CREDIA_UAT1.PROFITS_ACCOUNT P
+  JOIN CREDIA_UAT1.DEPOSIT_ACCOUNT D ON P.DEP_ACC_NUMBER = D.ACCOUNT_NUMBER
+ WHERE EXISTS (SELECT 1 FROM CREDIA_UAT1.MG_CUST_DPAC_INTER mg WHERE p.ACCOUNT_NUMBER = mg.ACCOUNT_NO)
+
+UNION ALL
+
+SELECT CAST('STATEMENT_FREQ' AS NVARCHAR2(100)) AS MAPPING_FIELD,
+       CAST(HUB_TYPE AS NVARCHAR2(100)) AS HUB_VALUE,
+       CAST(PRFT_TYPE AS NVARCHAR2(100)) AS PROFITS_VALUE
+  FROM (SELECT 'M' HUB_TYPE, 10 PRFT_TYPE FROM DUAL
+        UNION ALL
+        SELECT 'Q' HUB_TYPE, 12 PRFT_TYPE FROM DUAL
+        UNION ALL
+        SELECT 'H' HUB_TYPE, 13 PRFT_TYPE FROM DUAL
+        UNION ALL
+        SELECT 'Y' HUB_TYPE, 14 PRFT_TYPE FROM DUAL) d
+
+UNION ALL
+
+SELECT CAST('DEPOSIT_STATUS' AS NVARCHAR2(100)) AS MAPPING_FIELD,
+       CAST(HUB_TYPE AS NVARCHAR2(100)) AS HUB_VALUE,
+       CAST(PRFT_TYPE AS NVARCHAR2(100)) AS PROFITS_VALUE
+  FROM (SELECT '1&amp;1' HUB_TYPE, '1' PRFT_TYPE FROM DUAL
+        UNION ALL SELECT '2&amp;1' HUB_TYPE, '1' PRFT_TYPE FROM DUAL
+        UNION ALL SELECT '3&amp;1' HUB_TYPE, '2' PRFT_TYPE FROM DUAL
+        UNION ALL SELECT '3&amp;2' HUB_TYPE, '2' PRFT_TYPE FROM DUAL
+        UNION ALL SELECT '3&amp;3' HUB_TYPE, '2' PRFT_TYPE FROM DUAL
+        UNION ALL SELECT '4&amp;1' HUB_TYPE, '5' PRFT_TYPE FROM DUAL
+        UNION ALL SELECT '4&amp;2' HUB_TYPE, '5' PRFT_TYPE FROM DUAL
+        UNION ALL SELECT '4&amp;3' HUB_TYPE, '5' PRFT_TYPE FROM DUAL
+        UNION ALL SELECT '1&amp;2' HUB_TYPE, '6' PRFT_TYPE FROM DUAL
+        UNION ALL SELECT '2&amp;2' HUB_TYPE, '6' PRFT_TYPE FROM DUAL
+        UNION ALL SELECT '1&amp;3' HUB_TYPE, '8' PRFT_TYPE FROM DUAL
+        UNION ALL SELECT '2&amp;3' HUB_TYPE, '8' PRFT_TYPE FROM DUAL
+        UNION ALL SELECT '5&amp;1' HUB_TYPE, '1' PRFT_TYPE FROM DUAL
+        UNION ALL SELECT '5&amp;2' HUB_TYPE, '6' PRFT_TYPE FROM DUAL
+        UNION ALL SELECT '5&amp;3' HUB_TYPE, '8' PRFT_TYPE FROM DUAL) d
+
+UNION ALL
+
+SELECT DISTINCT CAST('DEP_DEBIT_INTEREST' AS NVARCHAR2(100)) AS MAPPING_FIELD,
+       CAST(D1HORT AS NVARCHAR2(100)) AS HUB_VALUE,
+       CAST(DB_ID_INTEREST AS NVARCHAR2(100)) AS PROFITS_VALUE
+  FROM CREDIA_UAT1.MG_HGR_OVD_INTERESTS
+
+UNION ALL
+
+SELECT DISTINCT CAST('DEP_CREDIT_INTEREST' AS NVARCHAR2(100)) AS MAPPING_FIELD,
+       CAST(DGCIRT AS NVARCHAR2(100)) AS HUB_VALUE,
+       CAST(CR_ID_INTEREST AS NVARCHAR2(100)) AS PROFITS_VALUE
+  FROM CREDIA_UAT1.MG_HGR_OVD_INTERESTS
+
+UNION ALL
+
+SELECT CAST('DAYS_BASE' AS NVARCHAR2(100)) AS MAPPING_FIELD,
+       CAST(HUB_TYPE AS NVARCHAR2(100)) AS HUB_VALUE,
+       CAST(PRFT_TYPE AS NVARCHAR2(100)) AS PROFITS_VALUE
+  FROM (SELECT 'A' HUB_TYPE, '360' PRFT_TYPE FROM DUAL
+        UNION ALL SELECT 'B' HUB_TYPE, '360' PRFT_TYPE FROM DUAL
+        UNION ALL SELECT 'C' HUB_TYPE, '365' PRFT_TYPE FROM DUAL
+        UNION ALL SELECT 'D' HUB_TYPE, '365' PRFT_TYPE FROM DUAL
+        UNION ALL SELECT 'E' HUB_TYPE, '365' PRFT_TYPE FROM DUAL
+        UNION ALL SELECT 'F' HUB_TYPE, '365' PRFT_TYPE FROM DUAL) d
+
+UNION ALL
+
+SELECT CAST('DEPOSITS_INTEREST_APPLICATION_CYCLE' AS NVARCHAR2(100)) AS MAPPING_FIELD,
+       CAST(HUB_TYPE AS NVARCHAR2(100)) AS HUB_VALUE,
+       CAST(PRFT_TYPE AS NVARCHAR2(100)) AS PROFITS_VALUE
+  FROM (SELECT 'M' HUB_TYPE, 1 PRFT_TYPE FROM DUAL
+        UNION ALL SELECT 'Q' HUB_TYPE, 3 PRFT_TYPE FROM DUAL
+        UNION ALL SELECT 'H' HUB_TYPE, 6 PRFT_TYPE FROM DUAL
+        UNION ALL SELECT 'Y' HUB_TYPE, 12 PRFT_TYPE FROM DUAL) d
+
+UNION ALL
+
+SELECT CAST('SCHEDULED DATE' AS NVARCHAR2(100)) AS MAPPING_FIELD,
+       CAST(NULL AS NVARCHAR2(100)) AS HUB_VALUE,
+       CAST(SCHEDULED_DATE AS NVARCHAR2(100)) AS PROFITS_VALUE
+  FROM CREDIA_UAT1.BANK_PARAMETERS
+
+UNION ALL
+
+SELECT CAST('TD_MATURITY_INST' AS NVARCHAR2(100)) AS MAPPING_FIELD,
+       CAST(HUB_TYPE AS NVARCHAR2(100)) AS HUB_VALUE,
+       CAST(PROFITS_VALUE AS NVARCHAR2(100)) AS PROFITS_VALUE
+  FROM (SELECT '1-1' HUB_TYPE, 'Interest Capitalization' PROFITS_VALUE FROM DUAL
+        UNION ALL SELECT '0-0' HUB_TYPE, 'Cash' PROFITS_VALUE FROM DUAL
+        UNION ALL SELECT '0-3' HUB_TYPE, 'Cash' PROFITS_VALUE FROM DUAL
+        UNION ALL SELECT '0-3' HUB_TYPE, 'Transfer to service account' PROFITS_VALUE FROM DUAL
+        UNION ALL SELECT '1-2' HUB_TYPE, 'Transfer to service account' PROFITS_VALUE FROM DUAL) d</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specify the number of rows fetched per batch."
+                  expressionType="Notify"
+                  name="BatchSize">1000</property>
+                <property
+                  dataType="System.Int32"
+                  description="Determines the chunk size allocation for LOB columns"
+                  expressionType="Notify"
+                  name="LobChunkSize">32768</property>
+                <property
+                  dataType="System.Int32"
+                  description="The code page to use when code page information is unavailable from the data source."
+                  expressionType="Notify"
+                  name="DefaultCodePage">1253</property>
+                <property
+                  dataType="System.Int32"
+                  description="Number of pre-fetched rows."
+                  expressionType="Notify"
+                  name="PrefetchCount">0</property>
+                <property
+                  dataType="System.Int32"
+                  description="The mode used to access the database."
+                  name="AccessMode"
+                  typeConverter="AccessMode">1</property>
+              </properties>
+              <connections>
+                <connection
+                  refId="Package\MIGRATION_MAPPING_DC3\Oracle Source.Connections[ORACLEConnection]"
+                  connectionManagerID="{E40B6805-A280-4F5C-A864-393E6FE7C0A8}:external"
+                  connectionManagerRefId="Project.ConnectionManagers[PRE]"
+                  description="The ORACLE runtime connection used to access the database."
+                  name="ORACLEConnection" />
+              </connections>
+              <outputs>
+                <output
+                  refId="Package\MIGRATION_MAPPING_DC3\Oracle Source.Outputs[Oracle Source Output]"
+                  errorRowDisposition="FailComponent"
+                  name="Oracle Source Output"
+                  truncationRowDisposition="FailComponent">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\MIGRATION_MAPPING_DC3\Oracle Source.Outputs[Oracle Source Output].Columns[MAPPING_FIELD]"
+                      dataType="wstr"
+                      externalMetadataColumnId="Package\MIGRATION_MAPPING_DC3\Oracle Source.Outputs[Oracle Source Output].ExternalColumns[MAPPING_FIELD]"
+                      length="100"
+                      lineageId="Package\MIGRATION_MAPPING_DC3\Oracle Source.Outputs[Oracle Source Output].Columns[MAPPING_FIELD]"
+                      name="MAPPING_FIELD" />
+                    <outputColumn
+                      refId="Package\MIGRATION_MAPPING_DC3\Oracle Source.Outputs[Oracle Source Output].Columns[HUB_VALUE]"
+                      dataType="wstr"
+                      externalMetadataColumnId="Package\MIGRATION_MAPPING_DC3\Oracle Source.Outputs[Oracle Source Output].ExternalColumns[HUB_VALUE]"
+                      length="100"
+                      lineageId="Package\MIGRATION_MAPPING_DC3\Oracle Source.Outputs[Oracle Source Output].Columns[HUB_VALUE]"
+                      name="HUB_VALUE" />
+                    <outputColumn
+                      refId="Package\MIGRATION_MAPPING_DC3\Oracle Source.Outputs[Oracle Source Output].Columns[PROFITS_VALUE]"
+                      dataType="wstr"
+                      externalMetadataColumnId="Package\MIGRATION_MAPPING_DC3\Oracle Source.Outputs[Oracle Source Output].ExternalColumns[PROFITS_VALUE]"
+                      length="100"
+                      lineageId="Package\MIGRATION_MAPPING_DC3\Oracle Source.Outputs[Oracle Source Output].Columns[PROFITS_VALUE]"
+                      name="PROFITS_VALUE" />
+                  </outputColumns>
+                  <externalMetadataColumns
+                    isUsed="True">
+                    <externalMetadataColumn
+                      refId="Package\MIGRATION_MAPPING_DC3\Oracle Source.Outputs[Oracle Source Output].ExternalColumns[MAPPING_FIELD]"
+                      dataType="wstr"
+                      length="100"
+                      name="MAPPING_FIELD" />
+                    <externalMetadataColumn
+                      refId="Package\MIGRATION_MAPPING_DC3\Oracle Source.Outputs[Oracle Source Output].ExternalColumns[HUB_VALUE]"
+                      dataType="wstr"
+                      length="100"
+                      name="HUB_VALUE" />
+                    <externalMetadataColumn
+                      refId="Package\MIGRATION_MAPPING_DC3\Oracle Source.Outputs[Oracle Source Output].ExternalColumns[PROFITS_VALUE]"
+                      dataType="wstr"
+                      length="100"
+                      name="PROFITS_VALUE" />
+                  </externalMetadataColumns>
+                </output>
+                <output
+                  refId="Package\MIGRATION_MAPPING_DC3\Oracle Source.Outputs[Oracle Source Error Output]"
+                  isErrorOut="true"
+                  name="Oracle Source Error Output">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\MIGRATION_MAPPING_DC3\Oracle Source.Outputs[Oracle Source Error Output].Columns[MAPPING_FIELD]"
+                      dataType="wstr"
+                      externalMetadataColumnId="Package\MIGRATION_MAPPING_DC3\Oracle Source.Outputs[Oracle Source Output].ExternalColumns[MAPPING_FIELD]"
+                      length="100"
+                      lineageId="Package\MIGRATION_MAPPING_DC3\Oracle Source.Outputs[Oracle Source Error Output].Columns[MAPPING_FIELD]"
+                      name="MAPPING_FIELD" />
+                    <outputColumn
+                      refId="Package\MIGRATION_MAPPING_DC3\Oracle Source.Outputs[Oracle Source Error Output].Columns[HUB_VALUE]"
+                      dataType="wstr"
+                      externalMetadataColumnId="Package\MIGRATION_MAPPING_DC3\Oracle Source.Outputs[Oracle Source Output].ExternalColumns[HUB_VALUE]"
+                      length="100"
+                      lineageId="Package\MIGRATION_MAPPING_DC3\Oracle Source.Outputs[Oracle Source Error Output].Columns[HUB_VALUE]"
+                      name="HUB_VALUE" />
+                    <outputColumn
+                      refId="Package\MIGRATION_MAPPING_DC3\Oracle Source.Outputs[Oracle Source Error Output].Columns[PROFITS_VALUE]"
+                      dataType="wstr"
+                      externalMetadataColumnId="Package\MIGRATION_MAPPING_DC3\Oracle Source.Outputs[Oracle Source Output].ExternalColumns[PROFITS_VALUE]"
+                      length="100"
+                      lineageId="Package\MIGRATION_MAPPING_DC3\Oracle Source.Outputs[Oracle Source Error Output].Columns[PROFITS_VALUE]"
+                      name="PROFITS_VALUE" />
+                    <outputColumn
+                      refId="Package\MIGRATION_MAPPING_DC3\Oracle Source.Outputs[Oracle Source Error Output].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\MIGRATION_MAPPING_DC3\Oracle Source.Outputs[Oracle Source Error Output].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\MIGRATION_MAPPING_DC3\Oracle Source.Outputs[Oracle Source Error Output].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\MIGRATION_MAPPING_DC3\Oracle Source.Outputs[Oracle Source Error Output].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+          </components>
+          <paths>
+            <path
+              refId="Package\MIGRATION_MAPPING_DC3.Paths[Oracle Source Output]"
+              endId="Package\MIGRATION_MAPPING_DC3\OLE DB Destination.Inputs[OLE DB Destination Input]"
+              name="Oracle Source Output"
+              startId="Package\MIGRATION_MAPPING_DC3\Oracle Source.Outputs[Oracle Source Output]" />
+          </paths>
+        </pipeline>
+      </DTS:ObjectData>
+    </DTS:Executable>
+  </DTS:Executables>
+  <DTS:PrecedenceConstraints>
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint]"
+      DTS:CreationName=""
+      DTS:DTSID="{11A7A989-687F-4E38-8D3F-F8FC77454CEF}"
+      DTS:From="Package\Execute SQL Task"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint"
+      DTS:To="Package\MIGRATION_MAPPING_DC3" />
+  </DTS:PrecedenceConstraints>
+  <DTS:DesignTimeProperties><![CDATA[<?xml version="1.0"?>
+<!--This CDATA section contains the layout information of the package. The section includes information such as (x,y) coordinates, width, and height.-->
+<!--If you manually edit this section and make a mistake, you can delete it. -->
+<!--The package will still be able to load normally but the previous layout information will be lost and the designer will automatically re-arrange the elements on the design surface.-->
+<Objects
+  Version="8">
+  <!--Each node below will contain properties that do not affect runtime behavior.-->
+  <Package
+    design-time-name="Package">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
+        <NodeLayout
+          Size="140,42.6666666666667"
+          Id="Package\Execute SQL Task"
+          TopLeft="197,96.6666666666667" />
+        <NodeLayout
+          Size="177.333333333334,42.6666666666667"
+          Id="Package\MIGRATION_MAPPING_DC3"
+          TopLeft="420.333333333333,95" />
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint]"
+          TopLeft="337,117.166666666667">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="83.3333333333334,0"
+              Start="0,0"
+              End="75.8333333333334,0">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="75.8333333333334,0" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+      </GraphLayout>
+    </LayoutInfo>
+  </Package>
+  <TaskHost
+    design-time-name="Package\MIGRATION_MAPPING_DC3">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
+        <NodeLayout
+          Size="126.666666666667,42.6666666666667"
+          Id="Package\MIGRATION_MAPPING_DC3\Oracle Source"
+          TopLeft="112,51" />
+        <NodeLayout
+          Size="145.333333333334,42.6666666666667"
+          Id="Package\MIGRATION_MAPPING_DC3\OLE DB Destination"
+          TopLeft="303,50" />
+        <EdgeLayout
+          Id="Package\MIGRATION_MAPPING_DC3.Paths[Oracle Source Output]"
+          TopLeft="238.666666666667,71.8333333333333">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="64.3333333333334,0"
+              Start="0,0"
+              End="56.8333333333334,0">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="56.8333333333334,0" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+      </GraphLayout>
+    </LayoutInfo>
+  </TaskHost>
+  <PipelineComponentMetadata
+    design-time-name="Package\MIGRATION_MAPPING_DC3\OLE DB Destination">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+      <Property>
+        <Name>TableInfoObjectType</Name>
+        <Value
+          type="q2:string">Table</Value>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+  <PipelineComponentMetadata
+    design-time-name="Package\MIGRATION_MAPPING_DC3\Oracle Source">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+</Objects>]]></DTS:DesignTimeProperties>
+</DTS:Executable>

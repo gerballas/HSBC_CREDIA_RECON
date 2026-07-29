@@ -1,0 +1,2499 @@
+<?xml version="1.0"?>
+<DTS:Executable xmlns:DTS="www.microsoft.com/SqlServer/Dts"
+  DTS:refId="Package"
+  DTS:CreationDate="7/28/2026 10:35:05 AM"
+  DTS:CreationName="Microsoft.Package"
+  DTS:CreatorComputerName="MLTERMSRV"
+  DTS:CreatorName="BOAHQ\lampirni_p"
+  DTS:DTSID="{36B9C1A0-CCC0-4932-8CF5-F1C56943A0C8}"
+  DTS:ExecutableType="Microsoft.Package"
+  DTS:LastModifiedProductVersion="16.0.5467.0"
+  DTS:LocaleID="1032"
+  DTS:ObjectName="RESULTS_PROFIT"
+  DTS:PackageType="5"
+  DTS:VersionBuild="22"
+  DTS:VersionGUID="{C947F1C3-4CC5-4FDF-BDA1-6941270E465D}">
+  <DTS:Property
+    DTS:Name="PackageFormatVersion">8</DTS:Property>
+  <DTS:Variables />
+  <DTS:Executables>
+    <DTS:Executable
+      DTS:refId="Package\Execute SQL Task"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:Description="Execute SQL Task"
+      DTS:DTSID="{9A7CB699-8D45-4532-BB6B-E02CB8FFA0FB}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Execute SQL Task"
+      DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2022; © 2022 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{B3B108BF-3075-460F-A54E-D4E17CA9FF88}"
+          SQLTask:SqlStatementSource="IF EXISTS (SELECT 1 FROM sys.tables WHERE name = 'RESULTS_PROFIT' AND schema_id = SCHEMA_ID('RECON'))&#xA;BEGIN&#xA;    EXEC('TRUNCATE TABLE RECON.RESULTS_PROFIT');&#xA;END&#xA;CREATE TABLE RECON.RESULTS_PROFIT (&#xA;    CHECK_TYPE      VARCHAR(50)    NULL,&#xA;    CHECK_ID        VARCHAR(20)    NULL,&#xA;    CHECK_NAME      VARCHAR(500)   NULL,&#xA;    CATEGORY        VARCHAR(20)    NULL,&#xA;    RESULT_NUM      DECIMAL(18,0)  NULL,&#xA;    RESULT_TOTAL    DECIMAL(18,0)  NULL,&#xA;    RESULT_TXT      VARCHAR(200)   NULL,&#xA;    STATUS          VARCHAR(10)    NULL&#xA;);" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\Sequence Container"
+      DTS:CreationName="STOCK:SEQUENCE"
+      DTS:Description="Sequence Container"
+      DTS:DTSID="{48566924-B384-42BA-91E6-7CA209190F29}"
+      DTS:ExecutableType="STOCK:SEQUENCE"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Sequence Container">
+      <DTS:Variables />
+      <DTS:Executables>
+        <DTS:Executable
+          DTS:refId="Package\Sequence Container\Data Flow Task"
+          DTS:CreationName="Microsoft.Pipeline"
+          DTS:Description="Data Flow Task"
+          DTS:DTSID="{EA968E3D-BA2D-46ED-B977-1B2840130808}"
+          DTS:ExecutableType="Microsoft.Pipeline"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Data Flow Task"
+          DTS:TaskContact="Performs high-performance data extraction, transformation and loading;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <pipeline
+              version="1">
+              <components>
+                <component
+                  refId="Package\Sequence Container\Data Flow Task\Customers"
+                  componentClassID="Microsoft.SSISOracleSrc"
+                  contactInfo="Oracle Source;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;1"
+                  description="Oracle Source"
+                  name="Customers"
+                  usesDispositions="true"
+                  version="1">
+                  <properties>
+                    <property
+                      dataType="System.String"
+                      description="The name of the table to be fetched."
+                      expressionType="Notify"
+                      name="TableName"></property>
+                    <property
+                      dataType="System.String"
+                      description="The SQL command to be executed."
+                      expressionType="Notify"
+                      name="SqlCommand"
+                      UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor, Microsoft.DataTransformationServices.Controls, Version=16.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91">SELECT
+       'Customers' AS CHECK_TYPE,
+       C.CHECK_ID, C.CHECK_NAME, C.CATEGORY,
+       C.RESULT_NUM, C.RESULT_TOTAL, C.RESULT_TXT,
+       CASE WHEN C.CATEGORY = 'NOT_FOUND' THEN 'INFO'
+            WHEN C.RESULT_NUM = 0            THEN 'PASS'
+            ELSE 'REVIEW' END AS STATUS
+  FROM (
+
+
+SELECT 'CM-001' AS CHECK_ID, 'Branch_Code mismatch vs SSCUSTP.ZGDCB' AS CHECK_NAME,
+       'CONFIRMED' AS CATEGORY, COUNT(CASE WHEN  TRIM(TO_CHAR(n.Branch_Code)) &lt;&gt; TRIM(TO_CHAR(s.ZGDCB))
+    OR (n.Branch_Code IS NULL AND s.ZGDCB IS NOT NULL)
+    OR (n.Branch_Code IS NOT NULL AND s.ZGDCB IS NULL) THEN 1 END) AS RESULT_NUM,
+       COUNT(*) AS RESULT_TOTAL,
+       CAST(NULL AS VARCHAR2(200)) AS RESULT_TXT
+  FROM NCIS_Customers n
+  JOIN MG_CUSTOMER_INTER mci ON mci.PRFT_CUST_ID = n.Customer_Code
+  JOIN HUB_MT_SSCUSTP s ON TRIM(s.CUSTOMER_CODE) = TRIM(mci.CUSTOMER_CODE)
+
+UNION ALL
+SELECT 'CM-002' AS CHECK_ID,
+       'Date_of_Birth mismatch vs SSINCIP.ZKDTBR' AS CHECK_NAME,
+       'CONFIRMED' AS CATEGORY,
+       COUNT(CASE WHEN  NVL(TO_CHAR(n.Date_of_Birth,'YYYYMMDD'),'X') &lt;&gt; 
+       CASE 
+         WHEN TRIM(i.ZKDTBR) = '99999999' THEN '19010101'
+         ELSE NVL(TRIM(i.ZKDTBR),'X')
+       END THEN 1 END) AS RESULT_NUM,
+       COUNT(*) AS RESULT_TOTAL,
+       CAST(NULL AS VARCHAR2(200)) AS RESULT_TXT
+  FROM NCIS_Customers n
+  JOIN MG_CUSTOMER_INTER mci ON mci.PRFT_CUST_ID = n.Customer_Code
+  JOIN HUB_MT_SSINCIP i ON TRIM(i.CUSTOMER_CODE) = TRIM(mci.CUSTOMER_CODE)
+
+UNION ALL
+SELECT 'CM-003' AS CHECK_ID, 'Sex mismatch vs SSINCIP.ZKSEX' AS CHECK_NAME,
+       'CONFIRMED' AS CATEGORY, COUNT(CASE WHEN  CASE 
+         WHEN n.Customer_Type = 1 AND (i.ZKSEX IS NULL OR TRIM(i.ZKSEX) = '') AND TRIM(n.Sex) = 'M' 
+           THEN 'MATCH_FOUND'
+         WHEN TRIM(i.ZKSEX) = 'X' AND TRIM(n.Sex) = 'M' 
+           THEN 'MATCH_FOUND'
+         ELSE NVL(TRIM(n.Sex), 'X')
+       END
+       &lt;&gt;
+       CASE 
+         WHEN n.Customer_Type = 1 AND (i.ZKSEX IS NULL OR TRIM(i.ZKSEX) = '') AND TRIM(n.Sex) = 'M' 
+           THEN 'MATCH_FOUND'
+         WHEN TRIM(i.ZKSEX) = 'X' AND TRIM(n.Sex) = 'M' 
+           THEN 'MATCH_FOUND'
+         ELSE NVL(TRIM(i.ZKSEX), 'X')
+       END THEN 1 END) AS RESULT_NUM,
+       COUNT(*) AS RESULT_TOTAL,
+       CAST(NULL AS VARCHAR2(200)) AS RESULT_TXT
+  FROM NCIS_Customers n
+  JOIN MG_CUSTOMER_INTER mci ON mci.PRFT_CUST_ID = n.Customer_Code
+  JOIN HUB_MT_SSINCIP i ON TRIM(i.CUSTOMER_CODE) = TRIM(mci.CUSTOMER_CODE)
+
+UNION ALL
+SELECT 'CM-004', 'Nationality mismatch vs SSCUSTP.ZGNATY',
+       'CONFIRMED', COUNT(CASE WHEN  NVL(TRIM(n.Nationality),'X') &lt;&gt; NVL(TRIM(s.ZGNATY),'X') THEN 1 END),
+       COUNT(*) AS RESULT_TOTAL,
+       CAST(NULL AS VARCHAR2(200))
+  FROM NCIS_Customers n
+  JOIN MG_CUSTOMER_INTER mci ON mci.PRFT_CUST_ID = n.Customer_Code
+  JOIN HUB_MT_SSCUSTP s ON TRIM(s.CUSTOMER_CODE) = TRIM(mci.CUSTOMER_CODE)
+
+UNION ALL
+SELECT 'CM-005', 'Communication_Language mismatch vs SSCUSTP.ZGLANG',
+       'CONFIRMED', COUNT(CASE WHEN  NVL(TRIM(n.Communication_Language),'X') &lt;&gt; NVL(TRIM(s.ZGLANG),'X') THEN 1 END),
+       COUNT(*) AS RESULT_TOTAL,
+       CAST(NULL AS VARCHAR2(200))
+  FROM NCIS_Customers n
+  JOIN MG_CUSTOMER_INTER mci ON mci.PRFT_CUST_ID = n.Customer_Code
+  JOIN HUB_MT_SSCUSTP s ON TRIM(s.CUSTOMER_CODE) = TRIM(mci.CUSTOMER_CODE)
+
+UNION ALL
+SELECT 'CM-006', 'Number_of_Children mismatch vs SSINCIP.ZKKID',
+       'CONFIRMED', COUNT(CASE WHEN  NVL(TO_NUMBER(n.Number_of_Children),-1) &lt;&gt; NVL(TO_NUMBER(i.ZKKID),-1) THEN 1 END),
+       COUNT(*) AS RESULT_TOTAL,
+       CAST(NULL AS VARCHAR2(200))
+  FROM NCIS_Customers n
+  JOIN MG_CUSTOMER_INTER mci ON mci.PRFT_CUST_ID = n.Customer_Code
+  JOIN HUB_MT_SSINCIP i ON TRIM(i.CUSTOMER_CODE) = TRIM(mci.CUSTOMER_CODE)
+
+UNION ALL
+SELECT 'CM-007', 'Education_Level mismatch vs SSINCIP.ZKEDUC',
+       'CONFIRMED', COUNT(CASE WHEN  NVL(TRIM(n.Education_Level),'X') &lt;&gt; NVL(TRIM(i.ZKEDUC),'X') THEN 1 END),
+       COUNT(*) AS RESULT_TOTAL,
+       CAST(NULL AS VARCHAR2(200))
+  FROM NCIS_Customers n
+  JOIN MG_CUSTOMER_INTER mci ON mci.PRFT_CUST_ID = n.Customer_Code
+  JOIN HUB_MT_SSINCIP i ON TRIM(i.CUSTOMER_CODE) = TRIM(mci.CUSTOMER_CODE)
+
+UNION ALL
+SELECT 'CM-008', 'Identification_ID_Type mismatch vs SSCUSTP.ZGIDTY (PROBABLE — confirm mapping)',
+       'PROBABLE', COUNT(CASE WHEN  NVL(TRIM(TO_CHAR(n.Identification_ID_Type)),'X') &lt;&gt; NVL(TRIM(s.ZGIDTY),'X') THEN 1 END),
+       COUNT(*) AS RESULT_TOTAL,
+       CAST(NULL AS VARCHAR2(200))
+  FROM NCIS_Customers n
+  JOIN MG_CUSTOMER_INTER mci ON mci.PRFT_CUST_ID = n.Customer_Code
+  JOIN HUB_MT_SSCUSTP s ON TRIM(s.CUSTOMER_CODE) = TRIM(mci.CUSTOMER_CODE)
+
+UNION ALL
+SELECT 'CM-009', 'Identification_ID mismatch vs SSCUSTP.ZGIDNO (PROBABLE — confirm mapping)',
+       'PROBABLE', COUNT(CASE WHEN  NVL(TRIM(n.Identification_ID),'X') &lt;&gt; NVL(TRIM(s.ZGIDNO),'X') THEN 1 END),
+       COUNT(*) AS RESULT_TOTAL,
+       CAST(NULL AS VARCHAR2(200))
+  FROM NCIS_Customers n
+  JOIN MG_CUSTOMER_INTER mci ON mci.PRFT_CUST_ID = n.Customer_Code
+  JOIN HUB_MT_SSCUSTP s ON TRIM(s.CUSTOMER_CODE) = TRIM(mci.CUSTOMER_CODE)
+
+UNION ALL
+SELECT 'CM-010', 'Tax_ID mismatch vs SSCUSTP.ZGTXNO (PROBABLE — confirm mapping)',
+       'PROBABLE', COUNT(CASE WHEN  NVL(TRIM(n.Tax_ID),'X') &lt;&gt; NVL(TRIM(s.ZGTXNO),'X') THEN 1 END),
+       COUNT(*) AS RESULT_TOTAL,
+       CAST(NULL AS VARCHAR2(200))
+  FROM NCIS_Customers n
+  JOIN MG_CUSTOMER_INTER mci ON mci.PRFT_CUST_ID = n.Customer_Code
+  JOIN HUB_MT_SSCUSTP s ON TRIM(s.CUSTOMER_CODE) = TRIM(mci.CUSTOMER_CODE)
+
+UNION ALL
+SELECT 'CM-011', 'Family_Status mismatch vs SSINCIP.ZKMST (PROBABLE — confirm mapping)',
+       'PROBABLE', COUNT(CASE WHEN  NVL(TRIM(n.Family_Status),'X') &lt;&gt; NVL(TRIM(i.ZKMST),'X') THEN 1 END),
+       COUNT(*) AS RESULT_TOTAL,
+       CAST(NULL AS VARCHAR2(200))
+  FROM NCIS_Customers n
+  JOIN MG_CUSTOMER_INTER mci ON mci.PRFT_CUST_ID = n.Customer_Code
+  JOIN HUB_MT_SSINCIP i ON TRIM(i.CUSTOMER_CODE) = TRIM(mci.CUSTOMER_CODE)
+
+UNION ALL
+SELECT 'CM-012', 'Activity_Code mismatch vs SSCUSTP.ZGINDY (PROBABLE — confirm mapping, see A5)',
+       'PROBABLE', COUNT(CASE WHEN  NVL(TRIM(TO_CHAR(n.Activity_Code)),'X') &lt;&gt; NVL(TRIM(TO_CHAR(s.ZGINDY)),'X') THEN 1 END),
+       COUNT(*) AS RESULT_TOTAL,
+       CAST(NULL AS VARCHAR2(200))
+  FROM NCIS_Customers n
+  JOIN MG_CUSTOMER_INTER mci ON mci.PRFT_CUST_ID = n.Customer_Code
+  JOIN HUB_MT_SSCUSTP s ON TRIM(s.CUSTOMER_CODE) = TRIM(mci.CUSTOMER_CODE)
+
+UNION ALL
+SELECT 'CM-013', 'Profession mismatch vs SSINCIP.ZKOCPT (PROBABLE — confirm mapping)',
+       'PROBABLE', COUNT(CASE WHEN  NVL(TRIM(n.Profession),'X') &lt;&gt; NVL(TRIM(i.ZKOCPT),'X') THEN 1 END),
+       COUNT(*) AS RESULT_TOTAL,
+       CAST(NULL AS VARCHAR2(200))
+  FROM NCIS_Customers n
+  JOIN MG_CUSTOMER_INTER mci ON mci.PRFT_CUST_ID = n.Customer_Code
+  JOIN HUB_MT_SSINCIP i ON TRIM(i.CUSTOMER_CODE) = TRIM(mci.CUSTOMER_CODE)
+
+UNION ALL
+SELECT 'CM-014', 'Corporation_Registry_Number mismatch vs SSNICIP.XUINCN (PROBABLE — non-individual only)',
+       'PROBABLE', COUNT(CASE WHEN  n.Corporation_Registry_Number IS NOT NULL
+   AND NVL(TRIM(n.Corporation_Registry_Number),'X') &lt;&gt; NVL(TRIM(ni.XUINCN),'X') THEN 1 END),
+       COUNT(CASE WHEN n.Corporation_Registry_Number IS NOT NULL THEN 1 END) AS RESULT_TOTAL,
+       CAST(NULL AS VARCHAR2(200))
+  FROM NCIS_Customers n
+  JOIN MG_CUSTOMER_INTER mci ON mci.PRFT_CUST_ID = n.Customer_Code
+  JOIN HUB_MT_SSNICIP ni ON TRIM(ni.CUSTOMER_CODE) = TRIM(mci.CUSTOMER_CODE)
+
+UNION ALL
+SELECT 'CM-015', 'Legal_Form mismatch vs SSCUSTP.ZGLGTP (PROBABLE — confirm mapping)',
+       'PROBABLE', COUNT(CASE WHEN  NVL(TRIM(TO_CHAR(n.Legal_Form)),'X') &lt;&gt; NVL(TRIM(s.ZGLGTP),'X') THEN 1 END),
+       COUNT(*) AS RESULT_TOTAL,
+       CAST(NULL AS VARCHAR2(200))
+  FROM NCIS_Customers n
+  JOIN MG_CUSTOMER_INTER mci ON mci.PRFT_CUST_ID = n.Customer_Code
+  JOIN HUB_MT_SSCUSTP s ON TRIM(s.CUSTOMER_CODE) = TRIM(mci.CUSTOMER_CODE)
+
+UNION ALL
+SELECT 'CM-016', 'Customer_Type distribution vs SSGHCLP.VQCSTY (LOW CONFIDENCE — for review only)',
+       'PROBABLE', COUNT(CASE WHEN  NVL(TRIM(TO_CHAR(n.Customer_Type)),'X') &lt;&gt; NVL(TRIM(g.VQCSTY),'X') THEN 1 END),
+       COUNT(*) AS RESULT_TOTAL,
+       CAST(NULL AS VARCHAR2(200))
+  FROM NCIS_Customers n
+  JOIN MG_CUSTOMER_INTER mci ON mci.PRFT_CUST_ID = n.Customer_Code
+  JOIN HUB_MT_SSCUSTP s ON TRIM(s.CUSTOMER_CODE) = TRIM(mci.CUSTOMER_CODE)
+  JOIN HUB_MT_SSGHCLP g ON TRIM(s.ZGGHCL) = TRIM(g.VQGHCL)
+
+UNION ALL
+SELECT 'CM-017', 'Customer_Check_Digit — TODO: no confirmed HUB field (see A3)',
+       'NOT_FOUND', COUNT(CASE WHEN  Customer_Check_Digit IS NOT NULL THEN 1 END), COUNT(*), CAST(NULL AS VARCHAR2(200))
+  FROM NCIS_Customers
+
+UNION ALL
+SELECT 'CM-018', 'First_Name — TODO: derived field only (ZGFNSP/ZGFNLN substring), not directly comparable',
+       'NOT_FOUND', COUNT(CASE WHEN  First_Name IS NOT NULL THEN 1 END), COUNT(*), CAST(NULL AS VARCHAR2(200))
+  FROM NCIS_Customers
+
+UNION ALL
+SELECT 'CM-019', 'Surname — TODO: derived field only (ZGLNSP/ZGLNLN substring), not directly comparable',
+       'NOT_FOUND', COUNT(CASE WHEN  Surname IS NOT NULL THEN 1 END), COUNT(*), CAST(NULL AS VARCHAR2(200))
+  FROM NCIS_Customers
+
+UNION ALL
+SELECT 'CM-020', 'Father_name — TODO: no confirmed HUB field',
+       'NOT_FOUND', COUNT(CASE WHEN  Father_name IS NOT NULL THEN 1 END), COUNT(*), CAST(NULL AS VARCHAR2(200))
+  FROM NCIS_Customers
+
+UNION ALL
+SELECT 'CM-021', 'Country_of_Birth — TODO: no confirmed HUB field',
+       'NOT_FOUND', COUNT(CASE WHEN  Country_of_Birth IS NOT NULL THEN 1 END), COUNT(*), CAST(NULL AS VARCHAR2(200))
+  FROM NCIS_Customers
+
+UNION ALL
+SELECT 'CM-022', 'Identification_ID_Issue_Date — TODO: no confirmed HUB field',
+       'NOT_FOUND', COUNT(CASE WHEN  Identification_ID_Issue_Date IS NOT NULL THEN 1 END), COUNT(*), CAST(NULL AS VARCHAR2(200))
+  FROM NCIS_Customers
+
+UNION ALL
+SELECT 'CM-023', 'Identification_ID_Issue_Authority — TODO: no confirmed HUB field',
+       'NOT_FOUND', COUNT(CASE WHEN  Identification_ID_Issue_Authority IS NOT NULL THEN 1 END), COUNT(*), CAST(NULL AS VARCHAR2(200))
+  FROM NCIS_Customers
+
+UNION ALL
+SELECT 'CM-024', 'Identification_ID_Issue_Country — TODO: no confirmed HUB field (see A5)',
+       'NOT_FOUND', COUNT(CASE WHEN  Identification_ID_Issue_Country IS NOT NULL THEN 1 END), COUNT(*), CAST(NULL AS VARCHAR2(200))
+  FROM NCIS_Customers
+
+UNION ALL
+SELECT 'CM-025', 'Tax_ID_Office — TODO: no confirmed HUB field',
+       'NOT_FOUND', COUNT(CASE WHEN  Tax_ID_Office IS NOT NULL THEN 1 END), COUNT(*), CAST(NULL AS VARCHAR2(200))
+  FROM NCIS_Customers
+
+UNION ALL
+SELECT 'CM-026', 'Mobile_Telephone — TODO: no confirmed HUB field in this DD subset',
+       'NOT_FOUND', COUNT(CASE WHEN  Mobile_Telephone IS NOT NULL THEN 1 END), COUNT(*), CAST(NULL AS VARCHAR2(200))
+  FROM NCIS_Customers
+
+UNION ALL
+SELECT 'CM-027', 'email — TODO: no confirmed HUB field in this DD subset',
+       'NOT_FOUND', COUNT(CASE WHEN  email IS NOT NULL THEN 1 END), COUNT(*), CAST(NULL AS VARCHAR2(200))
+  FROM NCIS_Customers
+
+UNION ALL
+SELECT 'CM-028', 'Citizenship — TODO: no confirmed distinct HUB field (possible overlap with Nationality)',
+       'NOT_FOUND', COUNT(CASE WHEN  Citizenship IS NOT NULL THEN 1 END), COUNT(*), CAST(NULL AS VARCHAR2(200))
+  FROM NCIS_Customers
+
+UNION ALL
+SELECT 'CM-029', 'Financial_Sector — TODO: candidate SSCUSTP.ZGMKS1/2/3, slot not confirmed',
+       'NOT_FOUND', COUNT(CASE WHEN  Financial_Sector IS NOT NULL THEN 1 END), COUNT(*), CAST(NULL AS VARCHAR2(200))
+  FROM NCIS_Customers
+
+UNION ALL
+SELECT 'CM-030', 'Professional_Status — TODO: no confirmed HUB field',
+       'NOT_FOUND', COUNT(CASE WHEN  Professional_Status IS NOT NULL THEN 1 END), COUNT(*), CAST(NULL AS VARCHAR2(200))
+  FROM NCIS_Customers
+
+UNION ALL
+SELECT 'CM-031', 'Insurance_Clearance_Expiration_Date — TODO: likely no HUB source (PROFITS-only enrichment)',
+       'NOT_FOUND', COUNT(CASE WHEN  Insurance_Clearance_Expiration_Date IS NOT NULL THEN 1 END), COUNT(*), CAST(NULL AS VARCHAR2(200))
+  FROM NCIS_Customers
+
+UNION ALL
+SELECT 'CM-032', 'Corp_Registry_Number_Issue_Country — TODO: candidate SSNICIP.XUCTHQ, not confirmed',
+       'NOT_FOUND', COUNT(CASE WHEN  Corporation_Registry_Number_Issue_Country IS NOT NULL THEN 1 END), COUNT(*), CAST(NULL AS VARCHAR2(200))
+  FROM NCIS_Customers
+
+UNION ALL
+SELECT 'CM-033', 'Risk_Classification — TODO: likely SSCDDMP.CMRSKC, outside SSCUSTP/SSINCIP join scope',
+       'NOT_FOUND', COUNT(CASE WHEN  Risk_Classification IS NOT NULL THEN 1 END), COUNT(*), CAST(NULL AS VARCHAR2(200))
+  FROM NCIS_Customers
+
+UNION ALL
+SELECT 'CM-034', 'Special_Agreements — TODO: no confirmed HUB field',
+       'NOT_FOUND', COUNT(CASE WHEN  Special_Agreements IS NOT NULL THEN 1 END), COUNT(*), CAST(NULL AS VARCHAR2(200))
+  FROM NCIS_Customers
+
+UNION ALL
+SELECT 'CM-035', 'Tax_ID_Issue_Country — TODO: no confirmed HUB field',
+       'NOT_FOUND', COUNT(CASE WHEN  Tax_ID_Issue_Country IS NOT NULL THEN 1 END), COUNT(*), CAST(NULL AS VARCHAR2(200))
+  FROM NCIS_Customers
+
+UNION ALL
+SELECT 'CM-036', 'Customer_Creation_Date — TODO: candidate SSCUSTP.ZGDTAD, not confirmed',
+       'NOT_FOUND', COUNT(CASE WHEN  Customer_Creation_Date IS NOT NULL THEN 1 END), COUNT(*), CAST(NULL AS VARCHAR2(200))
+  FROM NCIS_Customers
+
+UNION ALL
+SELECT 'CM-037', 'AMLRICAT — TODO: no confirmed HUB field (possibly related to SSCDDMP.CMRSKC)',
+       'NOT_FOUND', COUNT(CASE WHEN  AMLRICAT IS NOT NULL THEN 1 END), COUNT(*), CAST(NULL AS VARCHAR2(200))
+  FROM NCIS_Customers
+
+UNION ALL
+SELECT 'CM-038', 'CUSTOMER_ENTRY_COMMENTS — TODO: likely no HUB source (PROFITS-only free text)',
+       'NOT_FOUND', COUNT(CASE WHEN  CUSTOMER_ENTRY_COMMENTS IS NOT NULL THEN 1 END), COUNT(*), CAST(NULL AS VARCHAR2(200))
+  FROM NCIS_Customers
+) C
+ORDER BY C.CATEGORY, C.CHECK_ID</property>
+                    <property
+                      dataType="System.Int32"
+                      description="Specify the number of rows fetched per batch."
+                      expressionType="Notify"
+                      name="BatchSize">1000</property>
+                    <property
+                      dataType="System.Int32"
+                      description="Determines the chunk size allocation for LOB columns"
+                      expressionType="Notify"
+                      name="LobChunkSize">32768</property>
+                    <property
+                      dataType="System.Int32"
+                      description="The code page to use when code page information is unavailable from the data source."
+                      expressionType="Notify"
+                      name="DefaultCodePage">1253</property>
+                    <property
+                      dataType="System.Int32"
+                      description="Number of pre-fetched rows."
+                      expressionType="Notify"
+                      name="PrefetchCount">0</property>
+                    <property
+                      dataType="System.Int32"
+                      description="The mode used to access the database."
+                      name="AccessMode"
+                      typeConverter="AccessMode">1</property>
+                  </properties>
+                  <connections>
+                    <connection
+                      refId="Package\Sequence Container\Data Flow Task\Customers.Connections[ORACLEConnection]"
+                      connectionManagerID="{E40B6805-A280-4F5C-A864-393E6FE7C0A8}:external"
+                      connectionManagerRefId="Project.ConnectionManagers[PRE]"
+                      description="The ORACLE runtime connection used to access the database."
+                      name="ORACLEConnection" />
+                  </connections>
+                  <outputs>
+                    <output
+                      refId="Package\Sequence Container\Data Flow Task\Customers.Outputs[Oracle Source Output]"
+                      errorRowDisposition="FailComponent"
+                      name="Oracle Source Output"
+                      truncationRowDisposition="FailComponent">
+                      <outputColumns>
+                        <outputColumn
+                          refId="Package\Sequence Container\Data Flow Task\Customers.Outputs[Oracle Source Output].Columns[CHECK_TYPE]"
+                          codePage="1253"
+                          dataType="str"
+                          externalMetadataColumnId="Package\Sequence Container\Data Flow Task\Customers.Outputs[Oracle Source Output].ExternalColumns[CHECK_TYPE]"
+                          length="9"
+                          lineageId="Package\Sequence Container\Data Flow Task\Customers.Outputs[Oracle Source Output].Columns[CHECK_TYPE]"
+                          name="CHECK_TYPE" />
+                        <outputColumn
+                          refId="Package\Sequence Container\Data Flow Task\Customers.Outputs[Oracle Source Output].Columns[CHECK_ID]"
+                          codePage="1253"
+                          dataType="str"
+                          externalMetadataColumnId="Package\Sequence Container\Data Flow Task\Customers.Outputs[Oracle Source Output].ExternalColumns[CHECK_ID]"
+                          length="6"
+                          lineageId="Package\Sequence Container\Data Flow Task\Customers.Outputs[Oracle Source Output].Columns[CHECK_ID]"
+                          name="CHECK_ID" />
+                        <outputColumn
+                          refId="Package\Sequence Container\Data Flow Task\Customers.Outputs[Oracle Source Output].Columns[CHECK_NAME]"
+                          codePage="1253"
+                          dataType="str"
+                          externalMetadataColumnId="Package\Sequence Container\Data Flow Task\Customers.Outputs[Oracle Source Output].ExternalColumns[CHECK_NAME]"
+                          length="90"
+                          lineageId="Package\Sequence Container\Data Flow Task\Customers.Outputs[Oracle Source Output].Columns[CHECK_NAME]"
+                          name="CHECK_NAME" />
+                        <outputColumn
+                          refId="Package\Sequence Container\Data Flow Task\Customers.Outputs[Oracle Source Output].Columns[CATEGORY]"
+                          codePage="1253"
+                          dataType="str"
+                          externalMetadataColumnId="Package\Sequence Container\Data Flow Task\Customers.Outputs[Oracle Source Output].ExternalColumns[CATEGORY]"
+                          length="9"
+                          lineageId="Package\Sequence Container\Data Flow Task\Customers.Outputs[Oracle Source Output].Columns[CATEGORY]"
+                          name="CATEGORY" />
+                        <outputColumn
+                          refId="Package\Sequence Container\Data Flow Task\Customers.Outputs[Oracle Source Output].Columns[RESULT_NUM]"
+                          dataType="r8"
+                          externalMetadataColumnId="Package\Sequence Container\Data Flow Task\Customers.Outputs[Oracle Source Output].ExternalColumns[RESULT_NUM]"
+                          lineageId="Package\Sequence Container\Data Flow Task\Customers.Outputs[Oracle Source Output].Columns[RESULT_NUM]"
+                          name="RESULT_NUM" />
+                        <outputColumn
+                          refId="Package\Sequence Container\Data Flow Task\Customers.Outputs[Oracle Source Output].Columns[RESULT_TOTAL]"
+                          dataType="r8"
+                          externalMetadataColumnId="Package\Sequence Container\Data Flow Task\Customers.Outputs[Oracle Source Output].ExternalColumns[RESULT_TOTAL]"
+                          lineageId="Package\Sequence Container\Data Flow Task\Customers.Outputs[Oracle Source Output].Columns[RESULT_TOTAL]"
+                          name="RESULT_TOTAL" />
+                        <outputColumn
+                          refId="Package\Sequence Container\Data Flow Task\Customers.Outputs[Oracle Source Output].Columns[RESULT_TXT]"
+                          codePage="1253"
+                          dataType="str"
+                          externalMetadataColumnId="Package\Sequence Container\Data Flow Task\Customers.Outputs[Oracle Source Output].ExternalColumns[RESULT_TXT]"
+                          length="200"
+                          lineageId="Package\Sequence Container\Data Flow Task\Customers.Outputs[Oracle Source Output].Columns[RESULT_TXT]"
+                          name="RESULT_TXT" />
+                        <outputColumn
+                          refId="Package\Sequence Container\Data Flow Task\Customers.Outputs[Oracle Source Output].Columns[STATUS]"
+                          codePage="1253"
+                          dataType="str"
+                          externalMetadataColumnId="Package\Sequence Container\Data Flow Task\Customers.Outputs[Oracle Source Output].ExternalColumns[STATUS]"
+                          length="6"
+                          lineageId="Package\Sequence Container\Data Flow Task\Customers.Outputs[Oracle Source Output].Columns[STATUS]"
+                          name="STATUS" />
+                      </outputColumns>
+                      <externalMetadataColumns
+                        isUsed="True">
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\Data Flow Task\Customers.Outputs[Oracle Source Output].ExternalColumns[CHECK_TYPE]"
+                          codePage="1253"
+                          dataType="str"
+                          length="9"
+                          name="CHECK_TYPE" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\Data Flow Task\Customers.Outputs[Oracle Source Output].ExternalColumns[CHECK_ID]"
+                          codePage="1253"
+                          dataType="str"
+                          length="6"
+                          name="CHECK_ID" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\Data Flow Task\Customers.Outputs[Oracle Source Output].ExternalColumns[CHECK_NAME]"
+                          codePage="1253"
+                          dataType="str"
+                          length="90"
+                          name="CHECK_NAME" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\Data Flow Task\Customers.Outputs[Oracle Source Output].ExternalColumns[CATEGORY]"
+                          codePage="1253"
+                          dataType="str"
+                          length="9"
+                          name="CATEGORY" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\Data Flow Task\Customers.Outputs[Oracle Source Output].ExternalColumns[RESULT_NUM]"
+                          dataType="r8"
+                          name="RESULT_NUM" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\Data Flow Task\Customers.Outputs[Oracle Source Output].ExternalColumns[RESULT_TOTAL]"
+                          dataType="r8"
+                          name="RESULT_TOTAL" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\Data Flow Task\Customers.Outputs[Oracle Source Output].ExternalColumns[RESULT_TXT]"
+                          codePage="1253"
+                          dataType="str"
+                          length="200"
+                          name="RESULT_TXT" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\Data Flow Task\Customers.Outputs[Oracle Source Output].ExternalColumns[STATUS]"
+                          codePage="1253"
+                          dataType="str"
+                          length="6"
+                          name="STATUS" />
+                      </externalMetadataColumns>
+                    </output>
+                    <output
+                      refId="Package\Sequence Container\Data Flow Task\Customers.Outputs[Oracle Source Error Output]"
+                      isErrorOut="true"
+                      name="Oracle Source Error Output">
+                      <outputColumns>
+                        <outputColumn
+                          refId="Package\Sequence Container\Data Flow Task\Customers.Outputs[Oracle Source Error Output].Columns[CHECK_TYPE]"
+                          codePage="1253"
+                          dataType="str"
+                          externalMetadataColumnId="Package\Sequence Container\Data Flow Task\Customers.Outputs[Oracle Source Output].ExternalColumns[CHECK_TYPE]"
+                          length="9"
+                          lineageId="Package\Sequence Container\Data Flow Task\Customers.Outputs[Oracle Source Error Output].Columns[CHECK_TYPE]"
+                          name="CHECK_TYPE" />
+                        <outputColumn
+                          refId="Package\Sequence Container\Data Flow Task\Customers.Outputs[Oracle Source Error Output].Columns[CHECK_ID]"
+                          codePage="1253"
+                          dataType="str"
+                          externalMetadataColumnId="Package\Sequence Container\Data Flow Task\Customers.Outputs[Oracle Source Output].ExternalColumns[CHECK_ID]"
+                          length="6"
+                          lineageId="Package\Sequence Container\Data Flow Task\Customers.Outputs[Oracle Source Error Output].Columns[CHECK_ID]"
+                          name="CHECK_ID" />
+                        <outputColumn
+                          refId="Package\Sequence Container\Data Flow Task\Customers.Outputs[Oracle Source Error Output].Columns[CHECK_NAME]"
+                          codePage="1253"
+                          dataType="str"
+                          externalMetadataColumnId="Package\Sequence Container\Data Flow Task\Customers.Outputs[Oracle Source Output].ExternalColumns[CHECK_NAME]"
+                          length="90"
+                          lineageId="Package\Sequence Container\Data Flow Task\Customers.Outputs[Oracle Source Error Output].Columns[CHECK_NAME]"
+                          name="CHECK_NAME" />
+                        <outputColumn
+                          refId="Package\Sequence Container\Data Flow Task\Customers.Outputs[Oracle Source Error Output].Columns[CATEGORY]"
+                          codePage="1253"
+                          dataType="str"
+                          externalMetadataColumnId="Package\Sequence Container\Data Flow Task\Customers.Outputs[Oracle Source Output].ExternalColumns[CATEGORY]"
+                          length="9"
+                          lineageId="Package\Sequence Container\Data Flow Task\Customers.Outputs[Oracle Source Error Output].Columns[CATEGORY]"
+                          name="CATEGORY" />
+                        <outputColumn
+                          refId="Package\Sequence Container\Data Flow Task\Customers.Outputs[Oracle Source Error Output].Columns[RESULT_NUM]"
+                          dataType="r8"
+                          externalMetadataColumnId="Package\Sequence Container\Data Flow Task\Customers.Outputs[Oracle Source Output].ExternalColumns[RESULT_NUM]"
+                          lineageId="Package\Sequence Container\Data Flow Task\Customers.Outputs[Oracle Source Error Output].Columns[RESULT_NUM]"
+                          name="RESULT_NUM" />
+                        <outputColumn
+                          refId="Package\Sequence Container\Data Flow Task\Customers.Outputs[Oracle Source Error Output].Columns[RESULT_TOTAL]"
+                          dataType="r8"
+                          externalMetadataColumnId="Package\Sequence Container\Data Flow Task\Customers.Outputs[Oracle Source Output].ExternalColumns[RESULT_TOTAL]"
+                          lineageId="Package\Sequence Container\Data Flow Task\Customers.Outputs[Oracle Source Error Output].Columns[RESULT_TOTAL]"
+                          name="RESULT_TOTAL" />
+                        <outputColumn
+                          refId="Package\Sequence Container\Data Flow Task\Customers.Outputs[Oracle Source Error Output].Columns[RESULT_TXT]"
+                          codePage="1253"
+                          dataType="str"
+                          externalMetadataColumnId="Package\Sequence Container\Data Flow Task\Customers.Outputs[Oracle Source Output].ExternalColumns[RESULT_TXT]"
+                          length="200"
+                          lineageId="Package\Sequence Container\Data Flow Task\Customers.Outputs[Oracle Source Error Output].Columns[RESULT_TXT]"
+                          name="RESULT_TXT" />
+                        <outputColumn
+                          refId="Package\Sequence Container\Data Flow Task\Customers.Outputs[Oracle Source Error Output].Columns[STATUS]"
+                          codePage="1253"
+                          dataType="str"
+                          externalMetadataColumnId="Package\Sequence Container\Data Flow Task\Customers.Outputs[Oracle Source Output].ExternalColumns[STATUS]"
+                          length="6"
+                          lineageId="Package\Sequence Container\Data Flow Task\Customers.Outputs[Oracle Source Error Output].Columns[STATUS]"
+                          name="STATUS" />
+                        <outputColumn
+                          refId="Package\Sequence Container\Data Flow Task\Customers.Outputs[Oracle Source Error Output].Columns[ErrorCode]"
+                          dataType="i4"
+                          lineageId="Package\Sequence Container\Data Flow Task\Customers.Outputs[Oracle Source Error Output].Columns[ErrorCode]"
+                          name="ErrorCode"
+                          specialFlags="1" />
+                        <outputColumn
+                          refId="Package\Sequence Container\Data Flow Task\Customers.Outputs[Oracle Source Error Output].Columns[ErrorColumn]"
+                          dataType="i4"
+                          lineageId="Package\Sequence Container\Data Flow Task\Customers.Outputs[Oracle Source Error Output].Columns[ErrorColumn]"
+                          name="ErrorColumn"
+                          specialFlags="2" />
+                      </outputColumns>
+                      <externalMetadataColumns />
+                    </output>
+                  </outputs>
+                </component>
+                <component
+                  refId="Package\Sequence Container\Data Flow Task\OLE DB Destination 1"
+                  componentClassID="Microsoft.OLEDBDestination"
+                  contactInfo="OLE DB Destination;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;4"
+                  description="OLE DB Destination"
+                  name="OLE DB Destination 1"
+                  usesDispositions="true"
+                  version="4">
+                  <properties>
+                    <property
+                      dataType="System.Int32"
+                      description="The number of seconds before a command times out.  A value of 0 indicates an infinite time-out."
+                      name="CommandTimeout">0</property>
+                    <property
+                      dataType="System.String"
+                      description="Specifies the name of the database object used to open a rowset."
+                      name="OpenRowset">[RECON].[RESULTS_PROFIT]</property>
+                    <property
+                      dataType="System.String"
+                      description="Specifies the variable that contains the name of the database object used to open a rowset."
+                      name="OpenRowsetVariable"></property>
+                    <property
+                      dataType="System.String"
+                      description="The SQL command to be executed."
+                      name="SqlCommand"
+                      UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor"></property>
+                    <property
+                      dataType="System.Int32"
+                      description="Specifies the column code page to use when code page information is unavailable from the data source."
+                      name="DefaultCodePage">1253</property>
+                    <property
+                      dataType="System.Boolean"
+                      description="Forces the use of the DefaultCodePage property value when describing character data."
+                      name="AlwaysUseDefaultCodePage">false</property>
+                    <property
+                      dataType="System.Int32"
+                      description="Specifies the mode used to access the database."
+                      name="AccessMode"
+                      typeConverter="AccessMode">3</property>
+                    <property
+                      dataType="System.Boolean"
+                      description="Indicates whether the values supplied for identity columns will be copied to the destination. If false, values for identity columns will be auto-generated at the destination. Applies only if fast load is turned on."
+                      name="FastLoadKeepIdentity">false</property>
+                    <property
+                      dataType="System.Boolean"
+                      description="Indicates whether the columns containing null will have null inserted in the destination. If false, columns containing null will have their default values inserted at the destination. Applies only if fast load is turned on."
+                      name="FastLoadKeepNulls">false</property>
+                    <property
+                      dataType="System.String"
+                      description="Specifies options to be used with fast load.  Applies only if fast load is turned on."
+                      name="FastLoadOptions">TABLOCK,CHECK_CONSTRAINTS</property>
+                    <property
+                      dataType="System.Int32"
+                      description="Specifies when commits are issued during data insertion.  A value of 0 specifies that one commit will be issued at the end of data insertion.  Applies only if fast load is turned on."
+                      name="FastLoadMaxInsertCommitSize">2147483647</property>
+                  </properties>
+                  <connections>
+                    <connection
+                      refId="Package\Sequence Container\Data Flow Task\OLE DB Destination 1.Connections[OleDbConnection]"
+                      connectionManagerID="{B3B108BF-3075-460F-A54E-D4E17CA9FF88}:external"
+                      connectionManagerRefId="Project.ConnectionManagers[10.15.12.37.MLT_DW_EDW]"
+                      description="The OLE DB runtime connection used to access the database."
+                      name="OleDbConnection" />
+                  </connections>
+                  <inputs>
+                    <input
+                      refId="Package\Sequence Container\Data Flow Task\OLE DB Destination 1.Inputs[OLE DB Destination Input]"
+                      errorOrTruncationOperation="Insert"
+                      errorRowDisposition="FailComponent"
+                      hasSideEffects="true"
+                      name="OLE DB Destination Input">
+                      <inputColumns>
+                        <inputColumn
+                          refId="Package\Sequence Container\Data Flow Task\OLE DB Destination 1.Inputs[OLE DB Destination Input].Columns[CHECK_TYPE]"
+                          cachedCodepage="1253"
+                          cachedDataType="str"
+                          cachedLength="9"
+                          cachedName="CHECK_TYPE"
+                          externalMetadataColumnId="Package\Sequence Container\Data Flow Task\OLE DB Destination 1.Inputs[OLE DB Destination Input].ExternalColumns[CHECK_TYPE]"
+                          lineageId="Package\Sequence Container\Data Flow Task\Customers.Outputs[Oracle Source Output].Columns[CHECK_TYPE]" />
+                        <inputColumn
+                          refId="Package\Sequence Container\Data Flow Task\OLE DB Destination 1.Inputs[OLE DB Destination Input].Columns[CHECK_ID]"
+                          cachedCodepage="1253"
+                          cachedDataType="str"
+                          cachedLength="6"
+                          cachedName="CHECK_ID"
+                          externalMetadataColumnId="Package\Sequence Container\Data Flow Task\OLE DB Destination 1.Inputs[OLE DB Destination Input].ExternalColumns[CHECK_ID]"
+                          lineageId="Package\Sequence Container\Data Flow Task\Customers.Outputs[Oracle Source Output].Columns[CHECK_ID]" />
+                        <inputColumn
+                          refId="Package\Sequence Container\Data Flow Task\OLE DB Destination 1.Inputs[OLE DB Destination Input].Columns[CHECK_NAME]"
+                          cachedCodepage="1253"
+                          cachedDataType="str"
+                          cachedLength="90"
+                          cachedName="CHECK_NAME"
+                          externalMetadataColumnId="Package\Sequence Container\Data Flow Task\OLE DB Destination 1.Inputs[OLE DB Destination Input].ExternalColumns[CHECK_NAME]"
+                          lineageId="Package\Sequence Container\Data Flow Task\Customers.Outputs[Oracle Source Output].Columns[CHECK_NAME]" />
+                        <inputColumn
+                          refId="Package\Sequence Container\Data Flow Task\OLE DB Destination 1.Inputs[OLE DB Destination Input].Columns[CATEGORY]"
+                          cachedCodepage="1253"
+                          cachedDataType="str"
+                          cachedLength="9"
+                          cachedName="CATEGORY"
+                          externalMetadataColumnId="Package\Sequence Container\Data Flow Task\OLE DB Destination 1.Inputs[OLE DB Destination Input].ExternalColumns[CATEGORY]"
+                          lineageId="Package\Sequence Container\Data Flow Task\Customers.Outputs[Oracle Source Output].Columns[CATEGORY]" />
+                        <inputColumn
+                          refId="Package\Sequence Container\Data Flow Task\OLE DB Destination 1.Inputs[OLE DB Destination Input].Columns[RESULT_NUM]"
+                          cachedDataType="r8"
+                          cachedName="RESULT_NUM"
+                          externalMetadataColumnId="Package\Sequence Container\Data Flow Task\OLE DB Destination 1.Inputs[OLE DB Destination Input].ExternalColumns[RESULT_NUM]"
+                          lineageId="Package\Sequence Container\Data Flow Task\Customers.Outputs[Oracle Source Output].Columns[RESULT_NUM]" />
+                        <inputColumn
+                          refId="Package\Sequence Container\Data Flow Task\OLE DB Destination 1.Inputs[OLE DB Destination Input].Columns[RESULT_TOTAL]"
+                          cachedDataType="r8"
+                          cachedName="RESULT_TOTAL"
+                          externalMetadataColumnId="Package\Sequence Container\Data Flow Task\OLE DB Destination 1.Inputs[OLE DB Destination Input].ExternalColumns[RESULT_TOTAL]"
+                          lineageId="Package\Sequence Container\Data Flow Task\Customers.Outputs[Oracle Source Output].Columns[RESULT_TOTAL]" />
+                        <inputColumn
+                          refId="Package\Sequence Container\Data Flow Task\OLE DB Destination 1.Inputs[OLE DB Destination Input].Columns[RESULT_TXT]"
+                          cachedCodepage="1253"
+                          cachedDataType="str"
+                          cachedLength="200"
+                          cachedName="RESULT_TXT"
+                          externalMetadataColumnId="Package\Sequence Container\Data Flow Task\OLE DB Destination 1.Inputs[OLE DB Destination Input].ExternalColumns[RESULT_TXT]"
+                          lineageId="Package\Sequence Container\Data Flow Task\Customers.Outputs[Oracle Source Output].Columns[RESULT_TXT]" />
+                        <inputColumn
+                          refId="Package\Sequence Container\Data Flow Task\OLE DB Destination 1.Inputs[OLE DB Destination Input].Columns[STATUS]"
+                          cachedCodepage="1253"
+                          cachedDataType="str"
+                          cachedLength="6"
+                          cachedName="STATUS"
+                          externalMetadataColumnId="Package\Sequence Container\Data Flow Task\OLE DB Destination 1.Inputs[OLE DB Destination Input].ExternalColumns[STATUS]"
+                          lineageId="Package\Sequence Container\Data Flow Task\Customers.Outputs[Oracle Source Output].Columns[STATUS]" />
+                      </inputColumns>
+                      <externalMetadataColumns
+                        isUsed="True">
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\Data Flow Task\OLE DB Destination 1.Inputs[OLE DB Destination Input].ExternalColumns[CHECK_TYPE]"
+                          codePage="1253"
+                          dataType="str"
+                          length="50"
+                          name="CHECK_TYPE" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\Data Flow Task\OLE DB Destination 1.Inputs[OLE DB Destination Input].ExternalColumns[CHECK_ID]"
+                          codePage="1253"
+                          dataType="str"
+                          length="20"
+                          name="CHECK_ID" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\Data Flow Task\OLE DB Destination 1.Inputs[OLE DB Destination Input].ExternalColumns[CHECK_NAME]"
+                          codePage="1253"
+                          dataType="str"
+                          length="500"
+                          name="CHECK_NAME" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\Data Flow Task\OLE DB Destination 1.Inputs[OLE DB Destination Input].ExternalColumns[CATEGORY]"
+                          codePage="1253"
+                          dataType="str"
+                          length="20"
+                          name="CATEGORY" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\Data Flow Task\OLE DB Destination 1.Inputs[OLE DB Destination Input].ExternalColumns[RESULT_NUM]"
+                          dataType="numeric"
+                          name="RESULT_NUM"
+                          precision="18" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\Data Flow Task\OLE DB Destination 1.Inputs[OLE DB Destination Input].ExternalColumns[RESULT_TOTAL]"
+                          dataType="numeric"
+                          name="RESULT_TOTAL"
+                          precision="18" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\Data Flow Task\OLE DB Destination 1.Inputs[OLE DB Destination Input].ExternalColumns[RESULT_TXT]"
+                          codePage="1253"
+                          dataType="str"
+                          length="200"
+                          name="RESULT_TXT" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\Data Flow Task\OLE DB Destination 1.Inputs[OLE DB Destination Input].ExternalColumns[STATUS]"
+                          codePage="1253"
+                          dataType="str"
+                          length="10"
+                          name="STATUS" />
+                      </externalMetadataColumns>
+                    </input>
+                  </inputs>
+                  <outputs>
+                    <output
+                      refId="Package\Sequence Container\Data Flow Task\OLE DB Destination 1.Outputs[OLE DB Destination Error Output]"
+                      exclusionGroup="1"
+                      isErrorOut="true"
+                      name="OLE DB Destination Error Output"
+                      synchronousInputId="Package\Sequence Container\Data Flow Task\OLE DB Destination 1.Inputs[OLE DB Destination Input]">
+                      <outputColumns>
+                        <outputColumn
+                          refId="Package\Sequence Container\Data Flow Task\OLE DB Destination 1.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
+                          dataType="i4"
+                          lineageId="Package\Sequence Container\Data Flow Task\OLE DB Destination 1.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
+                          name="ErrorCode"
+                          specialFlags="1" />
+                        <outputColumn
+                          refId="Package\Sequence Container\Data Flow Task\OLE DB Destination 1.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
+                          dataType="i4"
+                          lineageId="Package\Sequence Container\Data Flow Task\OLE DB Destination 1.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
+                          name="ErrorColumn"
+                          specialFlags="2" />
+                      </outputColumns>
+                      <externalMetadataColumns />
+                    </output>
+                  </outputs>
+                </component>
+              </components>
+              <paths>
+                <path
+                  refId="Package\Sequence Container\Data Flow Task.Paths[Oracle Source Output]"
+                  endId="Package\Sequence Container\Data Flow Task\OLE DB Destination 1.Inputs[OLE DB Destination Input]"
+                  name="Oracle Source Output"
+                  startId="Package\Sequence Container\Data Flow Task\Customers.Outputs[Oracle Source Output]" />
+              </paths>
+            </pipeline>
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Sequence Container\Data Flow Task 1"
+          DTS:CreationName="Microsoft.Pipeline"
+          DTS:Description="Data Flow Task"
+          DTS:DTSID="{ECCBD322-E60B-48AB-BCA3-B46CBBC5160A}"
+          DTS:ExecutableType="Microsoft.Pipeline"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Data Flow Task 1"
+          DTS:TaskContact="Performs high-performance data extraction, transformation and loading;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <pipeline
+              version="1">
+              <components>
+                <component
+                  refId="Package\Sequence Container\Data Flow Task 1\OLE DB Destination"
+                  componentClassID="Microsoft.OLEDBDestination"
+                  contactInfo="OLE DB Destination;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;4"
+                  description="OLE DB Destination"
+                  name="OLE DB Destination"
+                  usesDispositions="true"
+                  version="4">
+                  <properties>
+                    <property
+                      dataType="System.Int32"
+                      description="The number of seconds before a command times out.  A value of 0 indicates an infinite time-out."
+                      name="CommandTimeout">0</property>
+                    <property
+                      dataType="System.String"
+                      description="Specifies the name of the database object used to open a rowset."
+                      name="OpenRowset">[RECON].[RESULTS_PROFIT]</property>
+                    <property
+                      dataType="System.String"
+                      description="Specifies the variable that contains the name of the database object used to open a rowset."
+                      name="OpenRowsetVariable"></property>
+                    <property
+                      dataType="System.String"
+                      description="The SQL command to be executed."
+                      name="SqlCommand"
+                      UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor"></property>
+                    <property
+                      dataType="System.Int32"
+                      description="Specifies the column code page to use when code page information is unavailable from the data source."
+                      name="DefaultCodePage">1253</property>
+                    <property
+                      dataType="System.Boolean"
+                      description="Forces the use of the DefaultCodePage property value when describing character data."
+                      name="AlwaysUseDefaultCodePage">false</property>
+                    <property
+                      dataType="System.Int32"
+                      description="Specifies the mode used to access the database."
+                      name="AccessMode"
+                      typeConverter="AccessMode">3</property>
+                    <property
+                      dataType="System.Boolean"
+                      description="Indicates whether the values supplied for identity columns will be copied to the destination. If false, values for identity columns will be auto-generated at the destination. Applies only if fast load is turned on."
+                      name="FastLoadKeepIdentity">false</property>
+                    <property
+                      dataType="System.Boolean"
+                      description="Indicates whether the columns containing null will have null inserted in the destination. If false, columns containing null will have their default values inserted at the destination. Applies only if fast load is turned on."
+                      name="FastLoadKeepNulls">false</property>
+                    <property
+                      dataType="System.String"
+                      description="Specifies options to be used with fast load.  Applies only if fast load is turned on."
+                      name="FastLoadOptions">TABLOCK,CHECK_CONSTRAINTS</property>
+                    <property
+                      dataType="System.Int32"
+                      description="Specifies when commits are issued during data insertion.  A value of 0 specifies that one commit will be issued at the end of data insertion.  Applies only if fast load is turned on."
+                      name="FastLoadMaxInsertCommitSize">2147483647</property>
+                  </properties>
+                  <connections>
+                    <connection
+                      refId="Package\Sequence Container\Data Flow Task 1\OLE DB Destination.Connections[OleDbConnection]"
+                      connectionManagerID="{B3B108BF-3075-460F-A54E-D4E17CA9FF88}:external"
+                      connectionManagerRefId="Project.ConnectionManagers[10.15.12.37.MLT_DW_EDW]"
+                      description="The OLE DB runtime connection used to access the database."
+                      name="OleDbConnection" />
+                  </connections>
+                  <inputs>
+                    <input
+                      refId="Package\Sequence Container\Data Flow Task 1\OLE DB Destination.Inputs[OLE DB Destination Input]"
+                      errorOrTruncationOperation="Insert"
+                      errorRowDisposition="FailComponent"
+                      hasSideEffects="true"
+                      name="OLE DB Destination Input">
+                      <inputColumns>
+                        <inputColumn
+                          refId="Package\Sequence Container\Data Flow Task 1\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[CHECK_TYPE]"
+                          cachedCodepage="1253"
+                          cachedDataType="str"
+                          cachedLength="18"
+                          cachedName="CHECK_TYPE"
+                          externalMetadataColumnId="Package\Sequence Container\Data Flow Task 1\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[CHECK_TYPE]"
+                          lineageId="Package\Sequence Container\Data Flow Task 1\Oracle Source 1.Outputs[Oracle Source Output].Columns[CHECK_TYPE]" />
+                        <inputColumn
+                          refId="Package\Sequence Container\Data Flow Task 1\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[CHECK_ID]"
+                          cachedCodepage="1253"
+                          cachedDataType="str"
+                          cachedLength="6"
+                          cachedName="CHECK_ID"
+                          externalMetadataColumnId="Package\Sequence Container\Data Flow Task 1\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[CHECK_ID]"
+                          lineageId="Package\Sequence Container\Data Flow Task 1\Oracle Source 1.Outputs[Oracle Source Output].Columns[CHECK_ID]" />
+                        <inputColumn
+                          refId="Package\Sequence Container\Data Flow Task 1\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[CHECK_NAME]"
+                          cachedCodepage="1253"
+                          cachedDataType="str"
+                          cachedLength="118"
+                          cachedName="CHECK_NAME"
+                          externalMetadataColumnId="Package\Sequence Container\Data Flow Task 1\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[CHECK_NAME]"
+                          lineageId="Package\Sequence Container\Data Flow Task 1\Oracle Source 1.Outputs[Oracle Source Output].Columns[CHECK_NAME]" />
+                        <inputColumn
+                          refId="Package\Sequence Container\Data Flow Task 1\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[CATEGORY]"
+                          cachedCodepage="1253"
+                          cachedDataType="str"
+                          cachedLength="9"
+                          cachedName="CATEGORY"
+                          externalMetadataColumnId="Package\Sequence Container\Data Flow Task 1\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[CATEGORY]"
+                          lineageId="Package\Sequence Container\Data Flow Task 1\Oracle Source 1.Outputs[Oracle Source Output].Columns[CATEGORY]" />
+                        <inputColumn
+                          refId="Package\Sequence Container\Data Flow Task 1\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[RESULT_NUM]"
+                          cachedDataType="r8"
+                          cachedName="RESULT_NUM"
+                          externalMetadataColumnId="Package\Sequence Container\Data Flow Task 1\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[RESULT_NUM]"
+                          lineageId="Package\Sequence Container\Data Flow Task 1\Oracle Source 1.Outputs[Oracle Source Output].Columns[RESULT_NUM]" />
+                        <inputColumn
+                          refId="Package\Sequence Container\Data Flow Task 1\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[RESULT_TOTAL]"
+                          cachedDataType="r8"
+                          cachedName="RESULT_TOTAL"
+                          externalMetadataColumnId="Package\Sequence Container\Data Flow Task 1\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[RESULT_TOTAL]"
+                          lineageId="Package\Sequence Container\Data Flow Task 1\Oracle Source 1.Outputs[Oracle Source Output].Columns[RESULT_TOTAL]" />
+                        <inputColumn
+                          refId="Package\Sequence Container\Data Flow Task 1\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[RESULT_TXT]"
+                          cachedCodepage="1253"
+                          cachedDataType="str"
+                          cachedLength="200"
+                          cachedName="RESULT_TXT"
+                          externalMetadataColumnId="Package\Sequence Container\Data Flow Task 1\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[RESULT_TXT]"
+                          lineageId="Package\Sequence Container\Data Flow Task 1\Oracle Source 1.Outputs[Oracle Source Output].Columns[RESULT_TXT]" />
+                        <inputColumn
+                          refId="Package\Sequence Container\Data Flow Task 1\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[STATUS]"
+                          cachedCodepage="1253"
+                          cachedDataType="str"
+                          cachedLength="6"
+                          cachedName="STATUS"
+                          externalMetadataColumnId="Package\Sequence Container\Data Flow Task 1\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[STATUS]"
+                          lineageId="Package\Sequence Container\Data Flow Task 1\Oracle Source 1.Outputs[Oracle Source Output].Columns[STATUS]" />
+                      </inputColumns>
+                      <externalMetadataColumns
+                        isUsed="True">
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\Data Flow Task 1\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[CHECK_TYPE]"
+                          codePage="1253"
+                          dataType="str"
+                          length="50"
+                          name="CHECK_TYPE" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\Data Flow Task 1\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[CHECK_ID]"
+                          codePage="1253"
+                          dataType="str"
+                          length="20"
+                          name="CHECK_ID" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\Data Flow Task 1\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[CHECK_NAME]"
+                          codePage="1253"
+                          dataType="str"
+                          length="500"
+                          name="CHECK_NAME" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\Data Flow Task 1\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[CATEGORY]"
+                          codePage="1253"
+                          dataType="str"
+                          length="20"
+                          name="CATEGORY" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\Data Flow Task 1\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[RESULT_NUM]"
+                          dataType="numeric"
+                          name="RESULT_NUM"
+                          precision="18" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\Data Flow Task 1\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[RESULT_TOTAL]"
+                          dataType="numeric"
+                          name="RESULT_TOTAL"
+                          precision="18" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\Data Flow Task 1\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[RESULT_TXT]"
+                          codePage="1253"
+                          dataType="str"
+                          length="200"
+                          name="RESULT_TXT" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\Data Flow Task 1\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[STATUS]"
+                          codePage="1253"
+                          dataType="str"
+                          length="10"
+                          name="STATUS" />
+                      </externalMetadataColumns>
+                    </input>
+                  </inputs>
+                  <outputs>
+                    <output
+                      refId="Package\Sequence Container\Data Flow Task 1\OLE DB Destination.Outputs[OLE DB Destination Error Output]"
+                      exclusionGroup="1"
+                      isErrorOut="true"
+                      name="OLE DB Destination Error Output"
+                      synchronousInputId="Package\Sequence Container\Data Flow Task 1\OLE DB Destination.Inputs[OLE DB Destination Input]">
+                      <outputColumns>
+                        <outputColumn
+                          refId="Package\Sequence Container\Data Flow Task 1\OLE DB Destination.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
+                          dataType="i4"
+                          lineageId="Package\Sequence Container\Data Flow Task 1\OLE DB Destination.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
+                          name="ErrorCode"
+                          specialFlags="1" />
+                        <outputColumn
+                          refId="Package\Sequence Container\Data Flow Task 1\OLE DB Destination.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
+                          dataType="i4"
+                          lineageId="Package\Sequence Container\Data Flow Task 1\OLE DB Destination.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
+                          name="ErrorColumn"
+                          specialFlags="2" />
+                      </outputColumns>
+                      <externalMetadataColumns />
+                    </output>
+                  </outputs>
+                </component>
+                <component
+                  refId="Package\Sequence Container\Data Flow Task 1\Oracle Source 1"
+                  componentClassID="Microsoft.SSISOracleSrc"
+                  contactInfo="Oracle Source;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;1"
+                  description="Oracle Source"
+                  name="Oracle Source 1"
+                  usesDispositions="true"
+                  version="1">
+                  <properties>
+                    <property
+                      dataType="System.String"
+                      description="The name of the table to be fetched."
+                      expressionType="Notify"
+                      name="TableName"></property>
+                    <property
+                      dataType="System.String"
+                      description="The SQL command to be executed."
+                      expressionType="Notify"
+                      name="SqlCommand"
+                      UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor, Microsoft.DataTransformationServices.Controls, Version=16.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91">SELECT
+       'Customer_Addresses' AS CHECK_TYPE,
+       C.CHECK_ID, C.CHECK_NAME, C.CATEGORY,
+       C.RESULT_NUM, C.RESULT_TOTAL, C.RESULT_TXT,
+       CASE WHEN C.CATEGORY = 'NOT_FOUND' THEN 'INFO'
+            WHEN C.RESULT_NUM = 0            THEN 'PASS'
+            ELSE 'REVIEW' END AS STATUS
+  FROM (
+
+SELECT 'CM-101' AS CHECK_ID,
+       'Customers with address row-count mismatch: NCIS_Customer_addresses vs SSADDRP' AS CHECK_NAME,
+       'CONFIRMED' AS CATEGORY,
+       COUNT(CASE WHEN NVL(pc.PROFITS_CNT,0) &lt;&gt; NVL(hc.HUB_CNT,0) THEN 1 END) AS RESULT_NUM,
+       COUNT(*) AS RESULT_TOTAL,
+       CAST(NULL AS VARCHAR2(200)) AS RESULT_TXT
+  FROM MG_CUSTOMER_INTER mci
+  LEFT JOIN (SELECT Customer_Code, COUNT(*) AS PROFITS_CNT
+               FROM NCIS_Customer_addresses
+              GROUP BY Customer_Code) pc
+    ON pc.Customer_Code = mci.PRFT_CUST_ID
+  LEFT JOIN (SELECT TRIM(sc.CUSTOMER_CODE) AS CUSTOMER_CODE, COUNT(*) AS HUB_CNT
+               FROM HUB_MT_SSCUSTP sc
+               JOIN HUB_MT_SSADDRP s ON s.ZBDCB = sc.ZGDCB AND s.ZBDCS = sc.ZGDCS
+              GROUP BY TRIM(sc.CUSTOMER_CODE)) hc
+    ON hc.CUSTOMER_CODE = TRIM(mci.CUSTOMER_CODE)
+ WHERE pc.Customer_Code IS NOT NULL OR hc.CUSTOMER_CODE IS NOT NULL
+
+UNION ALL
+SELECT 'CM-102', 'Customers with PROFITS address but no HUB SSADDRP row',
+       'CONFIRMED',
+       COUNT(DISTINCT CASE WHEN hcust.CUSTOMER_CODE IS NULL THEN p.Customer_Code END) AS RESULT_NUM,
+       COUNT(DISTINCT p.Customer_Code) AS RESULT_TOTAL,
+       CAST(NULL AS VARCHAR2(200))
+  FROM NCIS_Customer_addresses p
+  JOIN MG_CUSTOMER_INTER mci ON mci.PRFT_CUST_ID = p.Customer_Code
+  LEFT JOIN (SELECT DISTINCT TRIM(sc.CUSTOMER_CODE) AS CUSTOMER_CODE
+               FROM HUB_MT_SSCUSTP sc
+               JOIN HUB_MT_SSADDRP s ON s.ZBDCB = sc.ZGDCB AND s.ZBDCS = sc.ZGDCS) hcust
+    ON hcust.CUSTOMER_CODE = TRIM(mci.CUSTOMER_CODE)
+
+UNION ALL
+SELECT 'CM-103', 'Customers with HUB SSADDRP row but no PROFITS address',
+       'CONFIRMED',
+       COUNT(DISTINCT CASE WHEN pcust.Customer_Code IS NULL THEN mci.PRFT_CUST_ID END) AS RESULT_NUM,
+       COUNT(DISTINCT mci.PRFT_CUST_ID) AS RESULT_TOTAL,
+       CAST(NULL AS VARCHAR2(200))
+  FROM MG_CUSTOMER_INTER mci
+  JOIN HUB_MT_SSCUSTP sc ON TRIM(sc.CUSTOMER_CODE) = TRIM(mci.CUSTOMER_CODE)
+  JOIN HUB_MT_SSADDRP s ON s.ZBDCB = sc.ZGDCB AND s.ZBDCS = sc.ZGDCS
+  LEFT JOIN (SELECT DISTINCT Customer_Code FROM NCIS_Customer_addresses) pcust
+    ON pcust.Customer_Code = mci.PRFT_CUST_ID
+
+UNION ALL
+SELECT 'CM-104', 'Country: no matching SSADDRP.ZBADCE found among customer''s HUB addresses (PROBABLE — see A3)',
+       'PROBABLE',
+       COUNT(CASE WHEN p.Country IS NOT NULL AND h.CUSTOMER_CODE IS NULL THEN 1 END) AS RESULT_NUM,
+       COUNT(CASE WHEN p.Country IS NOT NULL THEN 1 END) AS RESULT_TOTAL,
+       CAST(NULL AS VARCHAR2(200))
+  FROM NCIS_Customer_addresses p
+  JOIN MG_CUSTOMER_INTER mci ON mci.PRFT_CUST_ID = p.Customer_Code
+  LEFT JOIN (SELECT DISTINCT TRIM(sc.CUSTOMER_CODE) AS CUSTOMER_CODE, TRIM(s.ZBADCE) AS ZBADCE
+               FROM HUB_MT_SSCUSTP sc
+               JOIN HUB_MT_SSADDRP s ON s.ZBDCB = sc.ZGDCB AND s.ZBDCS = sc.ZGDCS
+              WHERE s.ZBADCE IS NOT NULL) h
+    ON h.CUSTOMER_CODE = TRIM(mci.CUSTOMER_CODE) AND h.ZBADCE = TRIM(p.Country)
+
+UNION ALL
+SELECT 'CM-105', 'Telephone: no matching SSADDRP.ZBTENO/ZBTEN2 found among customer''s HUB addresses (PROBABLE — see A3)',
+       'PROBABLE',
+       COUNT(CASE WHEN p.Telephone IS NOT NULL AND h.CUSTOMER_CODE IS NULL THEN 1 END) AS RESULT_NUM,
+       COUNT(CASE WHEN p.Telephone IS NOT NULL THEN 1 END) AS RESULT_TOTAL,
+       CAST(NULL AS VARCHAR2(200))
+  FROM NCIS_Customer_addresses p
+  JOIN MG_CUSTOMER_INTER mci ON mci.PRFT_CUST_ID = p.Customer_Code
+  LEFT JOIN (SELECT DISTINCT TRIM(sc.CUSTOMER_CODE) AS CUSTOMER_CODE, TRIM(s.ZBTENO) AS PHONE
+               FROM HUB_MT_SSCUSTP sc
+               JOIN HUB_MT_SSADDRP s ON s.ZBDCB = sc.ZGDCB AND s.ZBDCS = sc.ZGDCS
+              WHERE s.ZBTENO IS NOT NULL
+             UNION
+             SELECT DISTINCT TRIM(sc.CUSTOMER_CODE) AS CUSTOMER_CODE, TRIM(s.ZBTEN2) AS PHONE
+               FROM HUB_MT_SSCUSTP sc
+               JOIN HUB_MT_SSADDRP s ON s.ZBDCB = sc.ZGDCB AND s.ZBDCS = sc.ZGDCS
+              WHERE s.ZBTEN2 IS NOT NULL) h
+    ON h.CUSTOMER_CODE = TRIM(mci.CUSTOMER_CODE) AND h.PHONE = TRIM(p.Telephone)
+
+UNION ALL
+SELECT 'CM-106', 'Fax_Number: no matching SSADDRP.ZBFAXN/ZBFAN2 found among customer''s HUB addresses (PROBABLE — see A3)',
+       'PROBABLE',
+       COUNT(CASE WHEN p.Fax_Number IS NOT NULL AND h.CUSTOMER_CODE IS NULL THEN 1 END) AS RESULT_NUM,
+       COUNT(CASE WHEN p.Fax_Number IS NOT NULL THEN 1 END) AS RESULT_TOTAL,
+       CAST(NULL AS VARCHAR2(200))
+  FROM NCIS_Customer_addresses p
+  JOIN MG_CUSTOMER_INTER mci ON mci.PRFT_CUST_ID = p.Customer_Code
+  LEFT JOIN (SELECT DISTINCT TRIM(sc.CUSTOMER_CODE) AS CUSTOMER_CODE, TRIM(s.ZBFAXN) AS FAXNO
+               FROM HUB_MT_SSCUSTP sc
+               JOIN HUB_MT_SSADDRP s ON s.ZBDCB = sc.ZGDCB AND s.ZBDCS = sc.ZGDCS
+              WHERE s.ZBFAXN IS NOT NULL
+             UNION
+             SELECT DISTINCT TRIM(sc.CUSTOMER_CODE) AS CUSTOMER_CODE, TRIM(s.ZBFAN2) AS FAXNO
+               FROM HUB_MT_SSCUSTP sc
+               JOIN HUB_MT_SSADDRP s ON s.ZBDCB = sc.ZGDCB AND s.ZBDCS = sc.ZGDCS
+              WHERE s.ZBFAN2 IS NOT NULL) h
+    ON h.CUSTOMER_CODE = TRIM(mci.CUSTOMER_CODE) AND h.FAXNO = TRIM(p.Fax_Number)
+
+UNION ALL
+SELECT 'CM-107', 'Address_2 — TODO: no confirmed line mapping to SSADDRP.ZBNAD1..5 (Address_1 does not exist on NCIS_Customer_addresses)',
+       'NOT_FOUND',
+       COUNT(CASE WHEN Address_2 IS NOT NULL THEN 1 END),
+       COUNT(*) AS RESULT_TOTAL,
+       CAST(NULL AS VARCHAR2(200))
+  FROM NCIS_Customer_addresses
+
+UNION ALL
+SELECT 'CM-108', 'RECON_KEY (ENTRY_COMMENTS) — TODO: no confirmed HUB field, clarify field semantics with NC (see A4)',
+       'NOT_FOUND',
+       COUNT(CASE WHEN RECON_KEY IS NOT NULL THEN 1 END),
+       COUNT(*) AS RESULT_TOTAL,
+       CAST(NULL AS VARCHAR2(200))
+  FROM NCIS_Customer_addresses
+) C
+ORDER BY C.CATEGORY, C.CHECK_ID</property>
+                    <property
+                      dataType="System.Int32"
+                      description="Specify the number of rows fetched per batch."
+                      expressionType="Notify"
+                      name="BatchSize">1000</property>
+                    <property
+                      dataType="System.Int32"
+                      description="Determines the chunk size allocation for LOB columns"
+                      expressionType="Notify"
+                      name="LobChunkSize">32768</property>
+                    <property
+                      dataType="System.Int32"
+                      description="The code page to use when code page information is unavailable from the data source."
+                      expressionType="Notify"
+                      name="DefaultCodePage">1253</property>
+                    <property
+                      dataType="System.Int32"
+                      description="Number of pre-fetched rows."
+                      expressionType="Notify"
+                      name="PrefetchCount">0</property>
+                    <property
+                      dataType="System.Int32"
+                      description="The mode used to access the database."
+                      name="AccessMode"
+                      typeConverter="AccessMode">1</property>
+                  </properties>
+                  <connections>
+                    <connection
+                      refId="Package\Sequence Container\Data Flow Task 1\Oracle Source 1.Connections[ORACLEConnection]"
+                      connectionManagerID="{E40B6805-A280-4F5C-A864-393E6FE7C0A8}:external"
+                      connectionManagerRefId="Project.ConnectionManagers[PRE]"
+                      description="The ORACLE runtime connection used to access the database."
+                      name="ORACLEConnection" />
+                  </connections>
+                  <outputs>
+                    <output
+                      refId="Package\Sequence Container\Data Flow Task 1\Oracle Source 1.Outputs[Oracle Source Output]"
+                      errorRowDisposition="FailComponent"
+                      name="Oracle Source Output"
+                      truncationRowDisposition="FailComponent">
+                      <outputColumns>
+                        <outputColumn
+                          refId="Package\Sequence Container\Data Flow Task 1\Oracle Source 1.Outputs[Oracle Source Output].Columns[CHECK_TYPE]"
+                          codePage="1253"
+                          dataType="str"
+                          externalMetadataColumnId="Package\Sequence Container\Data Flow Task 1\Oracle Source 1.Outputs[Oracle Source Output].ExternalColumns[CHECK_TYPE]"
+                          length="18"
+                          lineageId="Package\Sequence Container\Data Flow Task 1\Oracle Source 1.Outputs[Oracle Source Output].Columns[CHECK_TYPE]"
+                          name="CHECK_TYPE" />
+                        <outputColumn
+                          refId="Package\Sequence Container\Data Flow Task 1\Oracle Source 1.Outputs[Oracle Source Output].Columns[CHECK_ID]"
+                          codePage="1253"
+                          dataType="str"
+                          externalMetadataColumnId="Package\Sequence Container\Data Flow Task 1\Oracle Source 1.Outputs[Oracle Source Output].ExternalColumns[CHECK_ID]"
+                          length="6"
+                          lineageId="Package\Sequence Container\Data Flow Task 1\Oracle Source 1.Outputs[Oracle Source Output].Columns[CHECK_ID]"
+                          name="CHECK_ID" />
+                        <outputColumn
+                          refId="Package\Sequence Container\Data Flow Task 1\Oracle Source 1.Outputs[Oracle Source Output].Columns[CHECK_NAME]"
+                          codePage="1253"
+                          dataType="str"
+                          externalMetadataColumnId="Package\Sequence Container\Data Flow Task 1\Oracle Source 1.Outputs[Oracle Source Output].ExternalColumns[CHECK_NAME]"
+                          length="118"
+                          lineageId="Package\Sequence Container\Data Flow Task 1\Oracle Source 1.Outputs[Oracle Source Output].Columns[CHECK_NAME]"
+                          name="CHECK_NAME" />
+                        <outputColumn
+                          refId="Package\Sequence Container\Data Flow Task 1\Oracle Source 1.Outputs[Oracle Source Output].Columns[CATEGORY]"
+                          codePage="1253"
+                          dataType="str"
+                          externalMetadataColumnId="Package\Sequence Container\Data Flow Task 1\Oracle Source 1.Outputs[Oracle Source Output].ExternalColumns[CATEGORY]"
+                          length="9"
+                          lineageId="Package\Sequence Container\Data Flow Task 1\Oracle Source 1.Outputs[Oracle Source Output].Columns[CATEGORY]"
+                          name="CATEGORY" />
+                        <outputColumn
+                          refId="Package\Sequence Container\Data Flow Task 1\Oracle Source 1.Outputs[Oracle Source Output].Columns[RESULT_NUM]"
+                          dataType="r8"
+                          externalMetadataColumnId="Package\Sequence Container\Data Flow Task 1\Oracle Source 1.Outputs[Oracle Source Output].ExternalColumns[RESULT_NUM]"
+                          lineageId="Package\Sequence Container\Data Flow Task 1\Oracle Source 1.Outputs[Oracle Source Output].Columns[RESULT_NUM]"
+                          name="RESULT_NUM" />
+                        <outputColumn
+                          refId="Package\Sequence Container\Data Flow Task 1\Oracle Source 1.Outputs[Oracle Source Output].Columns[RESULT_TOTAL]"
+                          dataType="r8"
+                          externalMetadataColumnId="Package\Sequence Container\Data Flow Task 1\Oracle Source 1.Outputs[Oracle Source Output].ExternalColumns[RESULT_TOTAL]"
+                          lineageId="Package\Sequence Container\Data Flow Task 1\Oracle Source 1.Outputs[Oracle Source Output].Columns[RESULT_TOTAL]"
+                          name="RESULT_TOTAL" />
+                        <outputColumn
+                          refId="Package\Sequence Container\Data Flow Task 1\Oracle Source 1.Outputs[Oracle Source Output].Columns[RESULT_TXT]"
+                          codePage="1253"
+                          dataType="str"
+                          externalMetadataColumnId="Package\Sequence Container\Data Flow Task 1\Oracle Source 1.Outputs[Oracle Source Output].ExternalColumns[RESULT_TXT]"
+                          length="200"
+                          lineageId="Package\Sequence Container\Data Flow Task 1\Oracle Source 1.Outputs[Oracle Source Output].Columns[RESULT_TXT]"
+                          name="RESULT_TXT" />
+                        <outputColumn
+                          refId="Package\Sequence Container\Data Flow Task 1\Oracle Source 1.Outputs[Oracle Source Output].Columns[STATUS]"
+                          codePage="1253"
+                          dataType="str"
+                          externalMetadataColumnId="Package\Sequence Container\Data Flow Task 1\Oracle Source 1.Outputs[Oracle Source Output].ExternalColumns[STATUS]"
+                          length="6"
+                          lineageId="Package\Sequence Container\Data Flow Task 1\Oracle Source 1.Outputs[Oracle Source Output].Columns[STATUS]"
+                          name="STATUS" />
+                      </outputColumns>
+                      <externalMetadataColumns
+                        isUsed="True">
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\Data Flow Task 1\Oracle Source 1.Outputs[Oracle Source Output].ExternalColumns[CHECK_TYPE]"
+                          codePage="1253"
+                          dataType="str"
+                          length="18"
+                          name="CHECK_TYPE" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\Data Flow Task 1\Oracle Source 1.Outputs[Oracle Source Output].ExternalColumns[CHECK_ID]"
+                          codePage="1253"
+                          dataType="str"
+                          length="6"
+                          name="CHECK_ID" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\Data Flow Task 1\Oracle Source 1.Outputs[Oracle Source Output].ExternalColumns[CHECK_NAME]"
+                          codePage="1253"
+                          dataType="str"
+                          length="118"
+                          name="CHECK_NAME" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\Data Flow Task 1\Oracle Source 1.Outputs[Oracle Source Output].ExternalColumns[CATEGORY]"
+                          codePage="1253"
+                          dataType="str"
+                          length="9"
+                          name="CATEGORY" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\Data Flow Task 1\Oracle Source 1.Outputs[Oracle Source Output].ExternalColumns[RESULT_NUM]"
+                          dataType="r8"
+                          name="RESULT_NUM" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\Data Flow Task 1\Oracle Source 1.Outputs[Oracle Source Output].ExternalColumns[RESULT_TOTAL]"
+                          dataType="r8"
+                          name="RESULT_TOTAL" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\Data Flow Task 1\Oracle Source 1.Outputs[Oracle Source Output].ExternalColumns[RESULT_TXT]"
+                          codePage="1253"
+                          dataType="str"
+                          length="200"
+                          name="RESULT_TXT" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\Data Flow Task 1\Oracle Source 1.Outputs[Oracle Source Output].ExternalColumns[STATUS]"
+                          codePage="1253"
+                          dataType="str"
+                          length="6"
+                          name="STATUS" />
+                      </externalMetadataColumns>
+                    </output>
+                    <output
+                      refId="Package\Sequence Container\Data Flow Task 1\Oracle Source 1.Outputs[Oracle Source Error Output]"
+                      isErrorOut="true"
+                      name="Oracle Source Error Output">
+                      <outputColumns>
+                        <outputColumn
+                          refId="Package\Sequence Container\Data Flow Task 1\Oracle Source 1.Outputs[Oracle Source Error Output].Columns[CHECK_TYPE]"
+                          codePage="1253"
+                          dataType="str"
+                          externalMetadataColumnId="Package\Sequence Container\Data Flow Task 1\Oracle Source 1.Outputs[Oracle Source Output].ExternalColumns[CHECK_TYPE]"
+                          length="18"
+                          lineageId="Package\Sequence Container\Data Flow Task 1\Oracle Source 1.Outputs[Oracle Source Error Output].Columns[CHECK_TYPE]"
+                          name="CHECK_TYPE" />
+                        <outputColumn
+                          refId="Package\Sequence Container\Data Flow Task 1\Oracle Source 1.Outputs[Oracle Source Error Output].Columns[CHECK_ID]"
+                          codePage="1253"
+                          dataType="str"
+                          externalMetadataColumnId="Package\Sequence Container\Data Flow Task 1\Oracle Source 1.Outputs[Oracle Source Output].ExternalColumns[CHECK_ID]"
+                          length="6"
+                          lineageId="Package\Sequence Container\Data Flow Task 1\Oracle Source 1.Outputs[Oracle Source Error Output].Columns[CHECK_ID]"
+                          name="CHECK_ID" />
+                        <outputColumn
+                          refId="Package\Sequence Container\Data Flow Task 1\Oracle Source 1.Outputs[Oracle Source Error Output].Columns[CHECK_NAME]"
+                          codePage="1253"
+                          dataType="str"
+                          externalMetadataColumnId="Package\Sequence Container\Data Flow Task 1\Oracle Source 1.Outputs[Oracle Source Output].ExternalColumns[CHECK_NAME]"
+                          length="118"
+                          lineageId="Package\Sequence Container\Data Flow Task 1\Oracle Source 1.Outputs[Oracle Source Error Output].Columns[CHECK_NAME]"
+                          name="CHECK_NAME" />
+                        <outputColumn
+                          refId="Package\Sequence Container\Data Flow Task 1\Oracle Source 1.Outputs[Oracle Source Error Output].Columns[CATEGORY]"
+                          codePage="1253"
+                          dataType="str"
+                          externalMetadataColumnId="Package\Sequence Container\Data Flow Task 1\Oracle Source 1.Outputs[Oracle Source Output].ExternalColumns[CATEGORY]"
+                          length="9"
+                          lineageId="Package\Sequence Container\Data Flow Task 1\Oracle Source 1.Outputs[Oracle Source Error Output].Columns[CATEGORY]"
+                          name="CATEGORY" />
+                        <outputColumn
+                          refId="Package\Sequence Container\Data Flow Task 1\Oracle Source 1.Outputs[Oracle Source Error Output].Columns[RESULT_NUM]"
+                          dataType="r8"
+                          externalMetadataColumnId="Package\Sequence Container\Data Flow Task 1\Oracle Source 1.Outputs[Oracle Source Output].ExternalColumns[RESULT_NUM]"
+                          lineageId="Package\Sequence Container\Data Flow Task 1\Oracle Source 1.Outputs[Oracle Source Error Output].Columns[RESULT_NUM]"
+                          name="RESULT_NUM" />
+                        <outputColumn
+                          refId="Package\Sequence Container\Data Flow Task 1\Oracle Source 1.Outputs[Oracle Source Error Output].Columns[RESULT_TOTAL]"
+                          dataType="r8"
+                          externalMetadataColumnId="Package\Sequence Container\Data Flow Task 1\Oracle Source 1.Outputs[Oracle Source Output].ExternalColumns[RESULT_TOTAL]"
+                          lineageId="Package\Sequence Container\Data Flow Task 1\Oracle Source 1.Outputs[Oracle Source Error Output].Columns[RESULT_TOTAL]"
+                          name="RESULT_TOTAL" />
+                        <outputColumn
+                          refId="Package\Sequence Container\Data Flow Task 1\Oracle Source 1.Outputs[Oracle Source Error Output].Columns[RESULT_TXT]"
+                          codePage="1253"
+                          dataType="str"
+                          externalMetadataColumnId="Package\Sequence Container\Data Flow Task 1\Oracle Source 1.Outputs[Oracle Source Output].ExternalColumns[RESULT_TXT]"
+                          length="200"
+                          lineageId="Package\Sequence Container\Data Flow Task 1\Oracle Source 1.Outputs[Oracle Source Error Output].Columns[RESULT_TXT]"
+                          name="RESULT_TXT" />
+                        <outputColumn
+                          refId="Package\Sequence Container\Data Flow Task 1\Oracle Source 1.Outputs[Oracle Source Error Output].Columns[STATUS]"
+                          codePage="1253"
+                          dataType="str"
+                          externalMetadataColumnId="Package\Sequence Container\Data Flow Task 1\Oracle Source 1.Outputs[Oracle Source Output].ExternalColumns[STATUS]"
+                          length="6"
+                          lineageId="Package\Sequence Container\Data Flow Task 1\Oracle Source 1.Outputs[Oracle Source Error Output].Columns[STATUS]"
+                          name="STATUS" />
+                        <outputColumn
+                          refId="Package\Sequence Container\Data Flow Task 1\Oracle Source 1.Outputs[Oracle Source Error Output].Columns[ErrorCode]"
+                          dataType="i4"
+                          lineageId="Package\Sequence Container\Data Flow Task 1\Oracle Source 1.Outputs[Oracle Source Error Output].Columns[ErrorCode]"
+                          name="ErrorCode"
+                          specialFlags="1" />
+                        <outputColumn
+                          refId="Package\Sequence Container\Data Flow Task 1\Oracle Source 1.Outputs[Oracle Source Error Output].Columns[ErrorColumn]"
+                          dataType="i4"
+                          lineageId="Package\Sequence Container\Data Flow Task 1\Oracle Source 1.Outputs[Oracle Source Error Output].Columns[ErrorColumn]"
+                          name="ErrorColumn"
+                          specialFlags="2" />
+                      </outputColumns>
+                      <externalMetadataColumns />
+                    </output>
+                  </outputs>
+                </component>
+              </components>
+              <paths>
+                <path
+                  refId="Package\Sequence Container\Data Flow Task 1.Paths[Oracle Source Output]"
+                  endId="Package\Sequence Container\Data Flow Task 1\OLE DB Destination.Inputs[OLE DB Destination Input]"
+                  name="Oracle Source Output"
+                  startId="Package\Sequence Container\Data Flow Task 1\Oracle Source 1.Outputs[Oracle Source Output]" />
+              </paths>
+            </pipeline>
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Sequence Container\Data Flow Task 2"
+          DTS:CreationName="Microsoft.Pipeline"
+          DTS:Description="Data Flow Task"
+          DTS:DTSID="{C8B21B27-C6B4-4AC9-9406-C49B72194F05}"
+          DTS:ExecutableType="Microsoft.Pipeline"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Data Flow Task 2"
+          DTS:TaskContact="Performs high-performance data extraction, transformation and loading;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <pipeline
+              version="1">
+              <components>
+                <component
+                  refId="Package\Sequence Container\Data Flow Task 2\OLE DB Destination 1"
+                  componentClassID="Microsoft.OLEDBDestination"
+                  contactInfo="OLE DB Destination;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;4"
+                  description="OLE DB Destination"
+                  name="OLE DB Destination 1"
+                  usesDispositions="true"
+                  version="4">
+                  <properties>
+                    <property
+                      dataType="System.Int32"
+                      description="The number of seconds before a command times out.  A value of 0 indicates an infinite time-out."
+                      name="CommandTimeout">0</property>
+                    <property
+                      dataType="System.String"
+                      description="Specifies the name of the database object used to open a rowset."
+                      name="OpenRowset">[RECON].[RESULTS_PROFIT]</property>
+                    <property
+                      dataType="System.String"
+                      description="Specifies the variable that contains the name of the database object used to open a rowset."
+                      name="OpenRowsetVariable"></property>
+                    <property
+                      dataType="System.String"
+                      description="The SQL command to be executed."
+                      name="SqlCommand"
+                      UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor"></property>
+                    <property
+                      dataType="System.Int32"
+                      description="Specifies the column code page to use when code page information is unavailable from the data source."
+                      name="DefaultCodePage">1253</property>
+                    <property
+                      dataType="System.Boolean"
+                      description="Forces the use of the DefaultCodePage property value when describing character data."
+                      name="AlwaysUseDefaultCodePage">false</property>
+                    <property
+                      dataType="System.Int32"
+                      description="Specifies the mode used to access the database."
+                      name="AccessMode"
+                      typeConverter="AccessMode">3</property>
+                    <property
+                      dataType="System.Boolean"
+                      description="Indicates whether the values supplied for identity columns will be copied to the destination. If false, values for identity columns will be auto-generated at the destination. Applies only if fast load is turned on."
+                      name="FastLoadKeepIdentity">false</property>
+                    <property
+                      dataType="System.Boolean"
+                      description="Indicates whether the columns containing null will have null inserted in the destination. If false, columns containing null will have their default values inserted at the destination. Applies only if fast load is turned on."
+                      name="FastLoadKeepNulls">false</property>
+                    <property
+                      dataType="System.String"
+                      description="Specifies options to be used with fast load.  Applies only if fast load is turned on."
+                      name="FastLoadOptions">TABLOCK,CHECK_CONSTRAINTS</property>
+                    <property
+                      dataType="System.Int32"
+                      description="Specifies when commits are issued during data insertion.  A value of 0 specifies that one commit will be issued at the end of data insertion.  Applies only if fast load is turned on."
+                      name="FastLoadMaxInsertCommitSize">2147483647</property>
+                  </properties>
+                  <connections>
+                    <connection
+                      refId="Package\Sequence Container\Data Flow Task 2\OLE DB Destination 1.Connections[OleDbConnection]"
+                      connectionManagerID="{B3B108BF-3075-460F-A54E-D4E17CA9FF88}:external"
+                      connectionManagerRefId="Project.ConnectionManagers[10.15.12.37.MLT_DW_EDW]"
+                      description="The OLE DB runtime connection used to access the database."
+                      name="OleDbConnection" />
+                  </connections>
+                  <inputs>
+                    <input
+                      refId="Package\Sequence Container\Data Flow Task 2\OLE DB Destination 1.Inputs[OLE DB Destination Input]"
+                      errorOrTruncationOperation="Insert"
+                      errorRowDisposition="FailComponent"
+                      hasSideEffects="true"
+                      name="OLE DB Destination Input">
+                      <inputColumns>
+                        <inputColumn
+                          refId="Package\Sequence Container\Data Flow Task 2\OLE DB Destination 1.Inputs[OLE DB Destination Input].Columns[CHECK_TYPE]"
+                          cachedCodepage="1253"
+                          cachedDataType="str"
+                          cachedLength="8"
+                          cachedName="CHECK_TYPE"
+                          externalMetadataColumnId="Package\Sequence Container\Data Flow Task 2\OLE DB Destination 1.Inputs[OLE DB Destination Input].ExternalColumns[CHECK_TYPE]"
+                          lineageId="Package\Sequence Container\Data Flow Task 2\Oracle Source.Outputs[Oracle Source Output].Columns[CHECK_TYPE]" />
+                        <inputColumn
+                          refId="Package\Sequence Container\Data Flow Task 2\OLE DB Destination 1.Inputs[OLE DB Destination Input].Columns[CHECK_ID]"
+                          cachedCodepage="1253"
+                          cachedDataType="str"
+                          cachedLength="6"
+                          cachedName="CHECK_ID"
+                          externalMetadataColumnId="Package\Sequence Container\Data Flow Task 2\OLE DB Destination 1.Inputs[OLE DB Destination Input].ExternalColumns[CHECK_ID]"
+                          lineageId="Package\Sequence Container\Data Flow Task 2\Oracle Source.Outputs[Oracle Source Output].Columns[CHECK_ID]" />
+                        <inputColumn
+                          refId="Package\Sequence Container\Data Flow Task 2\OLE DB Destination 1.Inputs[OLE DB Destination Input].Columns[CHECK_NAME]"
+                          cachedCodepage="1253"
+                          cachedDataType="str"
+                          cachedLength="119"
+                          cachedName="CHECK_NAME"
+                          externalMetadataColumnId="Package\Sequence Container\Data Flow Task 2\OLE DB Destination 1.Inputs[OLE DB Destination Input].ExternalColumns[CHECK_NAME]"
+                          lineageId="Package\Sequence Container\Data Flow Task 2\Oracle Source.Outputs[Oracle Source Output].Columns[CHECK_NAME]" />
+                        <inputColumn
+                          refId="Package\Sequence Container\Data Flow Task 2\OLE DB Destination 1.Inputs[OLE DB Destination Input].Columns[CATEGORY]"
+                          cachedCodepage="1253"
+                          cachedDataType="str"
+                          cachedLength="9"
+                          cachedName="CATEGORY"
+                          externalMetadataColumnId="Package\Sequence Container\Data Flow Task 2\OLE DB Destination 1.Inputs[OLE DB Destination Input].ExternalColumns[CATEGORY]"
+                          lineageId="Package\Sequence Container\Data Flow Task 2\Oracle Source.Outputs[Oracle Source Output].Columns[CATEGORY]" />
+                        <inputColumn
+                          refId="Package\Sequence Container\Data Flow Task 2\OLE DB Destination 1.Inputs[OLE DB Destination Input].Columns[RESULT_NUM]"
+                          cachedDataType="r8"
+                          cachedName="RESULT_NUM"
+                          externalMetadataColumnId="Package\Sequence Container\Data Flow Task 2\OLE DB Destination 1.Inputs[OLE DB Destination Input].ExternalColumns[RESULT_NUM]"
+                          lineageId="Package\Sequence Container\Data Flow Task 2\Oracle Source.Outputs[Oracle Source Output].Columns[RESULT_NUM]" />
+                        <inputColumn
+                          refId="Package\Sequence Container\Data Flow Task 2\OLE DB Destination 1.Inputs[OLE DB Destination Input].Columns[RESULT_TOTAL]"
+                          cachedDataType="r8"
+                          cachedName="RESULT_TOTAL"
+                          externalMetadataColumnId="Package\Sequence Container\Data Flow Task 2\OLE DB Destination 1.Inputs[OLE DB Destination Input].ExternalColumns[RESULT_TOTAL]"
+                          lineageId="Package\Sequence Container\Data Flow Task 2\Oracle Source.Outputs[Oracle Source Output].Columns[RESULT_TOTAL]" />
+                        <inputColumn
+                          refId="Package\Sequence Container\Data Flow Task 2\OLE DB Destination 1.Inputs[OLE DB Destination Input].Columns[RESULT_TXT]"
+                          cachedCodepage="1253"
+                          cachedDataType="str"
+                          cachedLength="200"
+                          cachedName="RESULT_TXT"
+                          externalMetadataColumnId="Package\Sequence Container\Data Flow Task 2\OLE DB Destination 1.Inputs[OLE DB Destination Input].ExternalColumns[RESULT_TXT]"
+                          lineageId="Package\Sequence Container\Data Flow Task 2\Oracle Source.Outputs[Oracle Source Output].Columns[RESULT_TXT]" />
+                        <inputColumn
+                          refId="Package\Sequence Container\Data Flow Task 2\OLE DB Destination 1.Inputs[OLE DB Destination Input].Columns[STATUS]"
+                          cachedCodepage="1253"
+                          cachedDataType="str"
+                          cachedLength="6"
+                          cachedName="STATUS"
+                          externalMetadataColumnId="Package\Sequence Container\Data Flow Task 2\OLE DB Destination 1.Inputs[OLE DB Destination Input].ExternalColumns[STATUS]"
+                          lineageId="Package\Sequence Container\Data Flow Task 2\Oracle Source.Outputs[Oracle Source Output].Columns[STATUS]" />
+                      </inputColumns>
+                      <externalMetadataColumns
+                        isUsed="True">
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\Data Flow Task 2\OLE DB Destination 1.Inputs[OLE DB Destination Input].ExternalColumns[CHECK_TYPE]"
+                          codePage="1253"
+                          dataType="str"
+                          length="50"
+                          name="CHECK_TYPE" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\Data Flow Task 2\OLE DB Destination 1.Inputs[OLE DB Destination Input].ExternalColumns[CHECK_ID]"
+                          codePage="1253"
+                          dataType="str"
+                          length="20"
+                          name="CHECK_ID" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\Data Flow Task 2\OLE DB Destination 1.Inputs[OLE DB Destination Input].ExternalColumns[CHECK_NAME]"
+                          codePage="1253"
+                          dataType="str"
+                          length="500"
+                          name="CHECK_NAME" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\Data Flow Task 2\OLE DB Destination 1.Inputs[OLE DB Destination Input].ExternalColumns[CATEGORY]"
+                          codePage="1253"
+                          dataType="str"
+                          length="20"
+                          name="CATEGORY" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\Data Flow Task 2\OLE DB Destination 1.Inputs[OLE DB Destination Input].ExternalColumns[RESULT_NUM]"
+                          dataType="numeric"
+                          name="RESULT_NUM"
+                          precision="18" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\Data Flow Task 2\OLE DB Destination 1.Inputs[OLE DB Destination Input].ExternalColumns[RESULT_TOTAL]"
+                          dataType="numeric"
+                          name="RESULT_TOTAL"
+                          precision="18" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\Data Flow Task 2\OLE DB Destination 1.Inputs[OLE DB Destination Input].ExternalColumns[RESULT_TXT]"
+                          codePage="1253"
+                          dataType="str"
+                          length="200"
+                          name="RESULT_TXT" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\Data Flow Task 2\OLE DB Destination 1.Inputs[OLE DB Destination Input].ExternalColumns[STATUS]"
+                          codePage="1253"
+                          dataType="str"
+                          length="10"
+                          name="STATUS" />
+                      </externalMetadataColumns>
+                    </input>
+                  </inputs>
+                  <outputs>
+                    <output
+                      refId="Package\Sequence Container\Data Flow Task 2\OLE DB Destination 1.Outputs[OLE DB Destination Error Output]"
+                      exclusionGroup="1"
+                      isErrorOut="true"
+                      name="OLE DB Destination Error Output"
+                      synchronousInputId="Package\Sequence Container\Data Flow Task 2\OLE DB Destination 1.Inputs[OLE DB Destination Input]">
+                      <outputColumns>
+                        <outputColumn
+                          refId="Package\Sequence Container\Data Flow Task 2\OLE DB Destination 1.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
+                          dataType="i4"
+                          lineageId="Package\Sequence Container\Data Flow Task 2\OLE DB Destination 1.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
+                          name="ErrorCode"
+                          specialFlags="1" />
+                        <outputColumn
+                          refId="Package\Sequence Container\Data Flow Task 2\OLE DB Destination 1.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
+                          dataType="i4"
+                          lineageId="Package\Sequence Container\Data Flow Task 2\OLE DB Destination 1.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
+                          name="ErrorColumn"
+                          specialFlags="2" />
+                      </outputColumns>
+                      <externalMetadataColumns />
+                    </output>
+                  </outputs>
+                </component>
+                <component
+                  refId="Package\Sequence Container\Data Flow Task 2\Oracle Source"
+                  componentClassID="Microsoft.SSISOracleSrc"
+                  contactInfo="Oracle Source;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;1"
+                  description="Oracle Source"
+                  name="Oracle Source"
+                  usesDispositions="true"
+                  version="1">
+                  <properties>
+                    <property
+                      dataType="System.String"
+                      description="The name of the table to be fetched."
+                      expressionType="Notify"
+                      name="TableName"></property>
+                    <property
+                      dataType="System.String"
+                      description="The SQL command to be executed."
+                      expressionType="Notify"
+                      name="SqlCommand"
+                      UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor, Microsoft.DataTransformationServices.Controls, Version=16.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91">SELECT
+       'Deposits' AS CHECK_TYPE,
+       C.CHECK_ID, C.CHECK_NAME, C.CATEGORY,
+       C.RESULT_NUM, C.RESULT_TOTAL, C.RESULT_TXT,
+       CASE WHEN C.CATEGORY = 'NOT_FOUND' THEN 'INFO'
+            WHEN C.RESULT_NUM = 0            THEN 'PASS'
+            ELSE 'REVIEW' END AS STATUS
+  FROM (
+
+
+SELECT 'CM-201' AS CHECK_ID,
+       'Deposit accounts with 0 or 2+ matching HUB DDACMSP/TDACMSP rows (expect exactly 1)' AS CHECK_NAME,
+       'CONFIRMED' AS CATEGORY,
+       COUNT(CASE WHEN  (NVL(dagg.DDA_CNT,0) + NVL(tagg.TD_CNT,0)) &lt;&gt; 1 THEN 1 END) AS RESULT_NUM,
+       COUNT(*) AS RESULT_TOTAL,
+       CAST(NULL AS VARCHAR2(200)) AS RESULT_TXT
+  FROM NCIS_Deposits n
+  JOIN MG_CUST_DPAC_INTER mg ON mg.ACCOUNT_NO = n.Account_Number
+  LEFT JOIN (SELECT TRIM(ACCOUNT_NO) AS ACCOUNT_NO, COUNT(*) AS DDA_CNT
+               FROM HUB_MT_DDACMSP
+              GROUP BY TRIM(ACCOUNT_NO)) dagg
+    ON dagg.ACCOUNT_NO = TRIM(mg.ACCOUNT_NO)
+  LEFT JOIN (SELECT TRIM(ACCOUNT_NO) AS ACCOUNT_NO, COUNT(*) AS TD_CNT
+               FROM HUB_MT_TDACMSP
+              GROUP BY TRIM(ACCOUNT_NO)) tagg
+    ON tagg.ACCOUNT_NO = TRIM(mg.ACCOUNT_NO)
+
+UNION ALL
+SELECT 'CM-202', 'Open_Date mismatch vs DDACMSP.DFDTAO / TDACMSP.TDDTAO',
+       'CONFIRMED', COUNT(CASE WHEN  NVL(TO_CHAR(n.Open_Date,'YYYYMMDD'),'X') &lt;&gt; NVL(TRIM(COALESCE(d.DFDTAO, t.TDDTAO)),'X') THEN 1 END),
+       COUNT(*) AS RESULT_TOTAL,
+       CAST(NULL AS VARCHAR2(200))
+  FROM NCIS_Deposits n
+  JOIN MG_CUST_DPAC_INTER mg ON mg.ACCOUNT_NO = n.Account_Number
+  LEFT JOIN HUB_MT_DDACMSP d ON TRIM(d.ACCOUNT_NO) = TRIM(mg.ACCOUNT_NO)
+  LEFT JOIN HUB_MT_TDACMSP t ON TRIM(t.ACCOUNT_NO) = TRIM(mg.ACCOUNT_NO)
+
+UNION ALL
+SELECT 'CM-203', 'Account_Status mismatch vs DDACMSP.DFSTUS / TDACMSP.TDSTUS',
+       'CONFIRMED', COUNT(CASE WHEN  NVL(TRIM(n.Account_Status),'X') &lt;&gt; NVL(TRIM(COALESCE(d.DFSTUS, t.TDSTUS)),'X') THEN 1 END),
+       COUNT(*) AS RESULT_TOTAL,
+       CAST(NULL AS VARCHAR2(200))
+  FROM NCIS_Deposits n
+  JOIN MG_CUST_DPAC_INTER mg ON mg.ACCOUNT_NO = n.Account_Number
+  LEFT JOIN HUB_MT_DDACMSP d ON TRIM(d.ACCOUNT_NO) = TRIM(mg.ACCOUNT_NO)
+  LEFT JOIN HUB_MT_TDACMSP t ON TRIM(t.ACCOUNT_NO) = TRIM(mg.ACCOUNT_NO)
+
+UNION ALL
+SELECT 'CM-204', 'TD_Expiration_DATE mismatch vs TDACMSP.TDDUDT',
+       'CONFIRMED', COUNT(CASE WHEN  n.TD_Expiration_DATE IS NOT NULL
+   AND NVL(TO_CHAR(n.TD_Expiration_DATE,'YYYYMMDD'),'X') &lt;&gt; NVL(TRIM(t.TDDUDT),'X') THEN 1 END),
+       COUNT(CASE WHEN n.TD_Expiration_DATE IS NOT NULL THEN 1 END) AS RESULT_TOTAL,
+       CAST(NULL AS VARCHAR2(200))
+  FROM NCIS_Deposits n
+  JOIN MG_CUST_DPAC_INTER mg ON mg.ACCOUNT_NO = n.Account_Number
+  JOIN HUB_MT_TDACMSP t ON TRIM(t.ACCOUNT_NO) = TRIM(mg.ACCOUNT_NO)
+
+UNION ALL
+SELECT 'CM-205', 'TD_Start_Date mismatch vs TDACMSP.TDSTDT',
+       'CONFIRMED', COUNT(CASE WHEN  n.TD_Start_Date IS NOT NULL
+   AND NVL(TO_CHAR(n.TD_Start_Date,'YYYYMMDD'),'X') &lt;&gt; NVL(TRIM(t.TDSTDT),'X') THEN 1 END),
+       COUNT(CASE WHEN n.TD_Start_Date IS NOT NULL THEN 1 END) AS RESULT_TOTAL,
+       CAST(NULL AS VARCHAR2(200))
+  FROM NCIS_Deposits n
+  JOIN MG_CUST_DPAC_INTER mg ON mg.ACCOUNT_NO = n.Account_Number
+  JOIN HUB_MT_TDACMSP t ON TRIM(t.ACCOUNT_NO) = TRIM(mg.ACCOUNT_NO)
+
+UNION ALL
+SELECT 'CM-206', 'Account_Type mismatch vs DDACMSP.DFAPTY / TDACMSP.TDAPTY (PROBABLE)',
+       'PROBABLE', COUNT(CASE WHEN  NVL(TRIM(TO_CHAR(n.Account_Type)),'X') &lt;&gt; NVL(TRIM(COALESCE(d.DFAPTY, t.TDAPTY)),'X') THEN 1 END),
+       COUNT(*) AS RESULT_TOTAL,
+       CAST(NULL AS VARCHAR2(200))
+  FROM NCIS_Deposits n
+  JOIN MG_CUST_DPAC_INTER mg ON mg.ACCOUNT_NO = n.Account_Number
+  LEFT JOIN HUB_MT_DDACMSP d ON TRIM(d.ACCOUNT_NO) = TRIM(mg.ACCOUNT_NO)
+  LEFT JOIN HUB_MT_TDACMSP t ON TRIM(t.ACCOUNT_NO) = TRIM(mg.ACCOUNT_NO)
+
+UNION ALL
+SELECT 'CM-207', 'Account_Currency: PROFITS description vs HUB currency code — needs crosswalk (PROBABLE)',
+       'PROBABLE', COUNT(CASE WHEN  NVL(TRIM(n.Account_Currency),'X') &lt;&gt; NVL(TRIM(COALESCE(d.DFCYCD, t.TDCYCD)),'X') THEN 1 END),
+       COUNT(*) AS RESULT_TOTAL,
+       CAST(NULL AS VARCHAR2(200))
+  FROM NCIS_Deposits n
+  JOIN MG_CUST_DPAC_INTER mg ON mg.ACCOUNT_NO = n.Account_Number
+  LEFT JOIN HUB_MT_DDACMSP d ON TRIM(d.ACCOUNT_NO) = TRIM(mg.ACCOUNT_NO)
+  LEFT JOIN HUB_MT_TDACMSP t ON TRIM(t.ACCOUNT_NO) = TRIM(mg.ACCOUNT_NO)
+
+UNION ALL
+SELECT 'CM-208', 'Extrait_Issue_Frequency mismatch vs DDSTMTP.DHSMCY (PROBABLE — DDA-side only)',
+       'PROBABLE', COUNT(CASE WHEN  NVL(TRIM(n.Extrait_Issue_Frequency),'X') &lt;&gt; NVL(TRIM(dh.DHSMCY),'X') THEN 1 END),
+       COUNT(*) AS RESULT_TOTAL,
+       CAST(NULL AS VARCHAR2(200))
+  FROM NCIS_Deposits n
+  JOIN MG_CUST_DPAC_INTER mg ON mg.ACCOUNT_NO = n.Account_Number
+  JOIN HUB_MT_DDSTMTP dh ON TRIM(dh.ACCOUNT_NO) = TRIM(mg.ACCOUNT_NO)
+
+UNION ALL
+SELECT 'CM-209', 'BOOK_BALANCE mismatch vs DDACMSP.DFRLBL / TDACMSP.TDRLBL "Ledger Balance" (PROBABLE)',
+       'PROBABLE', COUNT(CASE WHEN  NVL(TO_NUMBER(n.BOOK_BALANCE),-1) &lt;&gt; NVL(TO_NUMBER(COALESCE(d.DFRLBL, t.TDRLBL)),-1) THEN 1 END),
+       COUNT(*) AS RESULT_TOTAL,
+       CAST(NULL AS VARCHAR2(200))
+  FROM NCIS_Deposits n
+  JOIN MG_CUST_DPAC_INTER mg ON mg.ACCOUNT_NO = n.Account_Number
+  LEFT JOIN HUB_MT_DDACMSP d ON TRIM(d.ACCOUNT_NO) = TRIM(mg.ACCOUNT_NO)
+  LEFT JOIN HUB_MT_TDACMSP t ON TRIM(t.ACCOUNT_NO) = TRIM(mg.ACCOUNT_NO)
+
+UNION ALL
+SELECT 'CM-210', 'BLOCKED_BALANCE mismatch vs DDACMSP.DFTTHD / TDACMSP.TDTTHD "Total Holds" (PROBABLE)',
+       'PROBABLE', COUNT(CASE WHEN  NVL(TO_NUMBER(n.BLOCKED_BALANCE),-1) &lt;&gt; NVL(TO_NUMBER(COALESCE(d.DFTTHD, t.TDTTHD)),-1) THEN 1 END),
+       COUNT(*) AS RESULT_TOTAL,
+       CAST(NULL AS VARCHAR2(200))
+  FROM NCIS_Deposits n
+  JOIN MG_CUST_DPAC_INTER mg ON mg.ACCOUNT_NO = n.Account_Number
+  LEFT JOIN HUB_MT_DDACMSP d ON TRIM(d.ACCOUNT_NO) = TRIM(mg.ACCOUNT_NO)
+  LEFT JOIN HUB_MT_TDACMSP t ON TRIM(t.ACCOUNT_NO) = TRIM(mg.ACCOUNT_NO)
+
+UNION ALL
+SELECT 'CM-211', 'TD_MATURITY_INSTRUCTIONS mismatch vs TDACMSP.TDMTIN — code crosswalk unconfirmed (PROBABLE)',
+       'PROBABLE', COUNT(CASE WHEN  n.TD_MATURITY_INSTRUCTIONS IS NOT NULL
+   AND NVL(TRIM(n.TD_MATURITY_INSTRUCTIONS),'X') &lt;&gt; NVL(TRIM(t.TDMTIN),'X') THEN 1 END),
+       COUNT(CASE WHEN n.TD_MATURITY_INSTRUCTIONS IS NOT NULL THEN 1 END) AS RESULT_TOTAL,
+       CAST(NULL AS VARCHAR2(200))
+  FROM NCIS_Deposits n
+  JOIN MG_CUST_DPAC_INTER mg ON mg.ACCOUNT_NO = n.Account_Number
+  JOIN HUB_MT_TDACMSP t ON TRIM(t.ACCOUNT_NO) = TRIM(mg.ACCOUNT_NO)
+
+UNION ALL
+SELECT 'CM-212', 'TD_Interest_Rate mismatch vs TDACMSP.TDCNTR "Contract Rate" (PROBABLE)',
+       'PROBABLE', COUNT(CASE WHEN  n.TD_Interest_Rate IS NOT NULL
+   AND NVL(TO_NUMBER(n.TD_Interest_Rate),-1) &lt;&gt; NVL(TO_NUMBER(t.TDCNTR),-1) THEN 1 END),
+       COUNT(CASE WHEN n.TD_Interest_Rate IS NOT NULL THEN 1 END) AS RESULT_TOTAL,
+       CAST(NULL AS VARCHAR2(200))
+  FROM NCIS_Deposits n
+  JOIN MG_CUST_DPAC_INTER mg ON mg.ACCOUNT_NO = n.Account_Number
+  JOIN HUB_MT_TDACMSP t ON TRIM(t.ACCOUNT_NO) = TRIM(mg.ACCOUNT_NO)
+
+UNION ALL
+SELECT 'CM-213', 'CREDIT_INTEREST_ACCRUALS mismatch vs DDCRINP.DGCRIA / TDACMSP.TDINAR (PROBABLE, dual)',
+       'PROBABLE', COUNT(CASE WHEN  NVL(TO_NUMBER(n.CREDIT_INTEREST_ACCRUALS),-1) &lt;&gt; NVL(TO_NUMBER(COALESCE(g.DGCRIA, t.TDINAR)),-1) THEN 1 END),
+       COUNT(*) AS RESULT_TOTAL,
+       CAST(NULL AS VARCHAR2(200))
+  FROM NCIS_Deposits n
+  JOIN MG_CUST_DPAC_INTER mg ON mg.ACCOUNT_NO = n.Account_Number
+  LEFT JOIN HUB_MT_DDCRINP g ON TRIM(g.ACCOUNT_NO) = TRIM(mg.ACCOUNT_NO)
+  LEFT JOIN HUB_MT_TDACMSP t ON TRIM(t.ACCOUNT_NO) = TRIM(mg.ACCOUNT_NO)
+
+UNION ALL
+SELECT 'CM-214', 'Credit_Interest_Spread mismatch vs DDCRINP.DGCIRS / TDACMSP.TDCRSP (PROBABLE, dual)',
+       'PROBABLE', COUNT(CASE WHEN  NVL(TO_NUMBER(n.Credit_Interest_Spread),-1) &lt;&gt; NVL(TO_NUMBER(COALESCE(g.DGCIRS, t.TDCRSP)),-1) THEN 1 END),
+       COUNT(*) AS RESULT_TOTAL,
+       CAST(NULL AS VARCHAR2(200))
+  FROM NCIS_Deposits n
+  JOIN MG_CUST_DPAC_INTER mg ON mg.ACCOUNT_NO = n.Account_Number
+  LEFT JOIN HUB_MT_DDCRINP g ON TRIM(g.ACCOUNT_NO) = TRIM(mg.ACCOUNT_NO)
+  LEFT JOIN HUB_MT_TDACMSP t ON TRIM(t.ACCOUNT_NO) = TRIM(mg.ACCOUNT_NO)
+
+UNION ALL
+SELECT 'CM-215', 'Credit_Interest_Code mismatch vs DDCRINP.DGCIRT / TDACMSP.TDCRTY (PROBABLE, dual)',
+       'PROBABLE', COUNT(CASE WHEN  NVL(TRIM(TO_CHAR(n.Credit_Interest_Code)),'X') &lt;&gt; NVL(TRIM(COALESCE(TO_CHAR(g.DGCIRT), t.TDCRTY)),'X') THEN 1 END),
+       COUNT(*) AS RESULT_TOTAL,
+       CAST(NULL AS VARCHAR2(200))
+  FROM NCIS_Deposits n
+  JOIN MG_CUST_DPAC_INTER mg ON mg.ACCOUNT_NO = n.Account_Number
+  LEFT JOIN HUB_MT_DDCRINP g ON TRIM(g.ACCOUNT_NO) = TRIM(mg.ACCOUNT_NO)
+  LEFT JOIN HUB_MT_TDACMSP t ON TRIM(t.ACCOUNT_NO) = TRIM(mg.ACCOUNT_NO)
+
+UNION ALL
+SELECT 'CM-216', 'Check_Digit — TODO: possibly embedded in DFACS/TDACS trailing digit (see A2/customer precedent)',
+       'NOT_FOUND', COUNT(CASE WHEN  Check_Digit IS NOT NULL THEN 1 END), COUNT(*), CAST(NULL AS VARCHAR2(200)) FROM NCIS_Deposits
+
+UNION ALL
+SELECT 'CM-217', 'Unit_Code — TODO: possible overlap with DFACB/TDACB (Account Branch), not confirmed',
+       'NOT_FOUND', COUNT(CASE WHEN  Unit_Code IS NOT NULL THEN 1 END), COUNT(*), CAST(NULL AS VARCHAR2(200)) FROM NCIS_Deposits
+
+UNION ALL
+SELECT 'CM-218', 'Number_Of_Beneficiaries — TODO: no confirmed HUB field (PROFITS BENEFICIARY count, derived)',
+       'NOT_FOUND', COUNT(CASE WHEN  Number_Of_Beneficiaries IS NOT NULL THEN 1 END), COUNT(*), CAST(NULL AS VARCHAR2(200)) FROM NCIS_Deposits
+
+UNION ALL
+SELECT 'CM-219', 'Agreement_Code — TODO: PROFITS-internal self-join construct (AGR_UNIT/YEAR/SN), no HUB field found',
+       'NOT_FOUND', COUNT(CASE WHEN  Agreement_Code IS NOT NULL THEN 1 END), COUNT(*), CAST(NULL AS VARCHAR2(200)) FROM NCIS_Deposits
+
+UNION ALL
+SELECT 'CM-220', 'Overdraft_Limit_Start_Date — TODO: no confirmed HUB field (AFSIMSP.FNODLI is an indicator only, see A5)',
+       'NOT_FOUND', COUNT(CASE WHEN  Overdraft_Limit_Start_Date IS NOT NULL THEN 1 END), COUNT(*), CAST(NULL AS VARCHAR2(200)) FROM NCIS_Deposits
+
+UNION ALL
+SELECT 'CM-221', 'Overdraft_Limit_Amount — TODO: no confirmed HUB field (AFSIMSP.FNODLI is an indicator only, see A5)',
+       'NOT_FOUND', COUNT(CASE WHEN  Overdraft_Limit_Amount IS NOT NULL THEN 1 END), COUNT(*), CAST(NULL AS VARCHAR2(200)) FROM NCIS_Deposits
+
+UNION ALL
+SELECT 'CM-222', 'Service_Account_1 — TODO: PROFITS-derived linked-account chain, no HUB field found',
+       'NOT_FOUND', COUNT(CASE WHEN  Service_Account_1 IS NOT NULL THEN 1 END), COUNT(*), CAST(NULL AS VARCHAR2(200)) FROM NCIS_Deposits
+
+UNION ALL
+SELECT 'CM-223', 'Service_Account_2 — TODO: PROFITS-derived linked-account chain, no HUB field found',
+       'NOT_FOUND', COUNT(CASE WHEN  Service_Account_2 IS NOT NULL THEN 1 END), COUNT(*), CAST(NULL AS VARCHAR2(200)) FROM NCIS_Deposits
+
+UNION ALL
+SELECT 'CM-224', 'UNCLEAR_BALANCE — TODO: no confirmed HUB field in DDACMSP/TDACMSP',
+       'NOT_FOUND', COUNT(CASE WHEN  UNCLEAR_BALANCE IS NOT NULL THEN 1 END), COUNT(*), CAST(NULL AS VARCHAR2(200)) FROM NCIS_Deposits
+
+UNION ALL
+SELECT 'CM-225', 'TD_Renewal_Flag — TODO: candidate TDACMSP.TDRNCT is a COUNT not a FLAG, type mismatch unresolved',
+       'NOT_FOUND', COUNT(CASE WHEN  TD_Renewal_Flag IS NOT NULL THEN 1 END), COUNT(*), CAST(NULL AS VARCHAR2(200)) FROM NCIS_Deposits
+
+UNION ALL
+SELECT 'CM-226', 'AVAILABLE_BALANCE — TODO: not a stored field in DDACMSP/TDACMSP (likely Ledger − Holds, formula TBD)',
+       'NOT_FOUND', COUNT(CASE WHEN  AVAILABLE_BALANCE IS NOT NULL THEN 1 END), COUNT(*), CAST(NULL AS VARCHAR2(200)) FROM NCIS_Deposits
+
+UNION ALL
+SELECT 'CM-227', 'Customer_Category — TODO: two unconfirmed candidates, DFGHCL/TDGHCL vs DFCBCL/TDCBCL',
+       'NOT_FOUND', COUNT(CASE WHEN  Customer_Category IS NOT NULL THEN 1 END), COUNT(*), CAST(NULL AS VARCHAR2(200)) FROM NCIS_Deposits
+
+UNION ALL
+SELECT 'CM-228', 'Activity_Sector — TODO: candidate DFMKS1/2/3 or TDMKS1/2/3 "Market Sector", slot not confirmed',
+       'NOT_FOUND', COUNT(CASE WHEN  Activity_Sector IS NOT NULL THEN 1 END), COUNT(*), CAST(NULL AS VARCHAR2(200)) FROM NCIS_Deposits
+
+UNION ALL
+SELECT 'CM-229', 'DEBIT_INTEREST_ACCRUALS — TODO: no DDA-side debit-interest table found in DD scan',
+       'NOT_FOUND', COUNT(CASE WHEN  DEBIT_INTEREST_ACCRUALS IS NOT NULL THEN 1 END), COUNT(*), CAST(NULL AS VARCHAR2(200)) FROM NCIS_Deposits
+
+UNION ALL
+SELECT 'CM-230', 'Reason — TODO: no confirmed HUB field',
+       'NOT_FOUND', COUNT(CASE WHEN  Reason IS NOT NULL THEN 1 END), COUNT(*), CAST(NULL AS VARCHAR2(200)) FROM NCIS_Deposits
+
+UNION ALL
+SELECT 'CM-231', 'OVD_Debit_interest_Spread — TODO: no confirmed HUB field (no DDA debit-interest table found)',
+       'NOT_FOUND', COUNT(CASE WHEN  OVD_Debit_interest_Spread IS NOT NULL THEN 1 END), COUNT(*), CAST(NULL AS VARCHAR2(200)) FROM NCIS_Deposits
+
+UNION ALL
+SELECT 'CM-232', 'OVD_Interest_Transfer_Account — INFO only: hardcoded literal ''N/A'' in source query, not a real field',
+       'NOT_FOUND', COUNT(CASE WHEN  OVD_Interest_Transfer_Account IS NOT NULL THEN 1 END), COUNT(*), CAST(NULL AS VARCHAR2(200)) FROM NCIS_Deposits
+
+UNION ALL
+SELECT 'CM-233', 'OVD_Days_Base — TODO: currency-level attribute (CRNCY.DAYSBASE), no account-level HUB field found',
+       'NOT_FOUND', COUNT(CASE WHEN  OVD_Days_Base IS NOT NULL THEN 1 END), COUNT(*), CAST(NULL AS VARCHAR2(200)) FROM NCIS_Deposits
+
+UNION ALL
+SELECT 'CM-234', 'OVD_Interest_application_cycle — TODO: no DDA debit-interest table found',
+       'NOT_FOUND', COUNT(CASE WHEN  OVD_Interest_application_cycle IS NOT NULL THEN 1 END), COUNT(*), CAST(NULL AS VARCHAR2(200)) FROM NCIS_Deposits
+
+UNION ALL
+SELECT 'CM-235', 'Next_Debit_interest_application_Date — TODO: no DDA debit-interest table found',
+       'NOT_FOUND', COUNT(CASE WHEN  Next_Debit_interest_application_Date IS NOT NULL THEN 1 END), COUNT(*), CAST(NULL AS VARCHAR2(200)) FROM NCIS_Deposits
+
+UNION ALL
+SELECT 'CM-236', 'Days_Base — TODO: likely resides in INT_SCALE-equivalent interest table, not in this DD scan',
+       'NOT_FOUND', COUNT(CASE WHEN  Days_Base IS NOT NULL THEN 1 END), COUNT(*), CAST(NULL AS VARCHAR2(200)) FROM NCIS_Deposits
+
+UNION ALL
+SELECT 'CM-237', 'Debit_Interest_Code — TODO: no DDA debit-interest table found, TD side has no distinct field',
+       'NOT_FOUND', COUNT(CASE WHEN  Debit_Interest_Code IS NOT NULL THEN 1 END), COUNT(*), CAST(NULL AS VARCHAR2(200)) FROM NCIS_Deposits
+
+UNION ALL
+SELECT 'CM-238', 'Unauthorized_Interest_Accrued — TODO: tentative TDACMSP.TDOIAR ("Overdue interest") but semantics differ, not confirmed',
+       'NOT_FOUND', COUNT(CASE WHEN  Unauthorized_Interest_Accrued IS NOT NULL THEN 1 END), COUNT(*), CAST(NULL AS VARCHAR2(200)) FROM NCIS_Deposits
+
+UNION ALL
+SELECT 'CM-239', 'DEPOSIT_TYPE — TODO: possible overlap/duplicate with Account_Type (DFAPTY/TDAPTY), needs NC clarification',
+       'NOT_FOUND', COUNT(CASE WHEN  DEPOSIT_TYPE IS NOT NULL THEN 1 END), COUNT(*), CAST(NULL AS VARCHAR2(200)) FROM NCIS_Deposits
+) C
+ORDER BY C.CATEGORY, C.CHECK_ID</property>
+                    <property
+                      dataType="System.Int32"
+                      description="Specify the number of rows fetched per batch."
+                      expressionType="Notify"
+                      name="BatchSize">1000</property>
+                    <property
+                      dataType="System.Int32"
+                      description="Determines the chunk size allocation for LOB columns"
+                      expressionType="Notify"
+                      name="LobChunkSize">32768</property>
+                    <property
+                      dataType="System.Int32"
+                      description="The code page to use when code page information is unavailable from the data source."
+                      expressionType="Notify"
+                      name="DefaultCodePage">1253</property>
+                    <property
+                      dataType="System.Int32"
+                      description="Number of pre-fetched rows."
+                      expressionType="Notify"
+                      name="PrefetchCount">0</property>
+                    <property
+                      dataType="System.Int32"
+                      description="The mode used to access the database."
+                      name="AccessMode"
+                      typeConverter="AccessMode">1</property>
+                  </properties>
+                  <connections>
+                    <connection
+                      refId="Package\Sequence Container\Data Flow Task 2\Oracle Source.Connections[ORACLEConnection]"
+                      connectionManagerID="{E40B6805-A280-4F5C-A864-393E6FE7C0A8}:external"
+                      connectionManagerRefId="Project.ConnectionManagers[PRE]"
+                      description="The ORACLE runtime connection used to access the database."
+                      name="ORACLEConnection" />
+                  </connections>
+                  <outputs>
+                    <output
+                      refId="Package\Sequence Container\Data Flow Task 2\Oracle Source.Outputs[Oracle Source Output]"
+                      errorRowDisposition="FailComponent"
+                      name="Oracle Source Output"
+                      truncationRowDisposition="FailComponent">
+                      <outputColumns>
+                        <outputColumn
+                          refId="Package\Sequence Container\Data Flow Task 2\Oracle Source.Outputs[Oracle Source Output].Columns[CHECK_TYPE]"
+                          codePage="1253"
+                          dataType="str"
+                          externalMetadataColumnId="Package\Sequence Container\Data Flow Task 2\Oracle Source.Outputs[Oracle Source Output].ExternalColumns[CHECK_TYPE]"
+                          length="8"
+                          lineageId="Package\Sequence Container\Data Flow Task 2\Oracle Source.Outputs[Oracle Source Output].Columns[CHECK_TYPE]"
+                          name="CHECK_TYPE" />
+                        <outputColumn
+                          refId="Package\Sequence Container\Data Flow Task 2\Oracle Source.Outputs[Oracle Source Output].Columns[CHECK_ID]"
+                          codePage="1253"
+                          dataType="str"
+                          externalMetadataColumnId="Package\Sequence Container\Data Flow Task 2\Oracle Source.Outputs[Oracle Source Output].ExternalColumns[CHECK_ID]"
+                          length="6"
+                          lineageId="Package\Sequence Container\Data Flow Task 2\Oracle Source.Outputs[Oracle Source Output].Columns[CHECK_ID]"
+                          name="CHECK_ID" />
+                        <outputColumn
+                          refId="Package\Sequence Container\Data Flow Task 2\Oracle Source.Outputs[Oracle Source Output].Columns[CHECK_NAME]"
+                          codePage="1253"
+                          dataType="str"
+                          externalMetadataColumnId="Package\Sequence Container\Data Flow Task 2\Oracle Source.Outputs[Oracle Source Output].ExternalColumns[CHECK_NAME]"
+                          length="119"
+                          lineageId="Package\Sequence Container\Data Flow Task 2\Oracle Source.Outputs[Oracle Source Output].Columns[CHECK_NAME]"
+                          name="CHECK_NAME" />
+                        <outputColumn
+                          refId="Package\Sequence Container\Data Flow Task 2\Oracle Source.Outputs[Oracle Source Output].Columns[CATEGORY]"
+                          codePage="1253"
+                          dataType="str"
+                          externalMetadataColumnId="Package\Sequence Container\Data Flow Task 2\Oracle Source.Outputs[Oracle Source Output].ExternalColumns[CATEGORY]"
+                          length="9"
+                          lineageId="Package\Sequence Container\Data Flow Task 2\Oracle Source.Outputs[Oracle Source Output].Columns[CATEGORY]"
+                          name="CATEGORY" />
+                        <outputColumn
+                          refId="Package\Sequence Container\Data Flow Task 2\Oracle Source.Outputs[Oracle Source Output].Columns[RESULT_NUM]"
+                          dataType="r8"
+                          externalMetadataColumnId="Package\Sequence Container\Data Flow Task 2\Oracle Source.Outputs[Oracle Source Output].ExternalColumns[RESULT_NUM]"
+                          lineageId="Package\Sequence Container\Data Flow Task 2\Oracle Source.Outputs[Oracle Source Output].Columns[RESULT_NUM]"
+                          name="RESULT_NUM" />
+                        <outputColumn
+                          refId="Package\Sequence Container\Data Flow Task 2\Oracle Source.Outputs[Oracle Source Output].Columns[RESULT_TOTAL]"
+                          dataType="r8"
+                          externalMetadataColumnId="Package\Sequence Container\Data Flow Task 2\Oracle Source.Outputs[Oracle Source Output].ExternalColumns[RESULT_TOTAL]"
+                          lineageId="Package\Sequence Container\Data Flow Task 2\Oracle Source.Outputs[Oracle Source Output].Columns[RESULT_TOTAL]"
+                          name="RESULT_TOTAL" />
+                        <outputColumn
+                          refId="Package\Sequence Container\Data Flow Task 2\Oracle Source.Outputs[Oracle Source Output].Columns[RESULT_TXT]"
+                          codePage="1253"
+                          dataType="str"
+                          externalMetadataColumnId="Package\Sequence Container\Data Flow Task 2\Oracle Source.Outputs[Oracle Source Output].ExternalColumns[RESULT_TXT]"
+                          length="200"
+                          lineageId="Package\Sequence Container\Data Flow Task 2\Oracle Source.Outputs[Oracle Source Output].Columns[RESULT_TXT]"
+                          name="RESULT_TXT" />
+                        <outputColumn
+                          refId="Package\Sequence Container\Data Flow Task 2\Oracle Source.Outputs[Oracle Source Output].Columns[STATUS]"
+                          codePage="1253"
+                          dataType="str"
+                          externalMetadataColumnId="Package\Sequence Container\Data Flow Task 2\Oracle Source.Outputs[Oracle Source Output].ExternalColumns[STATUS]"
+                          length="6"
+                          lineageId="Package\Sequence Container\Data Flow Task 2\Oracle Source.Outputs[Oracle Source Output].Columns[STATUS]"
+                          name="STATUS" />
+                      </outputColumns>
+                      <externalMetadataColumns
+                        isUsed="True">
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\Data Flow Task 2\Oracle Source.Outputs[Oracle Source Output].ExternalColumns[CHECK_TYPE]"
+                          codePage="1253"
+                          dataType="str"
+                          length="8"
+                          name="CHECK_TYPE" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\Data Flow Task 2\Oracle Source.Outputs[Oracle Source Output].ExternalColumns[CHECK_ID]"
+                          codePage="1253"
+                          dataType="str"
+                          length="6"
+                          name="CHECK_ID" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\Data Flow Task 2\Oracle Source.Outputs[Oracle Source Output].ExternalColumns[CHECK_NAME]"
+                          codePage="1253"
+                          dataType="str"
+                          length="119"
+                          name="CHECK_NAME" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\Data Flow Task 2\Oracle Source.Outputs[Oracle Source Output].ExternalColumns[CATEGORY]"
+                          codePage="1253"
+                          dataType="str"
+                          length="9"
+                          name="CATEGORY" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\Data Flow Task 2\Oracle Source.Outputs[Oracle Source Output].ExternalColumns[RESULT_NUM]"
+                          dataType="r8"
+                          name="RESULT_NUM" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\Data Flow Task 2\Oracle Source.Outputs[Oracle Source Output].ExternalColumns[RESULT_TOTAL]"
+                          dataType="r8"
+                          name="RESULT_TOTAL" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\Data Flow Task 2\Oracle Source.Outputs[Oracle Source Output].ExternalColumns[RESULT_TXT]"
+                          codePage="1253"
+                          dataType="str"
+                          length="200"
+                          name="RESULT_TXT" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\Data Flow Task 2\Oracle Source.Outputs[Oracle Source Output].ExternalColumns[STATUS]"
+                          codePage="1253"
+                          dataType="str"
+                          length="6"
+                          name="STATUS" />
+                      </externalMetadataColumns>
+                    </output>
+                    <output
+                      refId="Package\Sequence Container\Data Flow Task 2\Oracle Source.Outputs[Oracle Source Error Output]"
+                      isErrorOut="true"
+                      name="Oracle Source Error Output">
+                      <outputColumns>
+                        <outputColumn
+                          refId="Package\Sequence Container\Data Flow Task 2\Oracle Source.Outputs[Oracle Source Error Output].Columns[CHECK_TYPE]"
+                          codePage="1253"
+                          dataType="str"
+                          externalMetadataColumnId="Package\Sequence Container\Data Flow Task 2\Oracle Source.Outputs[Oracle Source Output].ExternalColumns[CHECK_TYPE]"
+                          length="8"
+                          lineageId="Package\Sequence Container\Data Flow Task 2\Oracle Source.Outputs[Oracle Source Error Output].Columns[CHECK_TYPE]"
+                          name="CHECK_TYPE" />
+                        <outputColumn
+                          refId="Package\Sequence Container\Data Flow Task 2\Oracle Source.Outputs[Oracle Source Error Output].Columns[CHECK_ID]"
+                          codePage="1253"
+                          dataType="str"
+                          externalMetadataColumnId="Package\Sequence Container\Data Flow Task 2\Oracle Source.Outputs[Oracle Source Output].ExternalColumns[CHECK_ID]"
+                          length="6"
+                          lineageId="Package\Sequence Container\Data Flow Task 2\Oracle Source.Outputs[Oracle Source Error Output].Columns[CHECK_ID]"
+                          name="CHECK_ID" />
+                        <outputColumn
+                          refId="Package\Sequence Container\Data Flow Task 2\Oracle Source.Outputs[Oracle Source Error Output].Columns[CHECK_NAME]"
+                          codePage="1253"
+                          dataType="str"
+                          externalMetadataColumnId="Package\Sequence Container\Data Flow Task 2\Oracle Source.Outputs[Oracle Source Output].ExternalColumns[CHECK_NAME]"
+                          length="119"
+                          lineageId="Package\Sequence Container\Data Flow Task 2\Oracle Source.Outputs[Oracle Source Error Output].Columns[CHECK_NAME]"
+                          name="CHECK_NAME" />
+                        <outputColumn
+                          refId="Package\Sequence Container\Data Flow Task 2\Oracle Source.Outputs[Oracle Source Error Output].Columns[CATEGORY]"
+                          codePage="1253"
+                          dataType="str"
+                          externalMetadataColumnId="Package\Sequence Container\Data Flow Task 2\Oracle Source.Outputs[Oracle Source Output].ExternalColumns[CATEGORY]"
+                          length="9"
+                          lineageId="Package\Sequence Container\Data Flow Task 2\Oracle Source.Outputs[Oracle Source Error Output].Columns[CATEGORY]"
+                          name="CATEGORY" />
+                        <outputColumn
+                          refId="Package\Sequence Container\Data Flow Task 2\Oracle Source.Outputs[Oracle Source Error Output].Columns[RESULT_NUM]"
+                          dataType="r8"
+                          externalMetadataColumnId="Package\Sequence Container\Data Flow Task 2\Oracle Source.Outputs[Oracle Source Output].ExternalColumns[RESULT_NUM]"
+                          lineageId="Package\Sequence Container\Data Flow Task 2\Oracle Source.Outputs[Oracle Source Error Output].Columns[RESULT_NUM]"
+                          name="RESULT_NUM" />
+                        <outputColumn
+                          refId="Package\Sequence Container\Data Flow Task 2\Oracle Source.Outputs[Oracle Source Error Output].Columns[RESULT_TOTAL]"
+                          dataType="r8"
+                          externalMetadataColumnId="Package\Sequence Container\Data Flow Task 2\Oracle Source.Outputs[Oracle Source Output].ExternalColumns[RESULT_TOTAL]"
+                          lineageId="Package\Sequence Container\Data Flow Task 2\Oracle Source.Outputs[Oracle Source Error Output].Columns[RESULT_TOTAL]"
+                          name="RESULT_TOTAL" />
+                        <outputColumn
+                          refId="Package\Sequence Container\Data Flow Task 2\Oracle Source.Outputs[Oracle Source Error Output].Columns[RESULT_TXT]"
+                          codePage="1253"
+                          dataType="str"
+                          externalMetadataColumnId="Package\Sequence Container\Data Flow Task 2\Oracle Source.Outputs[Oracle Source Output].ExternalColumns[RESULT_TXT]"
+                          length="200"
+                          lineageId="Package\Sequence Container\Data Flow Task 2\Oracle Source.Outputs[Oracle Source Error Output].Columns[RESULT_TXT]"
+                          name="RESULT_TXT" />
+                        <outputColumn
+                          refId="Package\Sequence Container\Data Flow Task 2\Oracle Source.Outputs[Oracle Source Error Output].Columns[STATUS]"
+                          codePage="1253"
+                          dataType="str"
+                          externalMetadataColumnId="Package\Sequence Container\Data Flow Task 2\Oracle Source.Outputs[Oracle Source Output].ExternalColumns[STATUS]"
+                          length="6"
+                          lineageId="Package\Sequence Container\Data Flow Task 2\Oracle Source.Outputs[Oracle Source Error Output].Columns[STATUS]"
+                          name="STATUS" />
+                        <outputColumn
+                          refId="Package\Sequence Container\Data Flow Task 2\Oracle Source.Outputs[Oracle Source Error Output].Columns[ErrorCode]"
+                          dataType="i4"
+                          lineageId="Package\Sequence Container\Data Flow Task 2\Oracle Source.Outputs[Oracle Source Error Output].Columns[ErrorCode]"
+                          name="ErrorCode"
+                          specialFlags="1" />
+                        <outputColumn
+                          refId="Package\Sequence Container\Data Flow Task 2\Oracle Source.Outputs[Oracle Source Error Output].Columns[ErrorColumn]"
+                          dataType="i4"
+                          lineageId="Package\Sequence Container\Data Flow Task 2\Oracle Source.Outputs[Oracle Source Error Output].Columns[ErrorColumn]"
+                          name="ErrorColumn"
+                          specialFlags="2" />
+                      </outputColumns>
+                      <externalMetadataColumns />
+                    </output>
+                  </outputs>
+                </component>
+              </components>
+              <paths>
+                <path
+                  refId="Package\Sequence Container\Data Flow Task 2.Paths[Oracle Source Output]"
+                  endId="Package\Sequence Container\Data Flow Task 2\OLE DB Destination 1.Inputs[OLE DB Destination Input]"
+                  name="Oracle Source Output"
+                  startId="Package\Sequence Container\Data Flow Task 2\Oracle Source.Outputs[Oracle Source Output]" />
+              </paths>
+            </pipeline>
+          </DTS:ObjectData>
+        </DTS:Executable>
+      </DTS:Executables>
+      <DTS:PrecedenceConstraints>
+        <DTS:PrecedenceConstraint
+          DTS:refId="Package\Sequence Container.PrecedenceConstraints[Constraint]"
+          DTS:CreationName=""
+          DTS:DTSID="{DA239AF3-5102-442D-9F27-3A387CFD344C}"
+          DTS:From="Package\Sequence Container\Data Flow Task"
+          DTS:LogicalAnd="True"
+          DTS:ObjectName="Constraint"
+          DTS:To="Package\Sequence Container\Data Flow Task 1" />
+        <DTS:PrecedenceConstraint
+          DTS:refId="Package\Sequence Container.PrecedenceConstraints[Constraint 1]"
+          DTS:CreationName=""
+          DTS:DTSID="{8D3A8D91-DFE6-4169-B2D7-A5B4B351B5F8}"
+          DTS:From="Package\Sequence Container\Data Flow Task 1"
+          DTS:LogicalAnd="True"
+          DTS:ObjectName="Constraint 1"
+          DTS:To="Package\Sequence Container\Data Flow Task 2" />
+      </DTS:PrecedenceConstraints>
+    </DTS:Executable>
+  </DTS:Executables>
+  <DTS:PrecedenceConstraints>
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint]"
+      DTS:CreationName=""
+      DTS:DTSID="{17C1779E-3997-4129-8C1B-C7CC253490B9}"
+      DTS:From="Package\Execute SQL Task"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint"
+      DTS:To="Package\Sequence Container" />
+  </DTS:PrecedenceConstraints>
+  <DTS:DesignTimeProperties><![CDATA[<?xml version="1.0"?>
+<!--This CDATA section contains the layout information of the package. The section includes information such as (x,y) coordinates, width, and height.-->
+<!--If you manually edit this section and make a mistake, you can delete it. -->
+<!--The package will still be able to load normally but the previous layout information will be lost and the designer will automatically re-arrange the elements on the design surface.-->
+<Objects
+  Version="8">
+  <!--Each node below will contain properties that do not affect runtime behavior.-->
+  <Package
+    design-time-name="Package">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="8" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
+        <NodeLayout
+          Size="140,42.6666666666667"
+          Id="Package\Execute SQL Task"
+          TopLeft="325,37" />
+        <NodeLayout
+          Size="153.333333333334,42.6666666666667"
+          Id="Package\Sequence Container\Data Flow Task"
+          TopLeft="35.3333333333333,28" />
+        <NodeLayout
+          Size="162.666666666667,42.6666666666667"
+          Id="Package\Sequence Container\Data Flow Task 1"
+          TopLeft="261.083327217649,31.3333378193672" />
+        <EdgeLayout
+          Id="Package\Sequence Container.PrecedenceConstraints[Constraint]"
+          TopLeft="188.666666666667,51.0000022430169">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="72.4166605509819,0"
+              Start="0,0"
+              End="64.9166605509819,0">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="64.9166605509819,0" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <NodeLayout
+          Size="162.666666666667,42.6666666666667"
+          Id="Package\Sequence Container\Data Flow Task 2"
+          TopLeft="458.999990935127,27.4561450086253" />
+        <EdgeLayout
+          Id="Package\Sequence Container.PrecedenceConstraints[Constraint 1]"
+          TopLeft="423.749993884315,50.7280747473296">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="35.2499970508116,0"
+              Start="0,0"
+              End="27.7499970508116,0">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="27.7499970508116,0" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <ContainerLayout
+          HeaderHeight="43"
+          IsExpanded="True"
+          PanelSize="640,168"
+          Size="640,210.666666666667"
+          Id="Package\Sequence Container"
+          TopLeft="149,177" />
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint]"
+          TopLeft="395,79.6666666666667">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="74,97.3333333333333"
+              Start="0,0"
+              End="74,89.8333333333333">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,44.6666666666667" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,44.6666666666667"
+                    Point2="0,48.6666666666667"
+                    Point3="4,48.6666666666667" />
+                  <mssgle:LineSegment
+                    End="70,48.6666666666667" />
+                  <mssgle:CubicBezierSegment
+                    Point1="70,48.6666666666667"
+                    Point2="74,48.6666666666667"
+                    Point3="74,52.6666666666667" />
+                  <mssgle:LineSegment
+                    End="74,89.8333333333333" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+      </GraphLayout>
+    </LayoutInfo>
+  </Package>
+  <TaskHost
+    design-time-name="Package\Sequence Container\Data Flow Task">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
+        <NodeLayout
+          Size="150.666666666667,42.6666666666667"
+          Id="Package\Sequence Container\Data Flow Task\OLE DB Destination 1"
+          TopLeft="306.583333314707,100.666666666667" />
+        <NodeLayout
+          Size="154,42.6666666666667"
+          Id="Package\Sequence Container\Data Flow Task\Customers"
+          TopLeft="98.6250005867332,102" />
+        <EdgeLayout
+          Id="Package\Sequence Container\Data Flow Task.Paths[Oracle Source Output]"
+          TopLeft="252.625000586733,122.666666666667">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="53.9583327279734,0"
+              Start="0,0"
+              End="46.4583327279734,0">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="46.4583327279734,0" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+      </GraphLayout>
+    </LayoutInfo>
+  </TaskHost>
+  <PipelineComponentMetadata
+    design-time-name="Package\Sequence Container\Data Flow Task\Customers">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+  <PipelineComponentMetadata
+    design-time-name="Package\Sequence Container\Data Flow Task\OLE DB Destination 1">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+      <Property>
+        <Name>TableInfoObjectType</Name>
+        <Value
+          type="q2:string">Table</Value>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+  <TaskHost
+    design-time-name="Package\Sequence Container\Data Flow Task 1">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
+        <NodeLayout
+          Size="156,42.6666666666667"
+          Id="Package\Sequence Container\Data Flow Task 1\Oracle Source 1"
+          TopLeft="123,112" />
+        <NodeLayout
+          Size="174.666666666667,42.6666666666667"
+          Id="Package\Sequence Container\Data Flow Task 1\OLE DB Destination"
+          TopLeft="434,113" />
+        <EdgeLayout
+          Id="Package\Sequence Container\Data Flow Task 1.Paths[Oracle Source Output]"
+          TopLeft="279,133.833333333333">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="155,0"
+              Start="0,0"
+              End="147.5,0">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="147.5,0" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+      </GraphLayout>
+    </LayoutInfo>
+  </TaskHost>
+  <PipelineComponentMetadata
+    design-time-name="Package\Sequence Container\Data Flow Task 1\Oracle Source 1">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+  <PipelineComponentMetadata
+    design-time-name="Package\Sequence Container\Data Flow Task 1\OLE DB Destination">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+      <Property>
+        <Name>TableInfoObjectType</Name>
+        <Value
+          type="q2:string">Table</Value>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+  <TaskHost
+    design-time-name="Package\Sequence Container\Data Flow Task 2">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
+        <NodeLayout
+          Size="148,44"
+          Id="Package\Sequence Container\Data Flow Task 2\Oracle Source"
+          TopLeft="187,94" />
+        <NodeLayout
+          Size="184,42.6666666666667"
+          Id="Package\Sequence Container\Data Flow Task 2\OLE DB Destination 1"
+          TopLeft="444,102" />
+        <EdgeLayout
+          Id="Package\Sequence Container\Data Flow Task 2.Paths[Oracle Source Output]"
+          TopLeft="335,119.666666666667">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="109,0"
+              Start="0,0"
+              End="101.5,0">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="101.5,0" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+      </GraphLayout>
+    </LayoutInfo>
+  </TaskHost>
+  <PipelineComponentMetadata
+    design-time-name="Package\Sequence Container\Data Flow Task 2\Oracle Source">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+  <PipelineComponentMetadata
+    design-time-name="Package\Sequence Container\Data Flow Task 2\OLE DB Destination 1">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+      <Property>
+        <Name>TableInfoObjectType</Name>
+        <Value
+          type="q2:string">Table</Value>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+</Objects>]]></DTS:DesignTimeProperties>
+</DTS:Executable>

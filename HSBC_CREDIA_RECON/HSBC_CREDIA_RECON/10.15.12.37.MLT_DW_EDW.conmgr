@@ -1,0 +1,12 @@
+﻿<?xml version="1.0"?>
+<DTS:ConnectionManager xmlns:DTS="www.microsoft.com/SqlServer/Dts"
+  DTS:ObjectName="10.15.12.37.MLT_DW_EDW"
+  DTS:DTSID="{6821A5EC-D23A-4EAE-A8D7-C1BFCD7DE798}"
+  DTS:CreationName="OLEDB">
+  <DTS:ObjectData>
+    <DTS:ConnectionManager
+      DTS:ConnectRetryCount="1"
+      DTS:ConnectRetryInterval="5"
+      DTS:ConnectionString="Data Source=10.15.12.37;Initial Catalog=MLT_DW_EDW;Provider=SQLOLEDB.1;Integrated Security=SSPI;Application Name=SSIS-HSBC_CREDIA_RECON-{6821A5EC-D23A-4EAE-A8D7-C1BFCD7DE798}10.15.12.37.MLT_DW_EDW;Auto Translate=False;" />
+  </DTS:ObjectData>
+</DTS:ConnectionManager>

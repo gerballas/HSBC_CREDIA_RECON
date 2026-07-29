@@ -1,0 +1,22 @@
+﻿<?xml version="1.0"?>
+<DTS:ConnectionManager xmlns:DTS="www.microsoft.com/SqlServer/Dts"
+  DTS:ObjectName="PRE Connection Manager"
+  DTS:DTSID="{ECA91632-834F-4B2F-85DF-6CA637347F58}"
+  DTS:Description="PRE Oracle Connection "
+  DTS:CreationName="ORACLE">
+  <DTS:ObjectData>
+    <DTS:ConnectionManager>
+      <OraConnectionString>SERVER=//mtprofpredb-scan.boahq.gr:1521/PRE;USERNAME=CREDIA_UAT1;WINAUTH=0;</OraConnectionString>
+      <OraPassword
+        Sensitive="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAjMp9JEwmnEWVbbXlGmYdtwAAAAACAAAAAAADZgAAwAAAABAAAABSBV4EQwmFMD/hSHUs/zNFAAAAAASAAACgAAAAEAAAAE9KJUCL+9bLDY+03LiDh/hAAAAAK1oa165lTRELcEJiiwWdTGTXPK1X6MPfFLRXjX5Kztp16JnFLbrwSAhl5Vbe8Hunm0syos8oIOJ924y25ywGpRQAAAAw9LNBCKF4V2zYd9YfmVTId5h4VQ==</OraPassword>
+      <OraRetain>False</OraRetain>
+      <OraInitialCatalog></OraInitialCatalog>
+      <OraServerName>//mtprofpredb-scan.boahq.gr:1521/PRE</OraServerName>
+      <OraUserName>CREDIA_UAT1</OraUserName>
+      <OraOracleHome></OraOracleHome>
+      <OraOracleHome64></OraOracleHome64>
+      <OraWinAuthentication>False</OraWinAuthentication>
+      <OraEnableDetailedTracing>False</OraEnableDetailedTracing>
+    </DTS:ConnectionManager>
+  </DTS:ObjectData>
+</DTS:ConnectionManager>

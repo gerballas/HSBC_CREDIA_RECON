@@ -1,0 +1,22 @@
+﻿<?xml version="1.0"?>
+<DTS:ConnectionManager xmlns:DTS="www.microsoft.com/SqlServer/Dts"
+  DTS:ObjectName="MALTA"
+  DTS:DTSID="{D60A8650-8A94-4F36-ACFC-5A8EEC93F9E2}"
+  DTS:Description="MALTA Oracle Connection "
+  DTS:CreationName="ORACLE">
+  <DTS:ObjectData>
+    <DTS:ConnectionManager>
+      <OraConnectionString>SERVER=//mtprofpredb-scan.boahq.gr:1521/MALTA;USERNAME=nlampiris;WINAUTH=0;</OraConnectionString>
+      <OraPassword
+        Sensitive="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAjMp9JEwmnEWVbbXlGmYdtwAAAAACAAAAAAADZgAAwAAAABAAAABxpFxW+z0I64vrXtRjtgEFAAAAAASAAACgAAAAEAAAAKUhS+PHIF40Wv1j2HDor+dIAAAAARCi9Lu16ukF38EonfP1WoRuBwmBChsmw5fPrCoGg3tLo9xqZhN0dMoud1v6q/cP8xzOTGK+UE2h0ZLWo1bHaWOIvc3t33eDFAAAALs/6e7N3g81+HWLFdm7jaFzypAR</OraPassword>
+      <OraRetain>False</OraRetain>
+      <OraInitialCatalog></OraInitialCatalog>
+      <OraServerName>//mtprofpredb-scan.boahq.gr:1521/MALTA</OraServerName>
+      <OraUserName>nlampiris</OraUserName>
+      <OraOracleHome></OraOracleHome>
+      <OraOracleHome64></OraOracleHome64>
+      <OraWinAuthentication>False</OraWinAuthentication>
+      <OraEnableDetailedTracing>False</OraEnableDetailedTracing>
+    </DTS:ConnectionManager>
+  </DTS:ObjectData>
+</DTS:ConnectionManager>
