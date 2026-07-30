@@ -32,6 +32,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MIGRATION_MAPPING", "MIGRAT
 		HSBC_CREDIA_RECON\MIGRATION_MAPPING\MIGRATION_MAPPING_SSIS.sql = HSBC_CREDIA_RECON\MIGRATION_MAPPING\MIGRATION_MAPPING_SSIS.sql
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "views", "views", "{1613DE8A-4B8A-4A49-8255-237A5C67E75B}"
+	ProjectSection(SolutionItems) = preProject
+		v_reconciliation_customer_recordsv2.sql = v_reconciliation_customer_recordsv2.sql
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Development|Default = Development|Default
@@ -47,6 +52,7 @@ Global
 		{0C14E794-24F7-40B6-842E-158470AEE5F7} = {C9CC8EDD-4274-44AC-AC2D-7786DE93EC30}
 		{95C3E71E-FB1A-4DE1-9B9A-0B2950CB8F6A} = {C9CC8EDD-4274-44AC-AC2D-7786DE93EC30}
 		{DB77E645-10F9-44DB-A990-3A78E2BB8F14} = {C9CC8EDD-4274-44AC-AC2D-7786DE93EC30}
+		{1613DE8A-4B8A-4A49-8255-237A5C67E75B} = {C9CC8EDD-4274-44AC-AC2D-7786DE93EC30}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3B1DA900-122A-46DB-B427-2D91CB725764}
