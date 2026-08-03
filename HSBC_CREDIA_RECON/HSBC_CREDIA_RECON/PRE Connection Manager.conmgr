@@ -8,7 +8,7 @@
     <DTS:ConnectionManager>
       <OraConnectionString>SERVER=//mtprofpredb-scan.boahq.gr:1521/PRE;USERNAME=CREDIA_UAT1;WINAUTH=0;</OraConnectionString>
       <OraPassword
-        Sensitive="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAjMp9JEwmnEWVbbXlGmYdtwAAAAACAAAAAAADZgAAwAAAABAAAABSBV4EQwmFMD/hSHUs/zNFAAAAAASAAACgAAAAEAAAAE9KJUCL+9bLDY+03LiDh/hAAAAAK1oa165lTRELcEJiiwWdTGTXPK1X6MPfFLRXjX5Kztp16JnFLbrwSAhl5Vbe8Hunm0syos8oIOJ924y25ywGpRQAAAAw9LNBCKF4V2zYd9YfmVTId5h4VQ==</OraPassword>
+        Sensitive="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAjjEhG4wTAkOKOzkcpbgjugAAAAACAAAAAAADZgAAwAAAABAAAACYkL/cW9CA3Sl8KDCza+xyAAAAAASAAACgAAAAEAAAAKAqJ60+judTiNZWn+tdte9AAAAA7jVlUb+HuWXylMONHHxPAmVPjc/1YWhjTTCmT6WWhyvevYohCguteMGkklqDRIU1LH3pzJCD/C8gCbVwE788uBQAAADPVGeVYDw7GC/pQ6lipl5yhCcHmg==</OraPassword>
       <OraRetain>False</OraRetain>
       <OraInitialCatalog></OraInitialCatalog>
       <OraServerName>//mtprofpredb-scan.boahq.gr:1521/PRE</OraServerName>

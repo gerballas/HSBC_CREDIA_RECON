@@ -6,13 +6,13 @@
   DTS:CreationName="ORACLE">
   <DTS:ObjectData>
     <DTS:ConnectionManager>
-      <OraConnectionString>SERVER=//mtprofpredb-scan.boahq.gr:1521/MALTA;USERNAME=nlampiris;WINAUTH=0;</OraConnectionString>
+      <OraConnectionString>SERVER=//mtprofpredb-scan.boahq.gr:1521/MALTA;USERNAME=mariapapadopoulou;WINAUTH=0;</OraConnectionString>
       <OraPassword
-        Sensitive="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAjMp9JEwmnEWVbbXlGmYdtwAAAAACAAAAAAADZgAAwAAAABAAAABxpFxW+z0I64vrXtRjtgEFAAAAAASAAACgAAAAEAAAAKUhS+PHIF40Wv1j2HDor+dIAAAAARCi9Lu16ukF38EonfP1WoRuBwmBChsmw5fPrCoGg3tLo9xqZhN0dMoud1v6q/cP8xzOTGK+UE2h0ZLWo1bHaWOIvc3t33eDFAAAALs/6e7N3g81+HWLFdm7jaFzypAR</OraPassword>
+        Sensitive="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAjjEhG4wTAkOKOzkcpbgjugAAAAACAAAAAAADZgAAwAAAABAAAAD/9NarsIVTJz61Yh9xEitmAAAAAASAAACgAAAAEAAAAIfjQb0+8w+GWoFyPsOAa3hIAAAAGiN185csgmAhFdUrcUyucwXyPnlTmWmcHCgTD5GSy6DZbNGDAhd4DmA7ZP2AOzIEhAM9/Xz8iqG2f+982tCs97PE4frYWyb5FAAAAALhuR0M12UhEWTrEd0sPj1F9oeI</OraPassword>
       <OraRetain>False</OraRetain>
       <OraInitialCatalog></OraInitialCatalog>
       <OraServerName>//mtprofpredb-scan.boahq.gr:1521/MALTA</OraServerName>
-      <OraUserName>nlampiris</OraUserName>
+      <OraUserName>mariapapadopoulou</OraUserName>
       <OraOracleHome></OraOracleHome>
       <OraOracleHome64></OraOracleHome64>
       <OraWinAuthentication>False</OraWinAuthentication>
