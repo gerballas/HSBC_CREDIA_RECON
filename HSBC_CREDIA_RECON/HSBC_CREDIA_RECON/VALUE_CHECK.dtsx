@@ -11,8 +11,8 @@
   DTS:LocaleID="1032"
   DTS:ObjectName="VALUE_CHECK"
   DTS:PackageType="5"
-  DTS:VersionBuild="145"
-  DTS:VersionGUID="{B8976388-3BA6-4629-81A5-D9E96292F93B}">
+  DTS:VersionBuild="147"
+  DTS:VersionGUID="{9077DAED-7E20-4140-9746-AC42E1F1B50E}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:ConnectionManagers>
@@ -35249,47 +35249,47 @@ ORDER BY table_name, field_name, check_type;</property>
       <GraphLayout
         Capacity="64" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
         <NodeLayout
-          Size="168,43"
+          Size="168,42.6666666666667"
           Id="Package\Execute SQL Task"
           TopLeft="877.010719546005,179.388889065611" />
         <NodeLayout
-          Size="177,43"
+          Size="177.333333333334,42.6666666666667"
           Id="Package\Execute SQL Task 1"
           TopLeft="871.689801822864,263.006826042793" />
         <NodeLayout
-          Size="131,43"
+          Size="130.666666666667,42.6666666666667"
           Id="Package\RESULTS_DC3\ME01_VAL_AF"
           TopLeft="1574.36307235196,322.474942801417" />
         <NodeLayout
-          Size="167,43"
+          Size="166.666666666667,42.6666666666667"
           Id="Package\RESULTS_DC3\ME01_VAL_AF(2)"
           TopLeft="24.2499997206031,32.9824566576399" />
         <NodeLayout
-          Size="153,43"
+          Size="153.333333333334,42.6666666666667"
           Id="Package\RESULTS_DC3\ME01_VAL_BA"
           TopLeft="331.895826530022,35.8947442687453" />
         <NodeLayout
-          Size="155,43"
+          Size="154.666666666667,42.6666666666667"
           Id="Package\RESULTS_DC3\ME01_VAL_DD"
           TopLeft="623.249988855173,36.3333398584736" />
         <NodeLayout
-          Size="153,43"
+          Size="153.333333333334,42.6666666666667"
           Id="Package\RESULTS_DC3\ME01_VAL_EB"
           TopLeft="926.499984316528,34.0877267034211" />
         <NodeLayout
-          Size="153,43"
+          Size="153.333333333334,42.6666666666667"
           Id="Package\RESULTS_DC3\ME01_VAL_FN"
           TopLeft="1232.72022555476,37.0125339126197" />
         <NodeLayout
-          Size="153,43"
+          Size="153.333333333334,42.6666666666667"
           Id="Package\RESULTS_DC3\ME01_VAL_GL"
           TopLeft="1250.63093566238,225.483718122598" />
         <NodeLayout
-          Size="152,43"
+          Size="152,42.6666666666667"
           Id="Package\RESULTS_DC3\ME01_VAL_LS"
           TopLeft="1563.18450233278,219.82456926802" />
         <NodeLayout
-          Size="156,43"
+          Size="156,42.6666666666667"
           Id="Package\RESULTS_DC3\ME01_VAL_OR"
           TopLeft="1563.89580815192,31.9210599959726" />
         <NodeLayout
@@ -35297,23 +35297,23 @@ ORDER BY table_name, field_name, check_type;</property>
           Id="Package\RESULTS_DC3\ME01_VAL_PL"
           TopLeft="1566.6041414449,130.885974126895" />
         <NodeLayout
-          Size="183,43"
+          Size="182.666666666667,42.6666666666667"
           Id="Package\RESULTS_DC3\ME01_VAL_SS_CDD"
           TopLeft="1226.22220960591,137.643282095848" />
         <NodeLayout
-          Size="199,42"
+          Size="198.666666666667,42"
           Id="Package\RESULTS_DC3\ME01_VAL_SS_CDD(2)"
           TopLeft="905.180547723133,132.830416654579" />
         <NodeLayout
-          Size="199,43"
+          Size="198.666666666667,42.6666666666667"
           Id="Package\RESULTS_DC3\ME01_VAL_SS_CREDIT"
           TopLeft="10.378973688901,225.098586997854" />
         <NodeLayout
-          Size="191,42"
+          Size="190.666666666667,42"
           Id="Package\RESULTS_DC3\ME01_VAL_SS_CUST"
           TopLeft="595.805549551629,138.023398518306" />
         <NodeLayout
-          Size="187,43"
+          Size="186.666666666667,42.6666666666667"
           Id="Package\RESULTS_DC3\ME01_VAL_SS_MISC"
           TopLeft="307.78472324202,133.017549989847" />
         <NodeLayout
@@ -35321,35 +35321,35 @@ ORDER BY table_name, field_name, check_type;</property>
           Id="Package\RESULTS_DC3\ME01_VAL_SS_OTHER"
           TopLeft="9.66666660457847,125.808279682796" />
         <NodeLayout
-          Size="153,43"
+          Size="153.333333333334,42.6666666666667"
           Id="Package\RESULTS_DC3\ME01_VAL_TD"
           TopLeft="317.333326727151,228.228081109341" />
         <NodeLayout
-          Size="188,43"
+          Size="188,42.6666666666667"
           Id="Package\RESULTS_DC3\ME04_VAL_ATAPTYP"
           TopLeft="599.208322526887,226.350888217035" />
         <NodeLayout
-          Size="199,43"
+          Size="198.666666666667,42.6666666666667"
           Id="Package\RESULTS_DC3\ME13_VAL_DECEASED"
           TopLeft="896.222208860848,227.283214042313" />
         <NodeLayout
-          Size="183,43"
+          Size="182.666666666667,42.6666666666667"
           Id="Package\RESULTS_DC3\ME20_VAL_EXP_DC"
           TopLeft="1245.83926483802,321.502508411478" />
         <NodeLayout
-          Size="180,43"
+          Size="180,42.6666666666667"
           Id="Package\RESULTS_DC3\ME20_VAL_IMP_DC"
           TopLeft="899.690460836959,325.71930950516" />
         <NodeLayout
-          Size="239,43"
+          Size="238.666666666667,42.6666666666667"
           Id="Package\RESULTS_DC3\ME20_VAL_LOANS_BILLS_ACC"
           TopLeft="560.404751606995,326.934848021115" />
         <NodeLayout
-          Size="175,43"
+          Size="174.666666666667,42.6666666666667"
           Id="Package\RESULTS_DC3\ME36_VAL_DEALS"
           TopLeft="315.761898109601,324.917303903895" />
         <NodeLayout
-          Size="201,43"
+          Size="201.333333333334,42.6666666666667"
           Id="Package\RESULTS_DC3\ME36_VAL_LIMITS_SEC"
           TopLeft="18.4404739686068,323.664170851039" />
         <EdgeLayout
@@ -35464,18 +35464,18 @@ ORDER BY table_name, field_name, check_type;</property>
         </EdgeLayout>
         <EdgeLayout
           Id="Package\RESULTS_DC3.PrecedenceConstraints[Constraint 13]"
-          TopLeft="209.378973688901,248.163334053597">
+          TopLeft="209.045640355568,247.996667386931">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="107.95435303825,0"
+              EndConnector="108.287686371583,0"
               Start="0,0"
-              End="100.45435303825,0">
+              End="100.787686371583,0">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="100.45435303825,0" />
+                    End="100.787686371583,0" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -35486,18 +35486,18 @@ ORDER BY table_name, field_name, check_type;</property>
         </EdgeLayout>
         <EdgeLayout
           Id="Package\RESULTS_DC3.PrecedenceConstraints[Constraint 14]"
-          TopLeft="470.333326727151,248.789484663188">
+          TopLeft="470.666660060484,248.622817996521">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="128.874995799736,0"
+              EndConnector="128.541662466403,0"
               Start="0,0"
-              End="121.374995799736,0">
+              End="121.041662466403,0">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="121.374995799736,0" />
+                    End="121.041662466403,0" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -35861,8 +35861,8 @@ ORDER BY table_name, field_name, check_type;</property>
         <ContainerLayout
           HeaderHeight="43"
           IsExpanded="True"
-          PanelSize="1727,424"
-          Size="1727,467"
+          PanelSize="1726.66666666667,424"
+          Size="1726.66666666667,466.666666666667"
           Id="Package\RESULTS_DC3"
           TopLeft="93.2916648692143,371.877199376664" />
         <EdgeLayout
@@ -35889,18 +35889,18 @@ ORDER BY table_name, field_name, check_type;</property>
         </EdgeLayout>
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint 2]"
-          TopLeft="958.490733346039,306.006826042793">
+          TopLeft="958.490733346039,305.67349270946">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="0,65.8703733338711"
+              EndConnector="0,66.2037066672042"
               Start="0,0"
-              End="0,58.3703733338711">
+              End="0,58.7037066672042">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,58.3703733338711" />
+                    End="0,58.7037066672042" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -36001,7 +36001,7 @@ ORDER BY table_name, field_name, check_type;</property>
     design-time-name="Package\RESULTS_DC3\ME01_VAL_AF(2)">
     <LayoutInfo>
       <GraphLayout
-        Capacity="8" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mssgm="clr-namespace:Microsoft.SqlServer.Graph.Model;assembly=Microsoft.SqlServer.Graph">
+        Capacity="8" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
         <NodeLayout
           Size="156,42.6666666666667"
           Id="Package\RESULTS_DC3\ME01_VAL_AF(2)\Derived Column"
@@ -36033,9 +36033,7 @@ ORDER BY table_name, field_name, check_type;</property>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <mssgm:EdgeLabel
-              BoundingBox="0,0,0,0"
-              RelativePosition="Any" />
+            <EdgeLabelCollection />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -36057,9 +36055,7 @@ ORDER BY table_name, field_name, check_type;</property>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <mssgm:EdgeLabel
-              BoundingBox="0,0,0,0"
-              RelativePosition="Any" />
+            <EdgeLabelCollection />
           </EdgeLayout.Labels>
         </EdgeLayout>
       </GraphLayout>
@@ -37112,15 +37108,15 @@ ORDER BY table_name, field_name, check_type;</property>
       <GraphLayout
         Capacity="8" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
         <NodeLayout
-          Size="156,43"
+          Size="156,42.6666666666667"
           Id="Package\RESULTS_DC3\ME01_VAL_TD\Derived Column"
           TopLeft="283.696424274484,63.2694247529243" />
         <NodeLayout
-          Size="172,43"
+          Size="172,42.6666666666667"
           Id="Package\RESULTS_DC3\ME01_VAL_TD\DD_VALIDATION_CHECKS"
           TopLeft="532.374992198622,65.8671699313091" />
         <NodeLayout
-          Size="131,43"
+          Size="130.666666666667,42.6666666666667"
           Id="Package\RESULTS_DC3\ME01_VAL_TD\ME01_VAL_TD"
           TopLeft="60,60" />
         <EdgeLayout

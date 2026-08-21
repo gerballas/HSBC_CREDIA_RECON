@@ -26,7 +26,7 @@
           <SSIS:Property SSIS:Name="CreatorComputerName">MLTERMSRV</SSIS:Property>
           <SSIS:Property SSIS:Name="Description">
           </SSIS:Property>
-          <SSIS:Property SSIS:Name="PasswordVerifier" SSIS:Sensitive="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAjMp9JEwmnEWVbbXlGmYdtwAAAAACAAAAAAADZgAAwAAAABAAAADES3J0vPjq/0cQ4/Y/Uz1WAAAAAASAAACgAAAAEAAAAB6Jdeesb25yqjcO6pai6XiIAAAASHWbo58dHLp+sBLIJr0wmUqmGU5H4qDcodFzhHZuLMX6t9NS9OiED38geX8grsherHKPA83xsJ6cF7jFyQCEZqc/0s2NgolSwY0O+IX9Ug3+PFakREHTwyMjcwQZa8hSPZ61S9t0cafyYpfZXErZd9HfMCGKwCGlj+Gc3OYPfjMxcMGAAB/dhBQAAADfF/3qgnSSmJrnJrFyxKB+uedk3A==</SSIS:Property>
+          <SSIS:Property SSIS:Name="PasswordVerifier" SSIS:Sensitive="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAjMp9JEwmnEWVbbXlGmYdtwAAAAACAAAAAAADZgAAwAAAABAAAACoRIb8CmHtgwod/qyzxQtCAAAAAASAAACgAAAAEAAAAGQsLxRR+MCy9ExYFqFAaU6IAAAAHsKPm9xwX9u4wTCO0542IWn9t1gUDbzZYwsdyxmU/28AV3fX8pNXRkC1rDo2USkLyYBuVVM2uzYHn7SXTTXnR4Tsi8wswRz+pXcoB0B9ANMjS5wWqKQMr8GgwEWLEE2XU0ZP85ybzeGK53zGtiG6/Tq19WaFn6t1bo7NdZcHAhIhX8bm+svK9hQAAABNfuKmYbUAScDBOvFTIs4Idb0Q+A==</SSIS:Property>
           <SSIS:Property SSIS:Name="FormatVersion">1</SSIS:Property>
         </SSIS:Properties>
         <SSIS:Packages>
@@ -34,6 +34,7 @@
           <SSIS:Package SSIS:Name="RESULTS_PROFIT.dtsx" SSIS:EntryPoint="1" />
           <SSIS:Package SSIS:Name="MIGRATION_MAPPING_DC3.dtsx" SSIS:EntryPoint="1" />
           <SSIS:Package SSIS:Name="VALUE_CHECK.dtsx" SSIS:EntryPoint="1" />
+          <SSIS:Package SSIS:Name="Deposit_checks.dtsx" SSIS:EntryPoint="1" />
         </SSIS:Packages>
         <SSIS:ConnectionManagers>
           <SSIS:ConnectionManager SSIS:Name="MALTA.conmgr" />
@@ -779,10 +780,10 @@
                 <SSIS:Property SSIS:Name="Name">VALUE_CHECK</SSIS:Property>
                 <SSIS:Property SSIS:Name="VersionMajor">1</SSIS:Property>
                 <SSIS:Property SSIS:Name="VersionMinor">0</SSIS:Property>
-                <SSIS:Property SSIS:Name="VersionBuild">77</SSIS:Property>
+                <SSIS:Property SSIS:Name="VersionBuild">147</SSIS:Property>
                 <SSIS:Property SSIS:Name="VersionComments">
                 </SSIS:Property>
-                <SSIS:Property SSIS:Name="VersionGUID">{1F9DEC5B-9360-4CA4-BE11-BAFBF53106EF}</SSIS:Property>
+                <SSIS:Property SSIS:Name="VersionGUID">{9077DAED-7E20-4140-9746-AC42E1F1B50E}</SSIS:Property>
                 <SSIS:Property SSIS:Name="PackageFormatVersion">8</SSIS:Property>
                 <SSIS:Property SSIS:Name="Description">
                 </SSIS:Property>
@@ -987,6 +988,23 @@
                   </SSIS:Properties>
                 </SSIS:Parameter>
               </SSIS:Parameters>
+            </SSIS:PackageMetaData>
+            <SSIS:PackageMetaData SSIS:Name="Deposit_checks.dtsx">
+              <SSIS:Properties>
+                <SSIS:Property SSIS:Name="ID">{32DC02EB-68A0-4D29-BCE8-7497212A8F4B}</SSIS:Property>
+                <SSIS:Property SSIS:Name="Name">Deposit_checks</SSIS:Property>
+                <SSIS:Property SSIS:Name="VersionMajor">1</SSIS:Property>
+                <SSIS:Property SSIS:Name="VersionMinor">0</SSIS:Property>
+                <SSIS:Property SSIS:Name="VersionBuild">6</SSIS:Property>
+                <SSIS:Property SSIS:Name="VersionComments">
+                </SSIS:Property>
+                <SSIS:Property SSIS:Name="VersionGUID">{D7474C69-DC6D-41C7-8BA8-0165952C28AC}</SSIS:Property>
+                <SSIS:Property SSIS:Name="PackageFormatVersion">8</SSIS:Property>
+                <SSIS:Property SSIS:Name="Description">
+                </SSIS:Property>
+                <SSIS:Property SSIS:Name="ProtectionLevel">1</SSIS:Property>
+              </SSIS:Properties>
+              <SSIS:Parameters />
             </SSIS:PackageMetaData>
           </SSIS:PackageInfo>
         </SSIS:DeploymentInfo>
