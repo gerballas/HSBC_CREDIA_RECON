@@ -1,0 +1,2768 @@
+﻿<?xml version="1.0"?>
+<DTS:Executable xmlns:DTS="www.microsoft.com/SqlServer/Dts"
+  DTS:refId="Package"
+  DTS:CreationDate="8/21/2026 11:39:03 AM"
+  DTS:CreationName="Microsoft.Package"
+  DTS:CreatorComputerName="MLTERMSRV"
+  DTS:CreatorName="BOAHQ\lampirni_p"
+  DTS:DTSID="{32DC02EB-68A0-4D29-BCE8-7497212A8F4B}"
+  DTS:ExecutableType="Microsoft.Package"
+  DTS:LastModifiedProductVersion="16.0.5467.0"
+  DTS:LocaleID="1032"
+  DTS:ObjectName="Deposit_checks"
+  DTS:PackageType="5"
+  DTS:VersionBuild="24"
+  DTS:VersionGUID="{04BBC75C-1C3D-494E-80BF-BEA344B8110D}">
+  <DTS:Property
+    DTS:Name="PackageFormatVersion">8</DTS:Property>
+  <DTS:Variables>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{0AE28B50-3E75-4AEE-BA19-913C8A93B50B}"
+      DTS:IncludeInDebugDump="2345"
+      DTS:Namespace="User"
+      DTS:ObjectName="DCVersion">
+      <DTS:VariableValue
+        DTS:DataType="8">DC3</DTS:VariableValue>
+    </DTS:Variable>
+  </DTS:Variables>
+  <DTS:Executables>
+    <DTS:Executable
+      DTS:refId="Package\Compute Run Version"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:Description="Execute SQL Task"
+      DTS:DTSID="{ACD6F7B5-AC9B-484C-848D-7ACAD93F9BB4}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Compute Run Version"
+      DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2022; © 2022 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{6821A5EC-D23A-4EAE-A8D7-C1BFCD7DE798}"
+          SQLTask:SqlStatementSource="SELECT ISNULL(MAX(RUN_VERSION), 0) + 1 AS NewRunVersion &#xA;FROM RECON.DEP_RECON_MASTER &#xA;WHERE DC_VERSION = ?;"
+          SQLTask:ResultType="ResultSetType_SingleRow" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+          <SQLTask:ResultBinding
+            SQLTask:ResultName="NewRunVersion"
+            SQLTask:DtsVariableName="User::DCVersion" />
+          <SQLTask:ParameterBinding
+            SQLTask:ParameterName="0"
+            SQLTask:DtsVariableName="User::DCVersion"
+            SQLTask:ParameterDirection="Input"
+            SQLTask:DataType="129"
+            SQLTask:ParameterSize="-1" />
+        </SQLTask:SqlTaskData>
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\Create Tables"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:Description="Execute SQL Task"
+      DTS:DTSID="{59EA03EB-A408-4365-B515-EF032CDDA4D1}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Create Tables"
+      DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2022; © 2022 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{6821A5EC-D23A-4EAE-A8D7-C1BFCD7DE798}"
+          SQLTask:SqlStatementSource="IF NOT EXISTS (&#xA;    SELECT 1 FROM sys.tables t JOIN sys.schemas s ON t.schema_id = s.schema_id&#xA;    WHERE s.name = 'RECON' AND t.name = 'DEP_RECON_MASTER'&#xA;)&#xA;BEGIN&#xA;    CREATE TABLE RECON.DEP_RECON_MASTER (&#xA;        CHECK_ID        VARCHAR(10)     NOT NULL,&#xA;        CHECK_NAME      VARCHAR(50)     NOT NULL,&#xA;        CATEGORY        VARCHAR(30)     NOT NULL,&#xA;        DESCRIPTION     VARCHAR(200)    NULL,&#xA;        TOTAL_RECORDS   INT             NOT NULL,&#xA;        VALID_COUNT     INT             NOT NULL,&#xA;        INVALID_COUNT   INT             NOT NULL,&#xA;        STATUS          VARCHAR(4)      NOT NULL,&#xA;        DC_VERSION      VARCHAR(5)      NOT NULL,&#xA;        RUN_VERSION     INT             NOT NULL,&#xA;        RUN_TIMESTAMP   DATETIME2(7)    NOT NULL,&#xA;        CONSTRAINT PK_DEP_RECON_MASTER PRIMARY KEY (CHECK_ID, DC_VERSION, RUN_VERSION)&#xA;    );&#xA;END&#xA;&#xA;IF NOT EXISTS (&#xA;    SELECT 1 FROM sys.tables t JOIN sys.schemas s ON t.schema_id = s.schema_id&#xA;    WHERE s.name = 'RECON' AND t.name = 'DEP_RECON_DETAIL'&#xA;)&#xA;BEGIN&#xA;    CREATE TABLE RECON.DEP_RECON_DETAIL (&#xA;        DETAIL_ID                  VARCHAR(20)     NOT NULL,&#xA;        CHECK_ID                   VARCHAR(10)     NOT NULL,&#xA;        CHECK_NAME                 VARCHAR(50)     NOT NULL,&#xA;        ACCOUNT_NO                 VARCHAR(30)     NULL,&#xA;        CUSTOMER_CODE              VARCHAR(30)     NULL,&#xA;        DEPOSIT_ACCOUNT_CATEGORY   VARCHAR(10)     NULL,&#xA;        HUB_VALUE                  VARCHAR(100)    NULL,&#xA;        NCIS_VALUE                 VARCHAR(100)    NULL,&#xA;        ISSUE                      VARCHAR(50)     NOT NULL,&#xA;        DC_VERSION                 VARCHAR(5)      NOT NULL,&#xA;        RUN_VERSION                INT             NOT NULL,&#xA;        RUN_TIMESTAMP              DATETIME2(7)    NOT NULL,&#xA;        CONSTRAINT PK_DEP_RECON_DETAIL PRIMARY KEY (DETAIL_ID, DC_VERSION, RUN_VERSION),&#xA;        CONSTRAINT FK_DEP_RECON_DETAIL_MASTER FOREIGN KEY (CHECK_ID, DC_VERSION, RUN_VERSION)&#xA;            REFERENCES RECON.DEP_RECON_MASTER (CHECK_ID, DC_VERSION, RUN_VERSION)&#xA;    );&#xA;&#xA;    CREATE INDEX IX_DEP_RECON_DETAIL_CHECK ON RECON.DEP_RECON_DETAIL (CHECK_ID, DC_VERSION, RUN_VERSION);&#xA;END" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\DFT_Detail"
+      DTS:CreationName="Microsoft.Pipeline"
+      DTS:Description="Data Flow Task"
+      DTS:DTSID="{0DC2FEAD-8739-48F6-9279-FBE072474767}"
+      DTS:ExecutableType="Microsoft.Pipeline"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="DFT_Detail"
+      DTS:TaskContact="Performs high-performance data extraction, transformation and loading;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <pipeline
+          version="1">
+          <components>
+            <component
+              refId="Package\DFT_Detail\Derived Column 1"
+              componentClassID="Microsoft.DerivedColumn"
+              contactInfo="Derived Column;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;0"
+              description="Creates new column values by applying expressions to transformation input columns. Create new columns or overwrite existing ones. For example, concatenate the values from the 'first name' and 'last name' column to make a 'full name' column."
+              name="Derived Column 1"
+              usesDispositions="true">
+              <inputs>
+                <input
+                  refId="Package\DFT_Detail\Derived Column 1.Inputs[Derived Column Input]"
+                  description="Input to the Derived Column Transformation"
+                  name="Derived Column Input">
+                  <inputColumns>
+                    <inputColumn
+                      refId="Package\DFT_Detail\Derived Column 1.Inputs[Derived Column Input].Columns[RUN_VERSION]"
+                      cachedDataType="r8"
+                      cachedName="RUN_VERSION"
+                      errorOrTruncationOperation="Computation"
+                      errorRowDisposition="FailComponent"
+                      lineageId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Output].Columns[RUN_VERSION]"
+                      truncationRowDisposition="FailComponent"
+                      usageType="readWrite">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.String"
+                          description="Derived Column Expression"
+                          name="Expression">@[User::DCVersion]</property>
+                        <property
+                          containsID="true"
+                          dataType="System.String"
+                          description="Derived Column Friendly Expression"
+                          expressionType="Notify"
+                          name="FriendlyExpression">@[User::DCVersion]</property>
+                      </properties>
+                    </inputColumn>
+                  </inputColumns>
+                  <externalMetadataColumns />
+                </input>
+              </inputs>
+              <outputs>
+                <output
+                  refId="Package\DFT_Detail\Derived Column 1.Outputs[Derived Column Output]"
+                  description="Default Output of the Derived Column Transformation"
+                  exclusionGroup="1"
+                  name="Derived Column Output"
+                  synchronousInputId="Package\DFT_Detail\Derived Column 1.Inputs[Derived Column Input]">
+                  <externalMetadataColumns />
+                </output>
+                <output
+                  refId="Package\DFT_Detail\Derived Column 1.Outputs[Derived Column Error Output]"
+                  description="Error Output of the Derived Column Transformation"
+                  exclusionGroup="1"
+                  isErrorOut="true"
+                  name="Derived Column Error Output"
+                  synchronousInputId="Package\DFT_Detail\Derived Column 1.Inputs[Derived Column Input]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\DFT_Detail\Derived Column 1.Outputs[Derived Column Error Output].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\DFT_Detail\Derived Column 1.Outputs[Derived Column Error Output].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\DFT_Detail\Derived Column 1.Outputs[Derived Column Error Output].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\DFT_Detail\Derived Column 1.Outputs[Derived Column Error Output].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+            <component
+              refId="Package\DFT_Detail\OLE DB Destination"
+              componentClassID="Microsoft.OLEDBDestination"
+              contactInfo="OLE DB Destination;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;4"
+              description="OLE DB Destination"
+              name="OLE DB Destination"
+              usesDispositions="true"
+              version="4">
+              <properties>
+                <property
+                  dataType="System.Int32"
+                  description="The number of seconds before a command times out.  A value of 0 indicates an infinite time-out."
+                  name="CommandTimeout">0</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the name of the database object used to open a rowset."
+                  name="OpenRowset">[RECON].[DEP_RECON_DETAIL]</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the variable that contains the name of the database object used to open a rowset."
+                  name="OpenRowsetVariable"></property>
+                <property
+                  dataType="System.String"
+                  description="The SQL command to be executed."
+                  name="SqlCommand"
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor"></property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the column code page to use when code page information is unavailable from the data source."
+                  name="DefaultCodePage">1253</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Forces the use of the DefaultCodePage property value when describing character data."
+                  name="AlwaysUseDefaultCodePage">false</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the mode used to access the database."
+                  name="AccessMode"
+                  typeConverter="AccessMode">3</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Indicates whether the values supplied for identity columns will be copied to the destination. If false, values for identity columns will be auto-generated at the destination. Applies only if fast load is turned on."
+                  name="FastLoadKeepIdentity">false</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Indicates whether the columns containing null will have null inserted in the destination. If false, columns containing null will have their default values inserted at the destination. Applies only if fast load is turned on."
+                  name="FastLoadKeepNulls">false</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies options to be used with fast load.  Applies only if fast load is turned on."
+                  name="FastLoadOptions">TABLOCK,CHECK_CONSTRAINTS</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies when commits are issued during data insertion.  A value of 0 specifies that one commit will be issued at the end of data insertion.  Applies only if fast load is turned on."
+                  name="FastLoadMaxInsertCommitSize">2147483647</property>
+              </properties>
+              <connections>
+                <connection
+                  refId="Package\DFT_Detail\OLE DB Destination.Connections[OleDbConnection]"
+                  connectionManagerID="{6821A5EC-D23A-4EAE-A8D7-C1BFCD7DE798}:external"
+                  connectionManagerRefId="Project.ConnectionManagers[10.15.12.37.MLT_DW_EDW]"
+                  description="The OLE DB runtime connection used to access the database."
+                  name="OleDbConnection" />
+              </connections>
+              <inputs>
+                <input
+                  refId="Package\DFT_Detail\OLE DB Destination.Inputs[OLE DB Destination Input]"
+                  errorOrTruncationOperation="Insert"
+                  errorRowDisposition="FailComponent"
+                  hasSideEffects="true"
+                  name="OLE DB Destination Input">
+                  <inputColumns>
+                    <inputColumn
+                      refId="Package\DFT_Detail\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[CHECK_ID]"
+                      cachedCodepage="1253"
+                      cachedDataType="str"
+                      cachedLength="50"
+                      cachedName="CHECK_ID"
+                      externalMetadataColumnId="Package\DFT_Detail\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[CHECK_ID]"
+                      lineageId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Output].Columns[CHECK_ID]" />
+                    <inputColumn
+                      refId="Package\DFT_Detail\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[CHECK_NAME]"
+                      cachedCodepage="1253"
+                      cachedDataType="str"
+                      cachedLength="50"
+                      cachedName="CHECK_NAME"
+                      externalMetadataColumnId="Package\DFT_Detail\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[CHECK_NAME]"
+                      lineageId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Output].Columns[CHECK_NAME]" />
+                    <inputColumn
+                      refId="Package\DFT_Detail\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[DC_VERSION]"
+                      cachedCodepage="1253"
+                      cachedDataType="str"
+                      cachedLength="3"
+                      cachedName="DC_VERSION"
+                      externalMetadataColumnId="Package\DFT_Detail\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[DC_VERSION]"
+                      lineageId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Output].Columns[DC_VERSION]" />
+                    <inputColumn
+                      refId="Package\DFT_Detail\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[RUN_VERSION]"
+                      cachedDataType="r8"
+                      cachedName="RUN_VERSION"
+                      externalMetadataColumnId="Package\DFT_Detail\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[RUN_VERSION]"
+                      lineageId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Output].Columns[RUN_VERSION]" />
+                    <inputColumn
+                      refId="Package\DFT_Detail\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[RUN_TIMESTAMP]"
+                      cachedDataType="dbTimeStamp"
+                      cachedName="RUN_TIMESTAMP"
+                      externalMetadataColumnId="Package\DFT_Detail\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[RUN_TIMESTAMP]"
+                      lineageId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Output].Columns[RUN_TIMESTAMP]" />
+                    <inputColumn
+                      refId="Package\DFT_Detail\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[DETAIL_ID]"
+                      cachedCodepage="1253"
+                      cachedDataType="str"
+                      cachedLength="20"
+                      cachedName="DETAIL_ID"
+                      externalMetadataColumnId="Package\DFT_Detail\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[DETAIL_ID]"
+                      lineageId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Output].Columns[DETAIL_ID]" />
+                    <inputColumn
+                      refId="Package\DFT_Detail\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[ACCOUNT_NO]"
+                      cachedCodepage="1253"
+                      cachedDataType="str"
+                      cachedLength="40"
+                      cachedName="ACCOUNT_NO"
+                      externalMetadataColumnId="Package\DFT_Detail\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ACCOUNT_NO]"
+                      lineageId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Output].Columns[ACCOUNT_NO]" />
+                    <inputColumn
+                      refId="Package\DFT_Detail\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[CUSTOMER_CODE]"
+                      cachedCodepage="1253"
+                      cachedDataType="str"
+                      cachedLength="40"
+                      cachedName="CUSTOMER_CODE"
+                      externalMetadataColumnId="Package\DFT_Detail\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[CUSTOMER_CODE]"
+                      lineageId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Output].Columns[CUSTOMER_CODE]" />
+                    <inputColumn
+                      refId="Package\DFT_Detail\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[DEPOSIT_ACCOUNT_CATEGORY]"
+                      cachedCodepage="1253"
+                      cachedDataType="str"
+                      cachedLength="10"
+                      cachedName="DEPOSIT_ACCOUNT_CATEGORY"
+                      externalMetadataColumnId="Package\DFT_Detail\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[DEPOSIT_ACCOUNT_CATEGORY]"
+                      lineageId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Output].Columns[DEPOSIT_ACCOUNT_CATEGORY]" />
+                    <inputColumn
+                      refId="Package\DFT_Detail\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[HUB_VALUE]"
+                      cachedCodepage="1253"
+                      cachedDataType="str"
+                      cachedLength="100"
+                      cachedName="HUB_VALUE"
+                      externalMetadataColumnId="Package\DFT_Detail\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[HUB_VALUE]"
+                      lineageId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Output].Columns[HUB_VALUE]" />
+                    <inputColumn
+                      refId="Package\DFT_Detail\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[NCIS_VALUE]"
+                      cachedCodepage="1253"
+                      cachedDataType="str"
+                      cachedLength="100"
+                      cachedName="NCIS_VALUE"
+                      externalMetadataColumnId="Package\DFT_Detail\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[NCIS_VALUE]"
+                      lineageId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Output].Columns[NCIS_VALUE]" />
+                    <inputColumn
+                      refId="Package\DFT_Detail\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[ISSUE]"
+                      cachedCodepage="1253"
+                      cachedDataType="str"
+                      cachedLength="50"
+                      cachedName="ISSUE"
+                      externalMetadataColumnId="Package\DFT_Detail\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ISSUE]"
+                      lineageId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Output].Columns[ISSUE]" />
+                  </inputColumns>
+                  <externalMetadataColumns
+                    isUsed="True">
+                    <externalMetadataColumn
+                      refId="Package\DFT_Detail\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[DETAIL_ID]"
+                      codePage="1253"
+                      dataType="str"
+                      length="20"
+                      name="DETAIL_ID" />
+                    <externalMetadataColumn
+                      refId="Package\DFT_Detail\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[CHECK_ID]"
+                      codePage="1253"
+                      dataType="str"
+                      length="10"
+                      name="CHECK_ID" />
+                    <externalMetadataColumn
+                      refId="Package\DFT_Detail\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[CHECK_NAME]"
+                      codePage="1253"
+                      dataType="str"
+                      length="50"
+                      name="CHECK_NAME" />
+                    <externalMetadataColumn
+                      refId="Package\DFT_Detail\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ACCOUNT_NO]"
+                      codePage="1253"
+                      dataType="str"
+                      length="30"
+                      name="ACCOUNT_NO" />
+                    <externalMetadataColumn
+                      refId="Package\DFT_Detail\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[CUSTOMER_CODE]"
+                      codePage="1253"
+                      dataType="str"
+                      length="150"
+                      name="CUSTOMER_CODE" />
+                    <externalMetadataColumn
+                      refId="Package\DFT_Detail\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[DEPOSIT_ACCOUNT_CATEGORY]"
+                      codePage="1253"
+                      dataType="str"
+                      length="10"
+                      name="DEPOSIT_ACCOUNT_CATEGORY" />
+                    <externalMetadataColumn
+                      refId="Package\DFT_Detail\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[HUB_VALUE]"
+                      codePage="1253"
+                      dataType="str"
+                      length="100"
+                      name="HUB_VALUE" />
+                    <externalMetadataColumn
+                      refId="Package\DFT_Detail\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[NCIS_VALUE]"
+                      codePage="1253"
+                      dataType="str"
+                      length="100"
+                      name="NCIS_VALUE" />
+                    <externalMetadataColumn
+                      refId="Package\DFT_Detail\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ISSUE]"
+                      codePage="1253"
+                      dataType="str"
+                      length="50"
+                      name="ISSUE" />
+                    <externalMetadataColumn
+                      refId="Package\DFT_Detail\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[DC_VERSION]"
+                      codePage="1253"
+                      dataType="str"
+                      length="5"
+                      name="DC_VERSION" />
+                    <externalMetadataColumn
+                      refId="Package\DFT_Detail\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[RUN_VERSION]"
+                      dataType="i4"
+                      name="RUN_VERSION" />
+                    <externalMetadataColumn
+                      refId="Package\DFT_Detail\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[RUN_TIMESTAMP]"
+                      dataType="wstr"
+                      length="27"
+                      name="RUN_TIMESTAMP" />
+                  </externalMetadataColumns>
+                </input>
+              </inputs>
+              <outputs>
+                <output
+                  refId="Package\DFT_Detail\OLE DB Destination.Outputs[OLE DB Destination Error Output]"
+                  exclusionGroup="1"
+                  isErrorOut="true"
+                  name="OLE DB Destination Error Output"
+                  synchronousInputId="Package\DFT_Detail\OLE DB Destination.Inputs[OLE DB Destination Input]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\DFT_Detail\OLE DB Destination.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\DFT_Detail\OLE DB Destination.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\DFT_Detail\OLE DB Destination.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\DFT_Detail\OLE DB Destination.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+            <component
+              refId="Package\DFT_Detail\Oracle Source 1"
+              componentClassID="Microsoft.SSISOracleSrc"
+              contactInfo="Oracle Source;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;1"
+              description="Oracle Source"
+              name="Oracle Source 1"
+              usesDispositions="true"
+              version="1">
+              <properties>
+                <property
+                  dataType="System.String"
+                  description="The name of the table to be fetched."
+                  expressionType="Notify"
+                  name="TableName"></property>
+                <property
+                  dataType="System.String"
+                  description="The SQL command to be executed."
+                  expressionType="Notify"
+                  name="SqlCommand"
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor, Microsoft.DataTransformationServices.Controls, Version=16.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91">-- ====================================================================
+-- DEP_RECON — DETAIL v3
+-- Τροφοδοτεί: RECON.DEP_RECON_DETAIL
+-- Πηγή λογικής: ενημερωμένο result set (33 έλεγχοι: A1-A13, G2-G4,
+-- B1-B3, E1-E2, E4, D1-D7, D10-D12, D14), αυτούσια business logic.
+-- Προστέθηκαν μόνο (ίδιο pattern με V2):
+--   - CHECK_ID: εξάγεται αυτόματα από το CHECK_NAME (πριν την 1η underscore)
+--   - DETAIL_ID: '&lt;CHECK_ID&gt;_00001', ...
+--   - DC_VERSION, RUN_VERSION (placeholder=1 standalone test, στο SSIS
+--     αντικαθίσταται μέσω Derived Column), RUN_TIMESTAMP
+--
+-- ΣΗΜΕΙΩΣΗ (να ελεγχθεί με τον senior): οι ελέγχοι D10, D11, D12, D14
+-- έχουν στα σχόλια πηγής numbering D8, D9, D10, D11 αντίστοιχα, αλλά
+-- το πραγματικό CHECK_NAME literal (άρα και το CHECK_ID που παράγεται
+-- εδώ) είναι D10/D11/D12/D14 -- δηλαδή λείπουν D8, D9, D13. Δεν το άλλαξα,
+-- κράτησα ό,τι δόθηκε αυτούσιο. Αν είναι λάθος αρίθμησης, πες μου να
+-- διορθώσω τα CHECK_NAME literals.
+-- ====================================================================
+SELECT
+    CAST(CHECK_ID || '_' || TO_CHAR(ROW_NUMBER() OVER (PARTITION BY CHECK_ID ORDER BY ACCOUNT_NO), 'FM0000000') AS VARCHAR2(20)) AS DETAIL_ID,
+    CAST(CHECK_ID AS VARCHAR2(10)) AS CHECK_ID,
+    CAST(CHECK_NAME AS VARCHAR2(50)) AS CHECK_NAME,
+    CAST(ACCOUNT_NO AS VARCHAR2(30)) AS ACCOUNT_NO,
+    CAST(CUSTOMER_CODE AS VARCHAR2(30)) AS CUSTOMER_CODE,
+    CAST(DEPOSIT_ACCOUNT_CATEGORY AS VARCHAR2(10)) AS DEPOSIT_ACCOUNT_CATEGORY,
+    CAST(HUB_VALUE AS VARCHAR2(100)) AS HUB_VALUE,
+    CAST(NCIS_VALUE AS VARCHAR2(100)) AS NCIS_VALUE,
+    CAST(ISSUE AS VARCHAR2(50)) AS ISSUE,
+    'DC3' AS DC_VERSION,
+    1 AS RUN_VERSION,  -- TESTING ONLY: στο SSIS αντικαθίσταται από @[User::RunVersion] μέσω Derived Column.
+    SYSDATE AS RUN_TIMESTAMP
+FROM (
+    SELECT
+        F.*,
+        CAST(SUBSTR(CHECK_NAME, 1, INSTR(CHECK_NAME, '_') - 1) AS VARCHAR2(10)) AS CHECK_ID
+    FROM (
+
+        --==============================================================
+        --A1. Accounts στο HUB (DD) που δεν υπάρχουν στο NCIS
+        SELECT
+          'A1_ACCOUNT_MISSING_IN_NCIS' AS CHECK_NAME,
+          H.ACCOUNT_NO, H.CUSTOMER_CODE, 'DD' AS DEPOSIT_ACCOUNT_CATEGORY,
+          CAST(NULL AS VARCHAR2(100)) AS HUB_VALUE, CAST(NULL AS VARCHAR2(100)) AS NCIS_VALUE,
+          'MISSING_IN_PROFITS' AS ISSUE
+        FROM (
+          SELECT TRIM(H.CUSTOMER_CODE) AS CUSTOMER_CODE, TRIM(H.ACCOUNT_NO) AS ACCOUNT_NO FROM HUB_MT_DDACMSP H
+        ) H
+        LEFT JOIN (
+          SELECT TRIM(N.Account_Number) AS ACCOUNT_NUMBER FROM NCIS_Deposits N
+        ) P ON P.ACCOUNT_NUMBER = H.ACCOUNT_NO
+        WHERE P.ACCOUNT_NUMBER IS NULL
+
+        UNION ALL
+        --==============================================================
+        --A2. Accounts στο NCIS που δεν υπάρχουν καθόλου στο HUB (ούτε DD, ούτε TD)
+        SELECT
+          'A2_ACCOUNT_MISSING_IN_HUB' AS CHECK_NAME,
+          P.ACCOUNT_NUMBER, P.CUSTOMER_CODE, COALESCE(H.DEPOSIT_ACCOUNT_CATEGORY, T.DEPOSIT_ACCOUNT_CATEGORY, 'NOT_FOUND'),
+          CAST(NULL AS VARCHAR2(100)), CAST(NULL AS VARCHAR2(100)),
+          'MISSING_IN_HUB' AS ISSUE
+        FROM (
+          SELECT TRIM(N.Account_Number) AS ACCOUNT_NUMBER, TRIM(N.Customer_Code) AS CUSTOMER_CODE FROM NCIS_Deposits N
+        ) P
+        LEFT JOIN (SELECT TRIM(ACCOUNT_NO) AS ACCOUNT_NO, 'TD' AS DEPOSIT_ACCOUNT_CATEGORY FROM HUB_MT_TDACMSP) T ON T.ACCOUNT_NO = P.ACCOUNT_NUMBER
+        LEFT JOIN (SELECT TRIM(ACCOUNT_NO) AS ACCOUNT_NO, 'DD' AS DEPOSIT_ACCOUNT_CATEGORY FROM HUB_MT_DDACMSP) H ON H.ACCOUNT_NO = P.ACCOUNT_NUMBER
+        WHERE H.ACCOUNT_NO IS NULL AND T.ACCOUNT_NO IS NULL
+
+        UNION ALL
+        --==============================================================
+        --A3. Duplicate account numbers μέσα στο HUB (DD + TD)
+        SELECT
+          'A3_DUPLICATE_ACCOUNT_HUB' AS CHECK_NAME,
+          ACCOUNT_NO, CAST(NULL AS VARCHAR2(30)), DEPOSIT_ACCOUNT_CATEGORY,
+          TO_CHAR(OCCURRENCES), CAST(NULL AS VARCHAR2(100)),
+          'DUPLICATE_ACCOUNT_NO' AS ISSUE
+        FROM (
+          SELECT ACCOUNT_NO, DEPOSIT_ACCOUNT_CATEGORY, COUNT(*) AS OCCURRENCES
+          FROM (
+            SELECT TRIM(ACCOUNT_NO) AS ACCOUNT_NO, 'DD' AS DEPOSIT_ACCOUNT_CATEGORY FROM HUB_MT_DDACMSP
+            UNION ALL
+            SELECT TRIM(ACCOUNT_NO) AS ACCOUNT_NO, 'TD' AS DEPOSIT_ACCOUNT_CATEGORY FROM HUB_MT_TDACMSP
+          )
+          GROUP BY ACCOUNT_NO, DEPOSIT_ACCOUNT_CATEGORY
+          HAVING COUNT(*) &gt; 1
+        )
+
+        UNION ALL
+        --==============================================================
+        --A4. NULL/κενό account number - HUB (DD + TD)
+        SELECT
+          'A4_NULL_ACCOUNT_NO_HUB' AS CHECK_NAME,
+          ACCOUNT_NO, CUSTOMER_CODE, DEPOSIT_ACCOUNT_CATEGORY,
+          CAST(NULL AS VARCHAR2(100)), CAST(NULL AS VARCHAR2(100)),
+          'NULL_OR_EMPTY_ACCOUNT_NO' AS ISSUE
+        FROM (
+          SELECT TRIM(CUSTOMER_CODE) AS CUSTOMER_CODE, TRIM(TO_CHAR(ACCOUNT_NO)) AS ACCOUNT_NO, 'DD' AS DEPOSIT_ACCOUNT_CATEGORY FROM HUB_MT_DDACMSP
+          UNION ALL
+          SELECT TRIM(CUSTOMER_CODE) AS CUSTOMER_CODE, TRIM(TO_CHAR(ACCOUNT_NO)) AS ACCOUNT_NO, 'TD' AS DEPOSIT_ACCOUNT_CATEGORY FROM HUB_MT_TDACMSP
+        )
+        WHERE ACCOUNT_NO IS NULL OR TRIM(ACCOUNT_NO) = ''
+
+        UNION ALL
+        --==============================================================
+        --A5. NULL/κενό account number - NCIS
+        SELECT
+          'A5_NULL_ACCOUNT_NO_NCIS' AS CHECK_NAME,
+          TO_CHAR(Account_Number), TRIM(TO_CHAR(Customer_Code)), CAST(NULL AS VARCHAR2(10)),
+          CAST(NULL AS VARCHAR2(100)), CAST(NULL AS VARCHAR2(100)),
+          'NULL_OR_EMPTY_ACCOUNT_NUMBER' AS ISSUE
+        FROM NCIS_Deposits
+        WHERE Account_Number IS NULL OR TRIM(TO_CHAR(Account_Number)) = ''
+
+        UNION ALL
+        --==============================================================
+        --A6. Duplicate account numbers μέσα στο NCIS
+        SELECT
+          'A6_DUPLICATE_ACCOUNT_NCIS' AS CHECK_NAME,
+          ACCOUNT_NUMBER, CAST(NULL AS VARCHAR2(30)), CAST(NULL AS VARCHAR2(10)),
+          CAST(NULL AS VARCHAR2(100)), TO_CHAR(OCCURRENCES),
+          'DUPLICATE_ACCOUNT_NUMBER' AS ISSUE
+        FROM (
+          SELECT TRIM(Account_Number) AS ACCOUNT_NUMBER, COUNT(*) AS OCCURRENCES
+          FROM NCIS_Deposits
+          GROUP BY TRIM(Account_Number)
+          HAVING COUNT(*) &gt; 1
+        )
+
+        UNION ALL
+        --==============================================================
+        --A7. NULL/κενό customer_code - HUB (DD + TD)
+        SELECT
+          'A7_NULL_CUSTOMER_CODE_HUB' AS CHECK_NAME,
+          ACCOUNT_NO, CUSTOMER_CODE, DEPOSIT_ACCOUNT_CATEGORY,
+          CAST(NULL AS VARCHAR2(100)), CAST(NULL AS VARCHAR2(100)),
+          'NULL_OR_EMPTY_CUSTOMER_CODE' AS ISSUE
+        FROM (
+          SELECT TRIM(ACCOUNT_NO) AS ACCOUNT_NO, TO_CHAR(CUSTOMER_CODE) AS CUSTOMER_CODE, 'DD' AS DEPOSIT_ACCOUNT_CATEGORY FROM HUB_MT_DDACMSP
+          UNION ALL
+          SELECT TRIM(ACCOUNT_NO) AS ACCOUNT_NO, TO_CHAR(CUSTOMER_CODE) AS CUSTOMER_CODE, 'TD' AS DEPOSIT_ACCOUNT_CATEGORY FROM HUB_MT_TDACMSP
+        )
+        WHERE CUSTOMER_CODE IS NULL OR TRIM(CUSTOMER_CODE) = ''
+
+        UNION ALL
+        --==============================================================
+        --A8. NULL/κενό customer_code - NCIS
+        SELECT
+          'A8_NULL_CUSTOMER_CODE_NCIS' AS CHECK_NAME,
+          TO_CHAR(Account_Number), TO_CHAR(Customer_Code), CAST(NULL AS VARCHAR2(10)),
+          CAST(NULL AS VARCHAR2(100)), CAST(NULL AS VARCHAR2(100)),
+          'NULL_OR_EMPTY_CUSTOMER_CODE' AS ISSUE
+        FROM NCIS_Deposits
+        WHERE Customer_Code IS NULL OR TRIM(TO_CHAR(Customer_Code)) = ''
+
+        UNION ALL
+        --==============================================================
+        --A9. Λογαριασμός που υπάρχει ΚΑΙ στο DD ΚΑΙ στο TD ταυτόχρονα
+        SELECT
+          'A9_ACCOUNT_IN_BOTH_DD_TD' AS CHECK_NAME,
+          DF_ACCOUNT_NO, DD_CUSTOMER_CODE, CAST(NULL AS VARCHAR2(10)),
+          TD_CUSTOMER_CODE, CAST(NULL AS VARCHAR2(100)),
+          'ACCOUNT_IN_BOTH_DD_AND_TD' AS ISSUE
+        FROM (
+          SELECT TRIM(DF.ACCOUNT_NO) AS DF_ACCOUNT_NO, TRIM(DF.CUSTOMER_CODE) AS DD_CUSTOMER_CODE, TRIM(TD.CUSTOMER_CODE) AS TD_CUSTOMER_CODE
+          FROM HUB_MT_DDACMSP DF
+          JOIN HUB_MT_TDACMSP TD ON TRIM(TD.ACCOUNT_NO) = TRIM(DF.ACCOUNT_NO)
+        )
+
+        UNION ALL
+        --==============================================================
+        --A10. NULL/κενό product code - HUB (DD + TD)
+        SELECT
+          'A10_NULL_PRODUCT_CODE_HUB' AS CHECK_NAME,
+          ACCOUNT_NO, CUSTOMER_CODE, DEPOSIT_ACCOUNT_CATEGORY,
+          CAST(NULL AS VARCHAR2(100)), CAST(NULL AS VARCHAR2(100)),
+          'NULL_OR_EMPTY_PRODUCT_CODE' AS ISSUE
+        FROM (
+          SELECT TRIM(ACCOUNT_NO) AS ACCOUNT_NO, TRIM(CUSTOMER_CODE) AS CUSTOMER_CODE, DFAPTY AS PRODUCT_CODE, 'DD/OVD' AS DEPOSIT_ACCOUNT_CATEGORY FROM HUB_MT_DDACMSP
+          UNION ALL
+          SELECT TRIM(ACCOUNT_NO) AS ACCOUNT_NO, TRIM(CUSTOMER_CODE) AS CUSTOMER_CODE, TDAPTY AS PRODUCT_CODE, 'TD' AS DEPOSIT_ACCOUNT_CATEGORY FROM HUB_MT_TDACMSP
+        )
+        WHERE PRODUCT_CODE IS NULL OR TRIM(PRODUCT_CODE) = ''
+
+        UNION ALL
+        --==============================================================
+        --A11. NULL account type - NCIS
+        SELECT
+          'A11_NULL_ACCOUNT_TYPE_NCIS' AS CHECK_NAME,
+          TO_CHAR(Account_Number), TO_CHAR(Customer_Code), CAST(NULL AS VARCHAR2(10)),
+          CAST(NULL AS VARCHAR2(100)), CAST(NULL AS VARCHAR2(100)),
+          'NULL_OR_EMPTY_ACCOUNT_TYPE' AS ISSUE
+        FROM NCIS_Deposits
+        WHERE Account_Type IS NULL
+
+        UNION ALL
+        --==============================================================
+        --A12. NULL/κενό branch code - HUB (DD + TD)
+        SELECT
+          'A12_NULL_BRANCH_CODE_HUB' AS CHECK_NAME,
+          ACCOUNT_NO, CUSTOMER_CODE, DEPOSIT_ACCOUNT_CATEGORY,
+          CAST(NULL AS VARCHAR2(100)), CAST(NULL AS VARCHAR2(100)),
+          'NULL_OR_EMPTY_BRANCH_CODE' AS ISSUE
+        FROM (
+          SELECT TRIM(ACCOUNT_NO) AS ACCOUNT_NO, TRIM(CUSTOMER_CODE) AS CUSTOMER_CODE, DFACB AS BRANCH_CODE, 'DD' AS DEPOSIT_ACCOUNT_CATEGORY FROM HUB_MT_DDACMSP
+          UNION ALL
+          SELECT TRIM(ACCOUNT_NO) AS ACCOUNT_NO, TRIM(CUSTOMER_CODE) AS CUSTOMER_CODE, TDACB AS BRANCH_CODE, 'TD' AS DEPOSIT_ACCOUNT_CATEGORY FROM HUB_MT_TDACMSP
+        )
+        WHERE BRANCH_CODE IS NULL
+
+        UNION ALL
+        --==============================================================
+        --A13. Branch code - HUB vs NCIS - μόνο MISMATCH
+        SELECT
+          'A13_BRANCH_MISMATCH' AS CHECK_NAME,
+          H.ACCOUNT_NO, CAST(NULL AS VARCHAR2(30)), H.DEPOSIT_ACCOUNT_CATEGORY,
+          H.HUB_BRANCH, P.PROFITS_UNIT_CODE,
+          'BRANCH_MISMATCH' AS ISSUE
+        FROM (
+          SELECT TRIM(ACCOUNT_NO) AS ACCOUNT_NO, TRIM(TO_CHAR(DFACB)) AS HUB_BRANCH, 'DD' AS DEPOSIT_ACCOUNT_CATEGORY FROM HUB_MT_DDACMSP
+          UNION ALL
+          SELECT TRIM(ACCOUNT_NO) AS ACCOUNT_NO, TRIM(TO_CHAR(TDACB)) AS HUB_BRANCH, 'TD' AS DEPOSIT_ACCOUNT_CATEGORY FROM HUB_MT_TDACMSP
+        ) H
+        JOIN (
+          SELECT TRIM(Account_Number) AS ACCOUNT_NUMBER, TRIM(TO_CHAR(Unit_Code)) AS PROFITS_UNIT_CODE FROM NCIS_Deposits
+        ) P ON P.ACCOUNT_NUMBER = H.ACCOUNT_NO
+        WHERE NVL(H.HUB_BRANCH,'x') &lt;&gt; NVL(P.PROFITS_UNIT_CODE,'x')
+
+        UNION ALL
+        --==============================================================
+        --G2. UNMAPPED product code - HUB (DD + TD)
+        SELECT
+          'G2_UNMAPPED_PRODUCT_CODE' AS CHECK_NAME,
+          ACCOUNT_NO, CUSTOMER_CODE, SOURCE_TABLE,
+          HUB_RAW_PRODUCT_CODE, CAST(NULL AS VARCHAR2(100)),
+          'UNMAPPED' AS ISSUE
+        FROM (
+          SELECT TRIM(DF.ACCOUNT_NO) AS ACCOUNT_NO, TRIM(DF.CUSTOMER_CODE) AS CUSTOMER_CODE,
+            TRIM(DF.DFAPTY) AS HUB_RAW_PRODUCT_CODE, 'DD' AS SOURCE_TABLE,
+            TRIM(DF.DFSTUS) AS STATUS, NVL(MAP.PRODUCT_TYPE, 'UNMAPPED') AS HUB_PRODUCT_TYPE
+          FROM HUB_MT_DDACMSP DF
+          LEFT JOIN MG_HGR_DEPOSITS_PRODUCT_MAPPING MAP ON MAP.HSBC_CODE = TRIM(DF.DFAPTY)
+          UNION ALL
+          SELECT TRIM(TD.ACCOUNT_NO) AS ACCOUNT_NO, TRIM(TD.CUSTOMER_CODE) AS CUSTOMER_CODE,
+            TRIM(TD.TDFAPT) AS HUB_RAW_PRODUCT_CODE, 'TD' AS SOURCE_TABLE,
+            TRIM(TD.TDSTUS) AS STATUS, NVL(MAP.PRODUCT_TYPE, 'UNMAPPED') AS HUB_PRODUCT_TYPE
+          FROM HUB_MT_TDACMSP TD
+          LEFT JOIN MG_HGR_DEPOSITS_PRODUCT_MAPPING MAP ON MAP.HSBC_CODE = TRIM(TD.TDAPTY)
+        )
+        WHERE HUB_PRODUCT_TYPE = 'UNMAPPED'
+          AND STATUS = 1
+
+        UNION ALL
+        --==============================================================
+        --G3. Product type MISMATCH
+        SELECT
+          'G3_PRODUCT_TYPE_MISMATCH' AS CHECK_NAME,
+          H.ACCOUNT_NO, H.CUSTOMER_CODE, H.DEPOSIT_ACCOUNT_CATEGORY,
+          H.HUB_PRODUCT_TYPE, P.PROFITS_PRODUCT_TYPE,
+          'MISMATCH' AS ISSUE
+        FROM (
+          SELECT TRIM(DF.ACCOUNT_NO) AS ACCOUNT_NO, TRIM(DF.CUSTOMER_CODE) AS CUSTOMER_CODE,
+            NVL(MAP.PRODUCT_TYPE, 'UNMAPPED') AS HUB_PRODUCT_TYPE, 'DD' AS DEPOSIT_ACCOUNT_CATEGORY
+          FROM HUB_MT_DDACMSP DF
+          LEFT JOIN MG_HGR_DEPOSITS_PRODUCT_MAPPING MAP ON MAP.HSBC_CODE = TRIM(DF.DFAPTY)
+          UNION ALL
+          SELECT TRIM(TD.ACCOUNT_NO) AS ACCOUNT_NO, TRIM(TD.CUSTOMER_CODE) AS CUSTOMER_CODE,
+            NVL(MAP.PRODUCT_TYPE, 'UNMAPPED') AS HUB_PRODUCT_TYPE, 'TD' AS DEPOSIT_ACCOUNT_CATEGORY
+          FROM HUB_MT_TDACMSP TD
+          LEFT JOIN MG_HGR_DEPOSITS_PRODUCT_MAPPING MAP ON MAP.HSBC_CODE = TRIM(TD.TDAPTY)
+        ) H
+        JOIN (
+          SELECT TRIM(N.Account_Number) AS ACCOUNT_NUMBER, TRIM(N.Customer_Code) AS CUSTOMER_CODE,
+            NVL(MAP.PRODUCT_TYPE, 'OTHER') AS PROFITS_PRODUCT_TYPE
+          FROM NCIS_Deposits N
+          LEFT JOIN (SELECT DISTINCT PROFITS_CODE, PRODUCT_TYPE FROM MG_HGR_DEPOSITS_PRODUCT_MAPPING) MAP
+            ON MAP.PROFITS_CODE = TO_CHAR(N.Account_Type)
+        ) P ON P.ACCOUNT_NUMBER = H.ACCOUNT_NO
+        WHERE NVL(H.HUB_PRODUCT_TYPE, CHR(1)) &lt;&gt; NVL(P.PROFITS_PRODUCT_TYPE, CHR(1))
+
+        UNION ALL
+        --==============================================================
+        --G4. Account Currency mismatch
+        SELECT
+          'G4_CURRENCY_MISMATCH' AS CHECK_NAME,
+          H.ACCOUNT_NO, CAST(NULL AS VARCHAR2(30)), H.DEPOSIT_ACCOUNT_CATEGORY,
+          H.HUB_CURRENCY, P.PROFITS_CURRENCY,
+          'MISMATCH' AS ISSUE
+        FROM (
+          SELECT TRIM(ACCOUNT_NO) AS ACCOUNT_NO, TRIM(DFCYCD) AS HUB_CURRENCY, 'DD' AS DEPOSIT_ACCOUNT_CATEGORY FROM HUB_MT_DDACMSP
+          UNION ALL
+          SELECT TRIM(ACCOUNT_NO) AS ACCOUNT_NO, TRIM(TDCYCD) AS HUB_CURRENCY, 'TD' AS DEPOSIT_ACCOUNT_CATEGORY FROM HUB_MT_TDACMSP
+        ) H
+        JOIN (
+          SELECT TRIM(Account_Number) AS ACCOUNT_NUMBER, TRIM(Account_Currency) AS PROFITS_CURRENCY FROM NCIS_Deposits
+        ) P ON P.ACCOUNT_NUMBER = H.ACCOUNT_NO
+        WHERE NVL(H.HUB_CURRENCY,'x') &lt;&gt; NVL(P.PROFITS_CURRENCY,'x')
+
+        UNION ALL
+        --==============================================================
+        --B1. Customer_Code consistency (DD + TD, με joint resolution)
+        SELECT
+          'B1_CUSTOMER_CODE_MISMATCH' AS CHECK_NAME,
+          M.ACCOUNT_NO, M.HUB_CUSTOMER_CODE, M.DEPOSIT_ACCOUNT_CATEGORY,
+          TO_CHAR(M.PRFT_CUST_ID), TO_CHAR(N.Customer_Code),
+          'MISMATCH' AS ISSUE
+        FROM (
+          SELECT
+            JR.ACCOUNT_NO, JR.DEPOSIT_ACCOUNT_CATEGORY, JR.HUB_CUSTOMER_CODE, JR.EFFECTIVE_CUSTOMER_CODE, MCI.PRFT_CUST_ID
+          FROM (
+            SELECT
+              A.ACCOUNT_NO, A.DEPOSIT_ACCOUNT_CATEGORY, A.HUB_CUSTOMER_CODE,
+              CASE WHEN J.CUSTOMER_1 IS NOT NULL THEN TRIM(J.CUSTOMER_BENEF_LIST) ELSE A.HUB_CUSTOMER_CODE END AS EFFECTIVE_CUSTOMER_CODE
+            FROM (
+              SELECT TRIM(ACCOUNT_NO) AS ACCOUNT_NO, TRIM(CUSTOMER_CODE) AS HUB_CUSTOMER_CODE, 'DD' AS DEPOSIT_ACCOUNT_CATEGORY FROM HUB_MT_DDACMSP
+              UNION ALL
+              SELECT TRIM(ACCOUNT_NO) AS ACCOUNT_NO, TRIM(CUSTOMER_CODE) AS HUB_CUSTOMER_CODE, 'TD' AS DEPOSIT_ACCOUNT_CATEGORY FROM HUB_MT_TDACMSP
+            ) A
+            LEFT JOIN HGR_MG_JOINT J ON J.CUSTOMER_1 = A.HUB_CUSTOMER_CODE AND J.SERIAL_NO = 1
+          ) JR
+          LEFT JOIN MG_CUSTOMER_INTER MCI ON TRIM(TO_CHAR(MCI.CUSTOMER_CODE)) = TRIM(TO_CHAR(JR.EFFECTIVE_CUSTOMER_CODE))
+        ) M
+        LEFT JOIN NCIS_Deposits N ON TRIM(TO_CHAR(N.Account_Number)) = TO_CHAR(M.ACCOUNT_NO)
+        WHERE TRIM(TO_CHAR(M.PRFT_CUST_ID)) &lt;&gt; TRIM(TO_CHAR(N.Customer_Code))
+
+        UNION ALL
+        --==============================================================
+        --B3. Orphan accounts - EFFECTIVE_CUSTOMER_CODE (μετά joint) χωρίς
+        -- αντιστοίχιση στο MG_CUSTOMER_INTER (DD + TD)
+        SELECT
+          'B3_ORPHAN_NO_MAPPING' AS CHECK_NAME,
+          JR.ACCOUNT_NO, JR.HUB_CUSTOMER_CODE, JR.DEPOSIT_ACCOUNT_CATEGORY,
+          JR.EFFECTIVE_CUSTOMER_CODE, CAST(NULL AS VARCHAR2(30)),
+          'NO_MAPPING_FOUND_IN_MG_CUSTOMER_INTER' AS ISSUE
+        FROM (
+          SELECT
+            A.ACCOUNT_NO, A.DEPOSIT_ACCOUNT_CATEGORY, A.HUB_CUSTOMER_CODE,
+            CASE WHEN J.CUSTOMER_1 IS NOT NULL THEN TRIM(J.CUSTOMER_BENEF_LIST) ELSE A.HUB_CUSTOMER_CODE END AS EFFECTIVE_CUSTOMER_CODE
+          FROM (
+            SELECT TRIM(ACCOUNT_NO) AS ACCOUNT_NO, TRIM(CUSTOMER_CODE) AS HUB_CUSTOMER_CODE, 'DD' AS DEPOSIT_ACCOUNT_CATEGORY FROM HUB_MT_DDACMSP
+            UNION ALL
+            SELECT TRIM(ACCOUNT_NO) AS ACCOUNT_NO, TRIM(CUSTOMER_CODE) AS HUB_CUSTOMER_CODE, 'TD' AS DEPOSIT_ACCOUNT_CATEGORY FROM HUB_MT_TDACMSP
+          ) A
+          LEFT JOIN HGR_MG_JOINT J ON J.CUSTOMER_1 = A.HUB_CUSTOMER_CODE AND J.SERIAL_NO = 1
+        ) JR
+        WHERE NOT EXISTS (
+          SELECT 1 FROM MG_CUSTOMER_INTER MCI
+          WHERE TRIM(TO_CHAR(MCI.CUSTOMER_CODE)) = TRIM(TO_CHAR(JR.EFFECTIVE_CUSTOMER_CODE))
+        )
+
+        UNION ALL
+        --==============================================================
+        --B2. Αριθμός beneficiaries - HUB vs NCIS (0 joint = 1 δικαιούχος, όχι mismatch)
+        SELECT
+          'B2_BENEFICIARIES_MISMATCH' AS CHECK_NAME,
+          H.ACCOUNT_NO, H.HUB_CUSTOMER_CODE, H.DEPOSIT_ACCOUNT_CATEGORY,
+          TO_CHAR(NVL(B.HUB_BENEF_CNT, 0)), TO_CHAR(NVL(P.PROFITS_BENEF_CNT, 0)),
+          'MISMATCH' AS ISSUE
+        FROM (
+          SELECT TRIM(ACCOUNT_NO) AS ACCOUNT_NO, TRIM(CUSTOMER_CODE) AS HUB_CUSTOMER_CODE, 'DD' AS DEPOSIT_ACCOUNT_CATEGORY FROM HUB_MT_DDACMSP
+          UNION ALL
+          SELECT TRIM(ACCOUNT_NO) AS ACCOUNT_NO, TRIM(CUSTOMER_CODE) AS HUB_CUSTOMER_CODE, 'TD' AS DEPOSIT_ACCOUNT_CATEGORY FROM HUB_MT_TDACMSP
+        ) H
+        LEFT JOIN (
+          SELECT TRIM(CUSTOMER_1) AS CUSTOMER_1, COUNT(*) AS HUB_BENEF_CNT FROM HGR_MG_JOINT GROUP BY TRIM(CUSTOMER_1)
+        ) B ON B.CUSTOMER_1 = H.HUB_CUSTOMER_CODE
+        JOIN (
+          SELECT TRIM(Account_Number) AS ACCOUNT_NUMBER, Number_Of_Beneficiaries AS PROFITS_BENEF_CNT FROM NCIS_Deposits
+        ) P ON P.ACCOUNT_NUMBER = H.ACCOUNT_NO
+        WHERE CASE WHEN NVL(B.HUB_BENEF_CNT, 0) = 0 THEN 1 ELSE NVL(B.HUB_BENEF_CNT, 0) END &lt;&gt; NVL(P.PROFITS_BENEF_CNT, 0)
+
+        UNION ALL
+        --==============================================================
+        --E1. Account Status - HUB (DFSTUS/TDSTUS) vs NCIS (Account_Status)
+        SELECT
+          'E1_STATUS_MISMATCH' AS CHECK_NAME,
+          H.ACCOUNT_NO, CAST(NULL AS VARCHAR2(30)), H.DEPOSIT_ACCOUNT_CATEGORY,
+          H.HUB_STATUS, P.PROFITS_STATUS,
+          'MISMATCH' AS ISSUE
+        FROM (
+          SELECT TRIM(ACCOUNT_NO) AS ACCOUNT_NO, TRIM(DFSTUS) AS HUB_STATUS, 'DD' AS DEPOSIT_ACCOUNT_CATEGORY FROM HUB_MT_DDACMSP
+          UNION ALL
+          SELECT TRIM(ACCOUNT_NO) AS ACCOUNT_NO, TRIM(TDSTUS) AS HUB_STATUS, 'TD' AS DEPOSIT_ACCOUNT_CATEGORY FROM HUB_MT_TDACMSP
+        ) H
+        JOIN (
+          SELECT TRIM(Account_Number) AS ACCOUNT_NUMBER, TRIM(Account_Status) AS PROFITS_STATUS FROM NCIS_Deposits
+        ) P ON P.ACCOUNT_NUMBER = H.ACCOUNT_NO
+        WHERE NVL(H.HUB_STATUS,'x') &lt;&gt; NVL(P.PROFITS_STATUS,'x')
+
+        UNION ALL
+        --==============================================================
+        --E2. Ημερομηνία ανοίγματος - HUB (DFDTAO/TDDTAO) vs NCIS (Open_Date)
+        SELECT
+          'E2_OPEN_DATE_MISMATCH' AS CHECK_NAME,
+          H.ACCOUNT_NO, CAST(NULL AS VARCHAR2(30)), H.DEPOSIT_ACCOUNT_CATEGORY,
+          TO_CHAR(TO_DATE(TRIM(TO_CHAR(H.HUB_OPEN_DATE)), 'YYYYMMDD'), 'YYYY-MM-DD'), TO_CHAR(P.PROFITS_OPEN_DATE, 'YYYY-MM-DD'),
+          'MISMATCH' AS ISSUE
+        FROM (
+          SELECT TRIM(ACCOUNT_NO) AS ACCOUNT_NO, DFDTAO AS HUB_OPEN_DATE, 'DD' AS DEPOSIT_ACCOUNT_CATEGORY FROM HUB_MT_DDACMSP
+          UNION ALL
+          SELECT TRIM(ACCOUNT_NO) AS ACCOUNT_NO, TDDTAO AS HUB_OPEN_DATE, 'TD' AS DEPOSIT_ACCOUNT_CATEGORY FROM HUB_MT_TDACMSP
+        ) H
+        JOIN (
+          SELECT TRIM(Account_Number) AS ACCOUNT_NUMBER, Open_Date AS PROFITS_OPEN_DATE FROM NCIS_Deposits
+        ) P ON P.ACCOUNT_NUMBER = H.ACCOUNT_NO
+        WHERE TO_DATE(TRIM(TO_CHAR(H.HUB_OPEN_DATE)), 'YYYYMMDD') &lt;&gt; TRUNC(P.PROFITS_OPEN_DATE)
+
+        UNION ALL
+        --==============================================================
+        --E4. TD Due/Expiration Date - HUB (TDDUDT) vs NCIS (TD_Expiration_Date) - μόνο TD
+        SELECT
+          'E4_TD_EXPIRATION_DATE_MISMATCH' AS CHECK_NAME,
+          H.ACCOUNT_NO, CAST(NULL AS VARCHAR2(30)), 'TD',
+          TO_CHAR(TO_DATE(TRIM(TO_CHAR(H.HUB_DUE_DATE)), 'YYYYMMDD'), 'YYYY-MM-DD'), TO_CHAR(P.PROFITS_EXPIRATION_DATE, 'YYYY-MM-DD'),
+          'MISMATCH' AS ISSUE
+        FROM (
+          SELECT TRIM(ACCOUNT_NO) AS ACCOUNT_NO, TDDUDT AS HUB_DUE_DATE FROM HUB_MT_TDACMSP
+        ) H
+        JOIN (
+          SELECT TRIM(Account_Number) AS ACCOUNT_NUMBER, TD_Expiration_Date AS PROFITS_EXPIRATION_DATE
+          FROM NCIS_Deposits WHERE TD_Expiration_Date IS NOT NULL
+        ) P ON P.ACCOUNT_NUMBER = H.ACCOUNT_NO
+        WHERE TO_DATE(TRIM(TO_CHAR(H.HUB_DUE_DATE)), 'YYYYMMDD') &lt;&gt; TRUNC(P.PROFITS_EXPIRATION_DATE)
+
+        UNION ALL
+        --==============================================================
+        --D1. Ledger/Book Balance - HUB (DFRLBL/TDRLBL) vs NCIS (Book_Balance), tolerance 0.01
+        SELECT
+          'D1_BOOK_BALANCE_MISMATCH' AS CHECK_NAME,
+          H.ACCOUNT_NO, CAST(NULL AS VARCHAR2(30)), H.DEPOSIT_ACCOUNT_CATEGORY,
+          TO_CHAR(H.HUB_LEDGER_BALANCE), TO_CHAR(P.PROFITS_BOOK_BALANCE),
+          'MISMATCH' AS ISSUE
+        FROM (
+          SELECT TRIM(ACCOUNT_NO) AS ACCOUNT_NO, DFRLBL AS HUB_LEDGER_BALANCE, 'DD' AS DEPOSIT_ACCOUNT_CATEGORY FROM HUB_MT_DDACMSP
+          UNION ALL
+          SELECT TRIM(ACCOUNT_NO) AS ACCOUNT_NO, TDRLBL AS HUB_LEDGER_BALANCE, 'TD' AS DEPOSIT_ACCOUNT_CATEGORY FROM HUB_MT_TDACMSP
+        ) H
+        JOIN (
+          SELECT TRIM(Account_Number) AS ACCOUNT_NUMBER, Book_Balance AS PROFITS_BOOK_BALANCE FROM NCIS_Deposits
+        ) P ON P.ACCOUNT_NUMBER = H.ACCOUNT_NO
+        WHERE ABS(NVL(H.HUB_LEDGER_BALANCE,0) - NVL(P.PROFITS_BOOK_BALANCE,0)) &gt; 0.01
+
+        UNION ALL
+        --==============================================================
+        --D2. Blocked Balance / Total Holds - HUB (DFTTHD/TDTTHD) vs NCIS (Blocked_Balance), tolerance 0.01
+        SELECT
+          'D2_BLOCKED_BALANCE_MISMATCH' AS CHECK_NAME,
+          H.ACCOUNT_NO, CAST(NULL AS VARCHAR2(30)), H.DEPOSIT_ACCOUNT_CATEGORY,
+          TO_CHAR(H.HUB_TOTAL_HOLDS), TO_CHAR(P.PROFITS_BLOCKED_BALANCE),
+          'MISMATCH' AS ISSUE
+        FROM (
+          SELECT TRIM(ACCOUNT_NO) AS ACCOUNT_NO, DFTTHD AS HUB_TOTAL_HOLDS, 'DD' AS DEPOSIT_ACCOUNT_CATEGORY FROM HUB_MT_DDACMSP
+          UNION ALL
+          SELECT TRIM(ACCOUNT_NO) AS ACCOUNT_NO, TDTTHD AS HUB_TOTAL_HOLDS, 'TD' AS DEPOSIT_ACCOUNT_CATEGORY FROM HUB_MT_TDACMSP
+        ) H
+        JOIN (
+          SELECT TRIM(Account_Number) AS ACCOUNT_NUMBER, Blocked_Balance AS PROFITS_BLOCKED_BALANCE FROM NCIS_Deposits
+        ) P ON P.ACCOUNT_NUMBER = H.ACCOUNT_NO
+        WHERE ABS(NVL(H.HUB_TOTAL_HOLDS,0) - NVL(P.PROFITS_BLOCKED_BALANCE,0)) &gt; 0.01
+
+        UNION ALL
+        --==============================================================
+        --D3. Available Balance - HUB (DFVLBL) vs NCIS (Available_Balance) - μόνο DD
+        -- ⚠️ Mapping DFVLBL &lt;-&gt; Available_Balance δεν έχει πλήρως επιβεβαιωθεί
+        SELECT
+          'D3_AVAILABLE_BALANCE_MISMATCH' AS CHECK_NAME,
+          H.ACCOUNT_NO, CAST(NULL AS VARCHAR2(30)), 'DD',
+          TO_CHAR(H.HUB_VALUE_BALANCE), TO_CHAR(P.PROFITS_AVAILABLE_BALANCE),
+          'MISMATCH' AS ISSUE
+        FROM (
+          SELECT TRIM(ACCOUNT_NO) AS ACCOUNT_NO, DFVLBL AS HUB_VALUE_BALANCE FROM HUB_MT_DDACMSP
+        ) H
+        JOIN (
+          SELECT TRIM(Account_Number) AS ACCOUNT_NUMBER, Available_Balance AS PROFITS_AVAILABLE_BALANCE FROM NCIS_Deposits
+        ) P ON P.ACCOUNT_NUMBER = H.ACCOUNT_NO
+        WHERE ABS(NVL(H.HUB_VALUE_BALANCE,0) - NVL(P.PROFITS_AVAILABLE_BALANCE,0)) &gt; 0.01
+
+        UNION ALL
+        --==============================================================
+        --D4. Λογαριασμοί HUB με αρνητικό Value Balance (DFVLBL) σε μη-overdraft προϊόν
+        SELECT
+          'D4_NEGATIVE_BALANCE_NO_OVERDRAFT_HUB' AS CHECK_NAME,
+          TRIM(ACCOUNT_NO), TRIM(CUSTOMER_CODE), 'DD',
+          TO_CHAR(DFVLBL), CAST(NULL AS VARCHAR2(30)),
+          'NEGATIVE_BALANCE_WITHOUT_OVERDRAFT' AS ISSUE
+        FROM HUB_MT_DDACMSP
+        WHERE DFAPTY NOT IN ('CA1','CA3','CA7','CA4','C10','CA2','CA8')
+          AND DFVLBL &lt; 0
+
+        UNION ALL
+        --==============================================================
+        --D5. Αρνητικό balance στο NCIS (μη-overdraft) που ΔΕΝ εμφανίζεται αρνητικό στο HUB
+        SELECT
+          'D5_NEGATIVE_BALANCE_NCIS_NOT_IN_HUB' AS CHECK_NAME,
+          P.ACCOUNT_NUMBER, P.CUSTOMER_CODE, 'DD',
+          TO_CHAR(H.HUB_VALUE_BALANCE), TO_CHAR(P.Available_Balance),
+          'NEGATIVE_IN_NCIS_NOT_IN_HUB' AS ISSUE
+        FROM (
+          SELECT TRIM(N.Account_Number) AS ACCOUNT_NUMBER, TRIM(N.Customer_Code) AS CUSTOMER_CODE,
+            N.Available_Balance, NVL(MAP.PRODUCT_TYPE, 'OTHER') AS PROFITS_PRODUCT_TYPE
+          FROM NCIS_Deposits N
+          LEFT JOIN (SELECT DISTINCT PROFITS_CODE, PRODUCT_TYPE FROM MG_HGR_DEPOSITS_PRODUCT_MAPPING) MAP
+            ON MAP.PROFITS_CODE = TO_CHAR(N.Account_Type)
+          WHERE N.Available_Balance &lt; 0
+        ) P
+        JOIN (
+          SELECT TRIM(ACCOUNT_NO) AS ACCOUNT_NO, DFVLBL AS HUB_VALUE_BALANCE FROM HUB_MT_DDACMSP
+        ) H ON H.ACCOUNT_NO = P.ACCOUNT_NUMBER
+        WHERE P.PROFITS_PRODUCT_TYPE NOT IN (
+            SELECT DISTINCT PRODUCT_TYPE FROM MG_HGR_DEPOSITS_PRODUCT_MAPPING WHERE HSBC_CODE IN ('CA1','CA3','CA7','CA4','C10','CA2','CA8')
+          )
+          AND NVL(H.HUB_VALUE_BALANCE, 0) &gt;= 0
+
+        UNION ALL
+        --==============================================================
+        --D6. OVD λογαριασμοί με ΥΠΕΡΒΑΣΗ ορίου (unauthorized excess) - μόνο NCIS
+        SELECT
+          'D6_OVD_UNAUTHORIZED_EXCESS' AS CHECK_NAME,
+          TO_CHAR(N.Account_Number), TO_CHAR(N.Customer_Code), 'OVD',
+          TO_CHAR(N.Available_Balance), TO_CHAR(N.Overdraft_Limit_Amount),
+          'BALANCE_EXCEEDS_OVERDRAFT_LIMIT' AS ISSUE
+        FROM NCIS_Deposits N
+        LEFT JOIN (SELECT DISTINCT PROFITS_CODE, PRODUCT_TYPE FROM MG_HGR_DEPOSITS_PRODUCT_MAPPING) MAP
+          ON MAP.PROFITS_CODE = TO_CHAR(N.Account_Type)
+        WHERE MAP.PRODUCT_TYPE = 'OVD'
+          AND N.Available_Balance &lt; 0
+          AND ABS(N.Available_Balance) &gt; NVL(N.Overdraft_Limit_Amount, 0)
+
+        UNION ALL
+        --==============================================================
+        --D7. OVD λογαριασμοί ΧΩΡΙΣ τεκμηριωμένο όριο - μόνο NCIS
+        SELECT
+          'D7_OVD_MISSING_LIMIT' AS CHECK_NAME,
+          TO_CHAR(N.Account_Number), TO_CHAR(N.Customer_Code), 'OVD',
+          TO_CHAR(N.Overdraft_Limit_Amount), CAST(NULL AS VARCHAR2(30)),
+          'OVD_WITHOUT_DOCUMENTED_LIMIT' AS ISSUE
+        FROM NCIS_Deposits N
+        LEFT JOIN (SELECT DISTINCT PROFITS_CODE, PRODUCT_TYPE FROM MG_HGR_DEPOSITS_PRODUCT_MAPPING) MAP
+          ON MAP.PROFITS_CODE = TO_CHAR(N.Account_Type)
+        WHERE MAP.PRODUCT_TYPE = 'OVD'
+          AND NVL(N.Overdraft_Limit_Amount, 0) = 0
+
+        UNION ALL
+        --==============================================================
+        --D10. Unauthorized interest flag - OVD με Unauthorized_Interest_Accrued &lt;&gt; 0 - μόνο NCIS
+        SELECT
+          'D10_OVD_UNAUTHORIZED_INTEREST' AS CHECK_NAME,
+          TO_CHAR(N.Account_Number), TO_CHAR(N.Customer_Code), 'OVD',
+          TO_CHAR(N.Unauthorized_Interest_Accrued), CAST(NULL AS VARCHAR2(30)),
+          'UNAUTHORIZED_INTEREST_ACCRUED' AS ISSUE
+        FROM NCIS_Deposits N
+        LEFT JOIN (SELECT DISTINCT PROFITS_CODE, PRODUCT_TYPE FROM MG_HGR_DEPOSITS_PRODUCT_MAPPING) MAP
+          ON MAP.PROFITS_CODE = TO_CHAR(N.Account_Type)
+        WHERE MAP.PRODUCT_TYPE = 'OVD'
+          AND NVL(N.Unauthorized_Interest_Accrued, 0) &lt;&gt; 0
+
+        UNION ALL
+        --==============================================================
+        --D11. Αρνητικό balance χωρίς spread - OVD με Available_Balance&lt;0 αλλά OVD_Debit_Interest_Spread NULL
+        SELECT
+          'D11_OVD_NEGATIVE_BALANCE_NO_SPREAD' AS CHECK_NAME,
+          TO_CHAR(N.Account_Number), TO_CHAR(N.Customer_Code), 'OVD',
+          TO_CHAR(N.Available_Balance), CAST(NULL AS VARCHAR2(30)),
+          'NEGATIVE_BALANCE_MISSING_INTEREST_SPREAD' AS ISSUE
+        FROM NCIS_Deposits N
+        LEFT JOIN (SELECT DISTINCT PROFITS_CODE, PRODUCT_TYPE FROM MG_HGR_DEPOSITS_PRODUCT_MAPPING) MAP
+          ON MAP.PROFITS_CODE = TO_CHAR(N.Account_Type)
+        WHERE MAP.PRODUCT_TYPE = 'OVD'
+          AND N.Available_Balance &lt; 0
+          AND N.OVD_Debit_Interest_Spread IS NULL
+
+        UNION ALL
+        --==============================================================
+        --D12. Αρνητικό balance χωρίς δεδουλευμένους τόκους - OVD με Available_Balance&lt;0 αλλά Debit_Interest_Accruals=0
+        SELECT
+          'D12_OVD_NEGATIVE_BALANCE_NO_ACCRUALS' AS CHECK_NAME,
+          TO_CHAR(N.Account_Number), TO_CHAR(N.Customer_Code), 'OVD',
+          TO_CHAR(N.Available_Balance), TO_CHAR(N.Debit_Interest_Accruals),
+          'NEGATIVE_BALANCE_NO_INTEREST_ACCRUED' AS ISSUE
+        FROM NCIS_Deposits N
+        LEFT JOIN (SELECT DISTINCT PROFITS_CODE, PRODUCT_TYPE FROM MG_HGR_DEPOSITS_PRODUCT_MAPPING) MAP
+          ON MAP.PROFITS_CODE = TO_CHAR(N.Account_Type)
+        WHERE MAP.PRODUCT_TYPE = 'OVD'
+          AND N.Available_Balance &lt; 0
+          AND NVL(N.Debit_Interest_Accruals, 0) = 0
+
+        UNION ALL
+        --==============================================================
+        --D14. Missing Debit_Interest_Code - OVD αρνητικό balance χωρίς κωδικό επιτοκίου χρέωσης
+        SELECT
+          'D14_OVD_NEGATIVE_BALANCE_NO_INTEREST_CODE' AS CHECK_NAME,
+          TO_CHAR(N.Account_Number), TO_CHAR(N.Customer_Code), 'OVD',
+          TO_CHAR(N.Available_Balance), CAST(NULL AS VARCHAR2(30)),
+          'NEGATIVE_BALANCE_MISSING_DEBIT_INTEREST_CODE' AS ISSUE
+        FROM NCIS_Deposits N
+        LEFT JOIN (SELECT DISTINCT PROFITS_CODE, PRODUCT_TYPE FROM MG_HGR_DEPOSITS_PRODUCT_MAPPING) MAP
+          ON MAP.PROFITS_CODE = TO_CHAR(N.Account_Type)
+        WHERE MAP.PRODUCT_TYPE = 'OVD'
+          AND N.Available_Balance &lt; 0
+          AND N.Debit_Interest_Code IS NULL
+
+    ) F
+)
+ORDER BY REGEXP_SUBSTR(CHECK_ID, '[A-Z]+'), TO_NUMBER(REGEXP_SUBSTR(CHECK_ID, '[0-9]+')), ACCOUNT_NO;</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specify the number of rows fetched per batch."
+                  expressionType="Notify"
+                  name="BatchSize">1000</property>
+                <property
+                  dataType="System.Int32"
+                  description="Determines the chunk size allocation for LOB columns"
+                  expressionType="Notify"
+                  name="LobChunkSize">32768</property>
+                <property
+                  dataType="System.Int32"
+                  description="The code page to use when code page information is unavailable from the data source."
+                  expressionType="Notify"
+                  name="DefaultCodePage">1253</property>
+                <property
+                  dataType="System.Int32"
+                  description="Number of pre-fetched rows."
+                  expressionType="Notify"
+                  name="PrefetchCount">0</property>
+                <property
+                  dataType="System.Int32"
+                  description="The mode used to access the database."
+                  name="AccessMode"
+                  typeConverter="AccessMode">1</property>
+              </properties>
+              <connections>
+                <connection
+                  refId="Package\DFT_Detail\Oracle Source 1.Connections[ORACLEConnection]"
+                  connectionManagerID="{ECA91632-834F-4B2F-85DF-6CA637347F58}:external"
+                  connectionManagerRefId="Project.ConnectionManagers[PRE Connection Manager]"
+                  description="The ORACLE runtime connection used to access the database."
+                  name="ORACLEConnection" />
+              </connections>
+              <outputs>
+                <output
+                  refId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Output]"
+                  errorRowDisposition="FailComponent"
+                  name="Oracle Source Output"
+                  truncationRowDisposition="FailComponent">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Output].Columns[CHECK_ID]"
+                      codePage="1253"
+                      dataType="str"
+                      externalMetadataColumnId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Output].ExternalColumns[CHECK_ID]"
+                      length="50"
+                      lineageId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Output].Columns[CHECK_ID]"
+                      name="CHECK_ID" />
+                    <outputColumn
+                      refId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Output].Columns[CHECK_NAME]"
+                      codePage="1253"
+                      dataType="str"
+                      externalMetadataColumnId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Output].ExternalColumns[CHECK_NAME]"
+                      length="50"
+                      lineageId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Output].Columns[CHECK_NAME]"
+                      name="CHECK_NAME" />
+                    <outputColumn
+                      refId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Output].Columns[DC_VERSION]"
+                      codePage="1253"
+                      dataType="str"
+                      externalMetadataColumnId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Output].ExternalColumns[DC_VERSION]"
+                      length="3"
+                      lineageId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Output].Columns[DC_VERSION]"
+                      name="DC_VERSION" />
+                    <outputColumn
+                      refId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Output].Columns[RUN_VERSION]"
+                      dataType="r8"
+                      externalMetadataColumnId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Output].ExternalColumns[RUN_VERSION]"
+                      lineageId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Output].Columns[RUN_VERSION]"
+                      name="RUN_VERSION" />
+                    <outputColumn
+                      refId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Output].Columns[RUN_TIMESTAMP]"
+                      dataType="dbTimeStamp"
+                      externalMetadataColumnId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Output].ExternalColumns[RUN_TIMESTAMP]"
+                      lineageId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Output].Columns[RUN_TIMESTAMP]"
+                      name="RUN_TIMESTAMP" />
+                    <outputColumn
+                      refId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Output].Columns[DETAIL_ID]"
+                      codePage="1253"
+                      dataType="str"
+                      externalMetadataColumnId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Output].ExternalColumns[DETAIL_ID]"
+                      length="20"
+                      lineageId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Output].Columns[DETAIL_ID]"
+                      name="DETAIL_ID" />
+                    <outputColumn
+                      refId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Output].Columns[ACCOUNT_NO]"
+                      codePage="1253"
+                      dataType="str"
+                      externalMetadataColumnId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Output].ExternalColumns[ACCOUNT_NO]"
+                      length="40"
+                      lineageId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Output].Columns[ACCOUNT_NO]"
+                      name="ACCOUNT_NO" />
+                    <outputColumn
+                      refId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Output].Columns[CUSTOMER_CODE]"
+                      codePage="1253"
+                      dataType="str"
+                      externalMetadataColumnId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Output].ExternalColumns[CUSTOMER_CODE]"
+                      length="40"
+                      lineageId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Output].Columns[CUSTOMER_CODE]"
+                      name="CUSTOMER_CODE" />
+                    <outputColumn
+                      refId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Output].Columns[DEPOSIT_ACCOUNT_CATEGORY]"
+                      codePage="1253"
+                      dataType="str"
+                      externalMetadataColumnId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Output].ExternalColumns[DEPOSIT_ACCOUNT_CATEGORY]"
+                      length="10"
+                      lineageId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Output].Columns[DEPOSIT_ACCOUNT_CATEGORY]"
+                      name="DEPOSIT_ACCOUNT_CATEGORY" />
+                    <outputColumn
+                      refId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Output].Columns[HUB_VALUE]"
+                      codePage="1253"
+                      dataType="str"
+                      externalMetadataColumnId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Output].ExternalColumns[HUB_VALUE]"
+                      length="100"
+                      lineageId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Output].Columns[HUB_VALUE]"
+                      name="HUB_VALUE" />
+                    <outputColumn
+                      refId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Output].Columns[NCIS_VALUE]"
+                      codePage="1253"
+                      dataType="str"
+                      externalMetadataColumnId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Output].ExternalColumns[NCIS_VALUE]"
+                      length="100"
+                      lineageId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Output].Columns[NCIS_VALUE]"
+                      name="NCIS_VALUE" />
+                    <outputColumn
+                      refId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Output].Columns[ISSUE]"
+                      codePage="1253"
+                      dataType="str"
+                      externalMetadataColumnId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Output].ExternalColumns[ISSUE]"
+                      length="50"
+                      lineageId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Output].Columns[ISSUE]"
+                      name="ISSUE" />
+                  </outputColumns>
+                  <externalMetadataColumns
+                    isUsed="True">
+                    <externalMetadataColumn
+                      refId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Output].ExternalColumns[CHECK_ID]"
+                      codePage="1253"
+                      dataType="str"
+                      length="10"
+                      name="CHECK_ID" />
+                    <externalMetadataColumn
+                      refId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Output].ExternalColumns[CHECK_NAME]"
+                      codePage="1253"
+                      dataType="str"
+                      length="50"
+                      name="CHECK_NAME" />
+                    <externalMetadataColumn
+                      refId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Output].ExternalColumns[DC_VERSION]"
+                      codePage="1253"
+                      dataType="str"
+                      length="3"
+                      name="DC_VERSION" />
+                    <externalMetadataColumn
+                      refId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Output].ExternalColumns[RUN_VERSION]"
+                      dataType="r8"
+                      name="RUN_VERSION" />
+                    <externalMetadataColumn
+                      refId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Output].ExternalColumns[RUN_TIMESTAMP]"
+                      dataType="dbTimeStamp"
+                      name="RUN_TIMESTAMP" />
+                    <externalMetadataColumn
+                      refId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Output].ExternalColumns[DETAIL_ID]"
+                      codePage="1253"
+                      dataType="str"
+                      length="20"
+                      name="DETAIL_ID" />
+                    <externalMetadataColumn
+                      refId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Output].ExternalColumns[ACCOUNT_NO]"
+                      codePage="1253"
+                      dataType="str"
+                      length="30"
+                      name="ACCOUNT_NO" />
+                    <externalMetadataColumn
+                      refId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Output].ExternalColumns[CUSTOMER_CODE]"
+                      codePage="1253"
+                      dataType="str"
+                      length="30"
+                      name="CUSTOMER_CODE" />
+                    <externalMetadataColumn
+                      refId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Output].ExternalColumns[DEPOSIT_ACCOUNT_CATEGORY]"
+                      codePage="1253"
+                      dataType="str"
+                      length="10"
+                      name="DEPOSIT_ACCOUNT_CATEGORY" />
+                    <externalMetadataColumn
+                      refId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Output].ExternalColumns[HUB_VALUE]"
+                      codePage="1253"
+                      dataType="str"
+                      length="100"
+                      name="HUB_VALUE" />
+                    <externalMetadataColumn
+                      refId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Output].ExternalColumns[NCIS_VALUE]"
+                      codePage="1253"
+                      dataType="str"
+                      length="100"
+                      name="NCIS_VALUE" />
+                    <externalMetadataColumn
+                      refId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Output].ExternalColumns[ISSUE]"
+                      codePage="1253"
+                      dataType="str"
+                      length="50"
+                      name="ISSUE" />
+                  </externalMetadataColumns>
+                </output>
+                <output
+                  refId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Error Output]"
+                  isErrorOut="true"
+                  name="Oracle Source Error Output">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Error Output].Columns[CHECK_ID]"
+                      codePage="1253"
+                      dataType="str"
+                      externalMetadataColumnId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Output].ExternalColumns[CHECK_ID]"
+                      length="10"
+                      lineageId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Error Output].Columns[CHECK_ID]"
+                      name="CHECK_ID" />
+                    <outputColumn
+                      refId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Error Output].Columns[CHECK_NAME]"
+                      codePage="1253"
+                      dataType="str"
+                      externalMetadataColumnId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Output].ExternalColumns[CHECK_NAME]"
+                      length="50"
+                      lineageId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Error Output].Columns[CHECK_NAME]"
+                      name="CHECK_NAME" />
+                    <outputColumn
+                      refId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Error Output].Columns[DC_VERSION]"
+                      codePage="1253"
+                      dataType="str"
+                      externalMetadataColumnId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Output].ExternalColumns[DC_VERSION]"
+                      length="3"
+                      lineageId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Error Output].Columns[DC_VERSION]"
+                      name="DC_VERSION" />
+                    <outputColumn
+                      refId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Error Output].Columns[RUN_VERSION]"
+                      dataType="r8"
+                      externalMetadataColumnId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Output].ExternalColumns[RUN_VERSION]"
+                      lineageId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Error Output].Columns[RUN_VERSION]"
+                      name="RUN_VERSION" />
+                    <outputColumn
+                      refId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Error Output].Columns[RUN_TIMESTAMP]"
+                      dataType="dbTimeStamp"
+                      externalMetadataColumnId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Output].ExternalColumns[RUN_TIMESTAMP]"
+                      lineageId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Error Output].Columns[RUN_TIMESTAMP]"
+                      name="RUN_TIMESTAMP" />
+                    <outputColumn
+                      refId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Error Output].Columns[DETAIL_ID]"
+                      codePage="1253"
+                      dataType="str"
+                      externalMetadataColumnId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Output].ExternalColumns[DETAIL_ID]"
+                      length="20"
+                      lineageId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Error Output].Columns[DETAIL_ID]"
+                      name="DETAIL_ID" />
+                    <outputColumn
+                      refId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Error Output].Columns[ACCOUNT_NO]"
+                      codePage="1253"
+                      dataType="str"
+                      externalMetadataColumnId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Output].ExternalColumns[ACCOUNT_NO]"
+                      length="30"
+                      lineageId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Error Output].Columns[ACCOUNT_NO]"
+                      name="ACCOUNT_NO" />
+                    <outputColumn
+                      refId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Error Output].Columns[CUSTOMER_CODE]"
+                      codePage="1253"
+                      dataType="str"
+                      externalMetadataColumnId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Output].ExternalColumns[CUSTOMER_CODE]"
+                      length="30"
+                      lineageId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Error Output].Columns[CUSTOMER_CODE]"
+                      name="CUSTOMER_CODE" />
+                    <outputColumn
+                      refId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Error Output].Columns[DEPOSIT_ACCOUNT_CATEGORY]"
+                      codePage="1253"
+                      dataType="str"
+                      externalMetadataColumnId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Output].ExternalColumns[DEPOSIT_ACCOUNT_CATEGORY]"
+                      length="10"
+                      lineageId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Error Output].Columns[DEPOSIT_ACCOUNT_CATEGORY]"
+                      name="DEPOSIT_ACCOUNT_CATEGORY" />
+                    <outputColumn
+                      refId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Error Output].Columns[HUB_VALUE]"
+                      codePage="1253"
+                      dataType="str"
+                      externalMetadataColumnId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Output].ExternalColumns[HUB_VALUE]"
+                      length="100"
+                      lineageId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Error Output].Columns[HUB_VALUE]"
+                      name="HUB_VALUE" />
+                    <outputColumn
+                      refId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Error Output].Columns[NCIS_VALUE]"
+                      codePage="1253"
+                      dataType="str"
+                      externalMetadataColumnId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Output].ExternalColumns[NCIS_VALUE]"
+                      length="100"
+                      lineageId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Error Output].Columns[NCIS_VALUE]"
+                      name="NCIS_VALUE" />
+                    <outputColumn
+                      refId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Error Output].Columns[ISSUE]"
+                      codePage="1253"
+                      dataType="str"
+                      externalMetadataColumnId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Output].ExternalColumns[ISSUE]"
+                      length="50"
+                      lineageId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Error Output].Columns[ISSUE]"
+                      name="ISSUE" />
+                    <outputColumn
+                      refId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Error Output].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Error Output].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Error Output].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Error Output].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+          </components>
+          <paths>
+            <path
+              refId="Package\DFT_Detail.Paths[Derived Column Output]"
+              endId="Package\DFT_Detail\OLE DB Destination.Inputs[OLE DB Destination Input]"
+              name="Derived Column Output"
+              startId="Package\DFT_Detail\Derived Column 1.Outputs[Derived Column Output]" />
+            <path
+              refId="Package\DFT_Detail.Paths[Oracle Source Output]"
+              endId="Package\DFT_Detail\Derived Column 1.Inputs[Derived Column Input]"
+              name="Oracle Source Output"
+              startId="Package\DFT_Detail\Oracle Source 1.Outputs[Oracle Source Output]" />
+          </paths>
+        </pipeline>
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\DFT_Master"
+      DTS:CreationName="Microsoft.Pipeline"
+      DTS:Description="Data Flow Task"
+      DTS:DTSID="{AAB0C8BB-A767-487C-A69F-00E6AA6DF2BC}"
+      DTS:ExecutableType="Microsoft.Pipeline"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="DFT_Master"
+      DTS:TaskContact="Performs high-performance data extraction, transformation and loading;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <pipeline
+          version="1">
+          <components>
+            <component
+              refId="Package\DFT_Master\Derived Column 1"
+              componentClassID="Microsoft.DerivedColumn"
+              contactInfo="Derived Column;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;0"
+              description="Creates new column values by applying expressions to transformation input columns. Create new columns or overwrite existing ones. For example, concatenate the values from the 'first name' and 'last name' column to make a 'full name' column."
+              name="Derived Column 1"
+              usesDispositions="true">
+              <inputs>
+                <input
+                  refId="Package\DFT_Master\Derived Column 1.Inputs[Derived Column Input]"
+                  description="Input to the Derived Column Transformation"
+                  name="Derived Column Input">
+                  <inputColumns>
+                    <inputColumn
+                      refId="Package\DFT_Master\Derived Column 1.Inputs[Derived Column Input].Columns[RUN_VERSION]"
+                      cachedDataType="r8"
+                      cachedName="RUN_VERSION"
+                      errorOrTruncationOperation="Computation"
+                      errorRowDisposition="FailComponent"
+                      lineageId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Output].Columns[RUN_VERSION]"
+                      truncationRowDisposition="FailComponent"
+                      usageType="readWrite">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.String"
+                          description="Derived Column Expression"
+                          name="Expression">@[User::DCVersion]</property>
+                        <property
+                          containsID="true"
+                          dataType="System.String"
+                          description="Derived Column Friendly Expression"
+                          expressionType="Notify"
+                          name="FriendlyExpression">@[User::DCVersion]</property>
+                      </properties>
+                    </inputColumn>
+                  </inputColumns>
+                  <externalMetadataColumns />
+                </input>
+              </inputs>
+              <outputs>
+                <output
+                  refId="Package\DFT_Master\Derived Column 1.Outputs[Derived Column Output]"
+                  description="Default Output of the Derived Column Transformation"
+                  exclusionGroup="1"
+                  name="Derived Column Output"
+                  synchronousInputId="Package\DFT_Master\Derived Column 1.Inputs[Derived Column Input]">
+                  <externalMetadataColumns />
+                </output>
+                <output
+                  refId="Package\DFT_Master\Derived Column 1.Outputs[Derived Column Error Output]"
+                  description="Error Output of the Derived Column Transformation"
+                  exclusionGroup="1"
+                  isErrorOut="true"
+                  name="Derived Column Error Output"
+                  synchronousInputId="Package\DFT_Master\Derived Column 1.Inputs[Derived Column Input]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\DFT_Master\Derived Column 1.Outputs[Derived Column Error Output].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\DFT_Master\Derived Column 1.Outputs[Derived Column Error Output].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\DFT_Master\Derived Column 1.Outputs[Derived Column Error Output].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\DFT_Master\Derived Column 1.Outputs[Derived Column Error Output].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+            <component
+              refId="Package\DFT_Master\OLE DB Destination"
+              componentClassID="Microsoft.OLEDBDestination"
+              contactInfo="OLE DB Destination;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;4"
+              description="OLE DB Destination"
+              name="OLE DB Destination"
+              usesDispositions="true"
+              version="4">
+              <properties>
+                <property
+                  dataType="System.Int32"
+                  description="The number of seconds before a command times out.  A value of 0 indicates an infinite time-out."
+                  name="CommandTimeout">0</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the name of the database object used to open a rowset."
+                  name="OpenRowset">[RECON].[DEP_RECON_MASTER]</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the variable that contains the name of the database object used to open a rowset."
+                  name="OpenRowsetVariable"></property>
+                <property
+                  dataType="System.String"
+                  description="The SQL command to be executed."
+                  name="SqlCommand"
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor"></property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the column code page to use when code page information is unavailable from the data source."
+                  name="DefaultCodePage">1253</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Forces the use of the DefaultCodePage property value when describing character data."
+                  name="AlwaysUseDefaultCodePage">false</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the mode used to access the database."
+                  name="AccessMode"
+                  typeConverter="AccessMode">3</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Indicates whether the values supplied for identity columns will be copied to the destination. If false, values for identity columns will be auto-generated at the destination. Applies only if fast load is turned on."
+                  name="FastLoadKeepIdentity">false</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Indicates whether the columns containing null will have null inserted in the destination. If false, columns containing null will have their default values inserted at the destination. Applies only if fast load is turned on."
+                  name="FastLoadKeepNulls">false</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies options to be used with fast load.  Applies only if fast load is turned on."
+                  name="FastLoadOptions">TABLOCK,CHECK_CONSTRAINTS</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies when commits are issued during data insertion.  A value of 0 specifies that one commit will be issued at the end of data insertion.  Applies only if fast load is turned on."
+                  name="FastLoadMaxInsertCommitSize">2147483647</property>
+              </properties>
+              <connections>
+                <connection
+                  refId="Package\DFT_Master\OLE DB Destination.Connections[OleDbConnection]"
+                  connectionManagerID="{6821A5EC-D23A-4EAE-A8D7-C1BFCD7DE798}:external"
+                  connectionManagerRefId="Project.ConnectionManagers[10.15.12.37.MLT_DW_EDW]"
+                  description="The OLE DB runtime connection used to access the database."
+                  name="OleDbConnection" />
+              </connections>
+              <inputs>
+                <input
+                  refId="Package\DFT_Master\OLE DB Destination.Inputs[OLE DB Destination Input]"
+                  errorOrTruncationOperation="Insert"
+                  errorRowDisposition="FailComponent"
+                  hasSideEffects="true"
+                  name="OLE DB Destination Input">
+                  <inputColumns>
+                    <inputColumn
+                      refId="Package\DFT_Master\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[CHECK_ID]"
+                      cachedCodepage="1253"
+                      cachedDataType="str"
+                      cachedLength="10"
+                      cachedName="CHECK_ID"
+                      externalMetadataColumnId="Package\DFT_Master\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[CHECK_ID]"
+                      lineageId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Output].Columns[CHECK_ID]" />
+                    <inputColumn
+                      refId="Package\DFT_Master\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[CHECK_NAME]"
+                      cachedCodepage="1253"
+                      cachedDataType="str"
+                      cachedLength="50"
+                      cachedName="CHECK_NAME"
+                      externalMetadataColumnId="Package\DFT_Master\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[CHECK_NAME]"
+                      lineageId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Output].Columns[CHECK_NAME]" />
+                    <inputColumn
+                      refId="Package\DFT_Master\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[CATEGORY]"
+                      cachedCodepage="1253"
+                      cachedDataType="str"
+                      cachedLength="30"
+                      cachedName="CATEGORY"
+                      externalMetadataColumnId="Package\DFT_Master\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[CATEGORY]"
+                      lineageId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Output].Columns[CATEGORY]" />
+                    <inputColumn
+                      refId="Package\DFT_Master\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[DESCRIPTION]"
+                      cachedCodepage="1253"
+                      cachedDataType="str"
+                      cachedLength="200"
+                      cachedName="DESCRIPTION"
+                      externalMetadataColumnId="Package\DFT_Master\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[DESCRIPTION]"
+                      lineageId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Output].Columns[DESCRIPTION]" />
+                    <inputColumn
+                      refId="Package\DFT_Master\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[TOTAL_RECORDS]"
+                      cachedDataType="r8"
+                      cachedName="TOTAL_RECORDS"
+                      externalMetadataColumnId="Package\DFT_Master\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[TOTAL_RECORDS]"
+                      lineageId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Output].Columns[TOTAL_RECORDS]" />
+                    <inputColumn
+                      refId="Package\DFT_Master\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[VALID_COUNT]"
+                      cachedDataType="r8"
+                      cachedName="VALID_COUNT"
+                      externalMetadataColumnId="Package\DFT_Master\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[VALID_COUNT]"
+                      lineageId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Output].Columns[VALID_COUNT]" />
+                    <inputColumn
+                      refId="Package\DFT_Master\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[INVALID_COUNT]"
+                      cachedDataType="r8"
+                      cachedName="INVALID_COUNT"
+                      externalMetadataColumnId="Package\DFT_Master\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[INVALID_COUNT]"
+                      lineageId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Output].Columns[INVALID_COUNT]" />
+                    <inputColumn
+                      refId="Package\DFT_Master\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[STATUS]"
+                      cachedCodepage="1253"
+                      cachedDataType="str"
+                      cachedLength="4"
+                      cachedName="STATUS"
+                      externalMetadataColumnId="Package\DFT_Master\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[STATUS]"
+                      lineageId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Output].Columns[STATUS]" />
+                    <inputColumn
+                      refId="Package\DFT_Master\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[DC_VERSION]"
+                      cachedCodepage="1253"
+                      cachedDataType="str"
+                      cachedLength="3"
+                      cachedName="DC_VERSION"
+                      externalMetadataColumnId="Package\DFT_Master\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[DC_VERSION]"
+                      lineageId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Output].Columns[DC_VERSION]" />
+                    <inputColumn
+                      refId="Package\DFT_Master\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[RUN_VERSION]"
+                      cachedDataType="r8"
+                      cachedName="RUN_VERSION"
+                      externalMetadataColumnId="Package\DFT_Master\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[RUN_VERSION]"
+                      lineageId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Output].Columns[RUN_VERSION]" />
+                    <inputColumn
+                      refId="Package\DFT_Master\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[RUN_TIMESTAMP]"
+                      cachedDataType="dbTimeStamp"
+                      cachedName="RUN_TIMESTAMP"
+                      externalMetadataColumnId="Package\DFT_Master\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[RUN_TIMESTAMP]"
+                      lineageId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Output].Columns[RUN_TIMESTAMP]" />
+                  </inputColumns>
+                  <externalMetadataColumns
+                    isUsed="True">
+                    <externalMetadataColumn
+                      refId="Package\DFT_Master\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[CHECK_ID]"
+                      codePage="1253"
+                      dataType="str"
+                      length="10"
+                      name="CHECK_ID" />
+                    <externalMetadataColumn
+                      refId="Package\DFT_Master\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[CHECK_NAME]"
+                      codePage="1253"
+                      dataType="str"
+                      length="50"
+                      name="CHECK_NAME" />
+                    <externalMetadataColumn
+                      refId="Package\DFT_Master\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[CATEGORY]"
+                      codePage="1253"
+                      dataType="str"
+                      length="30"
+                      name="CATEGORY" />
+                    <externalMetadataColumn
+                      refId="Package\DFT_Master\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[DESCRIPTION]"
+                      codePage="1253"
+                      dataType="str"
+                      length="200"
+                      name="DESCRIPTION" />
+                    <externalMetadataColumn
+                      refId="Package\DFT_Master\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[TOTAL_RECORDS]"
+                      dataType="i4"
+                      name="TOTAL_RECORDS" />
+                    <externalMetadataColumn
+                      refId="Package\DFT_Master\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[VALID_COUNT]"
+                      dataType="i4"
+                      name="VALID_COUNT" />
+                    <externalMetadataColumn
+                      refId="Package\DFT_Master\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[INVALID_COUNT]"
+                      dataType="i4"
+                      name="INVALID_COUNT" />
+                    <externalMetadataColumn
+                      refId="Package\DFT_Master\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[STATUS]"
+                      codePage="1253"
+                      dataType="str"
+                      length="4"
+                      name="STATUS" />
+                    <externalMetadataColumn
+                      refId="Package\DFT_Master\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[DC_VERSION]"
+                      codePage="1253"
+                      dataType="str"
+                      length="5"
+                      name="DC_VERSION" />
+                    <externalMetadataColumn
+                      refId="Package\DFT_Master\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[RUN_VERSION]"
+                      dataType="i4"
+                      name="RUN_VERSION" />
+                    <externalMetadataColumn
+                      refId="Package\DFT_Master\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[RUN_TIMESTAMP]"
+                      dataType="wstr"
+                      length="27"
+                      name="RUN_TIMESTAMP" />
+                  </externalMetadataColumns>
+                </input>
+              </inputs>
+              <outputs>
+                <output
+                  refId="Package\DFT_Master\OLE DB Destination.Outputs[OLE DB Destination Error Output]"
+                  exclusionGroup="1"
+                  isErrorOut="true"
+                  name="OLE DB Destination Error Output"
+                  synchronousInputId="Package\DFT_Master\OLE DB Destination.Inputs[OLE DB Destination Input]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\DFT_Master\OLE DB Destination.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\DFT_Master\OLE DB Destination.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\DFT_Master\OLE DB Destination.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\DFT_Master\OLE DB Destination.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+            <component
+              refId="Package\DFT_Master\Oracle Source 1"
+              componentClassID="Microsoft.SSISOracleSrc"
+              contactInfo="Oracle Source;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;1"
+              description="Oracle Source"
+              name="Oracle Source 1"
+              usesDispositions="true"
+              version="1">
+              <properties>
+                <property
+                  dataType="System.String"
+                  description="The name of the table to be fetched."
+                  expressionType="Notify"
+                  name="TableName"></property>
+                <property
+                  dataType="System.String"
+                  description="The SQL command to be executed."
+                  expressionType="Notify"
+                  name="SqlCommand"
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor, Microsoft.DataTransformationServices.Controls, Version=16.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91">-- ====================================================================
+-- DEP_RECON — MASTER v3
+-- Τροφοδοτεί: RECON.DEP_RECON_MASTER
+-- Μία γραμμή ΑΝΑ CHECK_ID — 33 γραμμές ανά run:
+-- A1-A13, G2-G4, B1-B3, E1-E2, E4, D1-D7, D10-D12, D14.
+--
+-- ΝΕΑ POPULATION_TYPE σε σχέση με v2: 'TD' (μόνο TD πληθυσμός, για E4)
+-- και 'OVD' (NCIS λογαριασμοί με product_type=OVD μέσω mapping, για
+-- D6/D7/D10/D11/D12/D14).
+--
+-- ΝΕΑ CATEGORY σε σχέση με v2: 'MAPPING_GAP' αντί για το απορριφθέν
+-- 'REFERENCE_DATA', για ελέγχους όπου δεν βρίσκεται αντιστοίχιση σε
+-- mapping/reference table (G2, B3). Είναι placeholder -- πες μου αν
+-- θες διαφορετικό όνομα (π.χ. UNMAPPED_CODE, LOOKUP_FAILURE) και το
+-- αλλάζω παντού.
+--
+-- ΣΗΜΕΙΩΣΗ: D10/D11/D12/D14 -- λείπουν D8, D9, D13 στην αρίθμηση (βλ.
+-- σχόλιο στο DEP_RECON_DETAIL_V3.sql). Κράτησα τα CHECK_NAME literals
+-- όπως δόθηκαν.
+-- ====================================================================
+WITH POPULATIONS AS (
+    SELECT
+        (SELECT COUNT(*) FROM HUB_MT_DDACMSP) AS DD_COUNT,
+        (SELECT COUNT(*) FROM HUB_MT_TDACMSP) AS TD_COUNT,
+        (SELECT COUNT(*) FROM NCIS_Deposits) AS NCIS_COUNT,
+        (SELECT COUNT(*) FROM (
+            SELECT ACCOUNT_NO FROM HUB_MT_DDACMSP
+            UNION ALL
+            SELECT ACCOUNT_NO FROM HUB_MT_TDACMSP
+        )) AS HUB_DDTD_COUNT,
+        (SELECT COUNT(*) FROM (
+            SELECT ACCOUNT_NO FROM HUB_MT_DDACMSP WHERE DFSTUS = 1
+            UNION ALL
+            SELECT ACCOUNT_NO FROM HUB_MT_TDACMSP WHERE TDSTUS = 1
+        )) AS HUB_DDTD_ACTIVE_COUNT,
+        (SELECT COUNT(*)
+           FROM (
+                SELECT TRIM(ACCOUNT_NO) AS ACCOUNT_NO FROM HUB_MT_DDACMSP
+                UNION ALL
+                SELECT TRIM(ACCOUNT_NO) AS ACCOUNT_NO FROM HUB_MT_TDACMSP
+           ) H
+           JOIN (SELECT TRIM(Account_Number) AS ACCOUNT_NUMBER FROM NCIS_Deposits) N
+             ON N.ACCOUNT_NUMBER = H.ACCOUNT_NO
+        ) AS MATCHED_COUNT,
+        (SELECT COUNT(*)
+           FROM NCIS_Deposits N
+           LEFT JOIN (SELECT DISTINCT PROFITS_CODE, PRODUCT_TYPE FROM MG_HGR_DEPOSITS_PRODUCT_MAPPING) MAP
+             ON MAP.PROFITS_CODE = TO_CHAR(N.Account_Type)
+           WHERE MAP.PRODUCT_TYPE = 'OVD'
+        ) AS OVD_COUNT
+    FROM DUAL
+),
+CHECK_META AS (
+    -- CHECK_ID | CHECK_NAME | CATEGORY | DESCRIPTION | POPULATION_TYPE
+    SELECT 'A1'  AS CHECK_ID, 'A1_ACCOUNT_MISSING_IN_NCIS'   AS CHECK_NAME, 'EXISTENCE'             AS CATEGORY, 'HUB (DD) accounts missing from NCIS'                        AS DESCRIPTION, 'DD'   AS POPULATION_TYPE FROM DUAL UNION ALL
+    SELECT 'A2',  'A2_ACCOUNT_MISSING_IN_HUB',    'EXISTENCE',              'NCIS accounts missing from HUB (neither DD nor TD)',        'NCIS' FROM DUAL UNION ALL
+    SELECT 'A3',  'A3_DUPLICATE_ACCOUNT_HUB',     'UNIQUENESS',             'Duplicate account numbers within HUB (DD+TD)',              'HUB_DDTD' FROM DUAL UNION ALL
+    SELECT 'A4',  'A4_NULL_ACCOUNT_NO_HUB',       'COMPLETENESS',           'NULL/empty account number in HUB (DD+TD)',                  'HUB_DDTD' FROM DUAL UNION ALL
+    SELECT 'A5',  'A5_NULL_ACCOUNT_NO_NCIS',      'COMPLETENESS',           'NULL/empty account number in NCIS',                         'NCIS' FROM DUAL UNION ALL
+    SELECT 'A6',  'A6_DUPLICATE_ACCOUNT_NCIS',    'UNIQUENESS',             'Duplicate account numbers within NCIS',                     'NCIS' FROM DUAL UNION ALL
+    SELECT 'A7',  'A7_NULL_CUSTOMER_CODE_HUB',    'COMPLETENESS',           'NULL/empty customer code in HUB (DD+TD)',                   'HUB_DDTD' FROM DUAL UNION ALL
+    SELECT 'A8',  'A8_NULL_CUSTOMER_CODE_NCIS',   'COMPLETENESS',           'NULL/empty customer code in NCIS',                          'NCIS' FROM DUAL UNION ALL
+    SELECT 'A9',  'A9_ACCOUNT_IN_BOTH_DD_TD',     'BUSINESS_RULE',          'Account exists in both DD and TD simultaneously',           'DD' FROM DUAL UNION ALL
+    SELECT 'A10', 'A10_NULL_PRODUCT_CODE_HUB',    'COMPLETENESS',           'NULL/empty product code in HUB (DD+TD)',                    'HUB_DDTD' FROM DUAL UNION ALL
+    SELECT 'A11', 'A11_NULL_ACCOUNT_TYPE_NCIS',   'COMPLETENESS',           'NULL account type in NCIS',                                 'NCIS' FROM DUAL UNION ALL
+    SELECT 'A12', 'A12_NULL_BRANCH_CODE_HUB',     'COMPLETENESS',           'NULL/empty branch code in HUB (DD+TD)',                     'HUB_DDTD' FROM DUAL UNION ALL
+    SELECT 'A13', 'A13_BRANCH_MISMATCH',          'CROSS_SYSTEM_MISMATCH', 'Branch code mismatch, HUB vs NCIS (matched accounts)',      'MATCHED' FROM DUAL UNION ALL
+    SELECT 'G2',  'G2_UNMAPPED_PRODUCT_CODE',     'MAPPING_GAP',            'Unmapped product code, active HUB accounts (DD+TD)',        'HUB_DDTD_ACTIVE' FROM DUAL UNION ALL
+    SELECT 'G3',  'G3_PRODUCT_TYPE_MISMATCH',     'CROSS_SYSTEM_MISMATCH', 'Product type mismatch, HUB vs NCIS (matched accounts)',     'MATCHED' FROM DUAL UNION ALL
+    SELECT 'G4',  'G4_CURRENCY_MISMATCH',         'CROSS_SYSTEM_MISMATCH', 'Currency mismatch, HUB vs NCIS (matched accounts)',         'MATCHED' FROM DUAL UNION ALL
+    SELECT 'B1',  'B1_CUSTOMER_CODE_MISMATCH',    'CROSS_SYSTEM_MISMATCH', 'Customer code mismatch, HUB (DD+TD, joint-resolved) vs NCIS','HUB_DDTD' FROM DUAL UNION ALL
+    SELECT 'B3',  'B3_ORPHAN_NO_MAPPING',         'MAPPING_GAP',            'Effective customer code with no match in MG_CUSTOMER_INTER', 'HUB_DDTD' FROM DUAL UNION ALL
+    SELECT 'B2',  'B2_BENEFICIARIES_MISMATCH',    'CROSS_SYSTEM_MISMATCH', 'Number of beneficiaries mismatch, HUB vs NCIS',             'MATCHED' FROM DUAL UNION ALL
+    SELECT 'E1',  'E1_STATUS_MISMATCH',           'CROSS_SYSTEM_MISMATCH', 'Account status mismatch, HUB vs NCIS',                      'MATCHED' FROM DUAL UNION ALL
+    SELECT 'E2',  'E2_OPEN_DATE_MISMATCH',        'CROSS_SYSTEM_MISMATCH', 'Account open date mismatch, HUB vs NCIS',                   'MATCHED' FROM DUAL UNION ALL
+    SELECT 'E4',  'E4_TD_EXPIRATION_DATE_MISMATCH','CROSS_SYSTEM_MISMATCH','TD expiration date mismatch, HUB vs NCIS (TD only)',        'TD' FROM DUAL UNION ALL
+    SELECT 'D1',  'D1_BOOK_BALANCE_MISMATCH',     'CROSS_SYSTEM_MISMATCH', 'Book/ledger balance mismatch, HUB vs NCIS (tolerance 0.01)','MATCHED' FROM DUAL UNION ALL
+    SELECT 'D2',  'D2_BLOCKED_BALANCE_MISMATCH',  'CROSS_SYSTEM_MISMATCH', 'Blocked balance mismatch, HUB vs NCIS (tolerance 0.01)',    'MATCHED' FROM DUAL UNION ALL
+    SELECT 'D3',  'D3_AVAILABLE_BALANCE_MISMATCH','CROSS_SYSTEM_MISMATCH', 'Available balance mismatch, HUB vs NCIS (DD only, unconfirmed mapping)', 'DD' FROM DUAL UNION ALL
+    SELECT 'D4',  'D4_NEGATIVE_BALANCE_NO_OVERDRAFT_HUB', 'BUSINESS_RULE', 'Negative value balance in HUB on a non-overdraft product',   'DD' FROM DUAL UNION ALL
+    SELECT 'D5',  'D5_NEGATIVE_BALANCE_NCIS_NOT_IN_HUB',  'BUSINESS_RULE', 'Negative balance in NCIS (non-overdraft) not reflected in HUB', 'NCIS' FROM DUAL UNION ALL
+    SELECT 'D6',  'D6_OVD_UNAUTHORIZED_EXCESS',   'BUSINESS_RULE',         'OVD balance exceeds approved overdraft limit',              'OVD' FROM DUAL UNION ALL
+    SELECT 'D7',  'D7_OVD_MISSING_LIMIT',         'COMPLETENESS',          'OVD account without a documented overdraft limit',          'OVD' FROM DUAL UNION ALL
+    SELECT 'D10', 'D10_OVD_UNAUTHORIZED_INTEREST','BUSINESS_RULE',         'OVD account with unauthorized interest accrued',            'OVD' FROM DUAL UNION ALL
+    SELECT 'D11', 'D11_OVD_NEGATIVE_BALANCE_NO_SPREAD',   'COMPLETENESS',  'OVD negative balance missing interest spread',              'OVD' FROM DUAL UNION ALL
+    SELECT 'D12', 'D12_OVD_NEGATIVE_BALANCE_NO_ACCRUALS', 'BUSINESS_RULE', 'OVD negative balance with no interest accrued',             'OVD' FROM DUAL UNION ALL
+    SELECT 'D14', 'D14_OVD_NEGATIVE_BALANCE_NO_INTEREST_CODE', 'COMPLETENESS', 'OVD negative balance missing debit interest code',      'OVD' FROM DUAL
+),
+FINDINGS_COUNT AS (
+    -- Πλήθος ευρημάτων ανά CHECK_ID -- ΙΔΙΑ business logic με το DETAIL script,
+    -- εδώ μόνο το CHECK_NAME χρειάζεται (για GROUP BY).
+    SELECT SUBSTR(CHECK_NAME, 1, INSTR(CHECK_NAME, '_') - 1) AS CHECK_ID, COUNT(*) AS INVALID_COUNT
+    FROM (
+        SELECT 'A1_ACCOUNT_MISSING_IN_NCIS' AS CHECK_NAME FROM (
+            SELECT TRIM(H.ACCOUNT_NO) AS ACCOUNT_NO FROM HUB_MT_DDACMSP H
+        ) H
+        LEFT JOIN (SELECT TRIM(N.Account_Number) AS ACCOUNT_NUMBER FROM NCIS_Deposits N) P ON P.ACCOUNT_NUMBER = H.ACCOUNT_NO
+        WHERE P.ACCOUNT_NUMBER IS NULL
+
+        UNION ALL
+        SELECT 'A2_ACCOUNT_MISSING_IN_HUB' FROM (
+            SELECT TRIM(N.Account_Number) AS ACCOUNT_NUMBER FROM NCIS_Deposits N
+        ) P
+        LEFT JOIN (SELECT TRIM(ACCOUNT_NO) AS ACCOUNT_NO FROM HUB_MT_TDACMSP) T ON T.ACCOUNT_NO = P.ACCOUNT_NUMBER
+        LEFT JOIN (SELECT TRIM(ACCOUNT_NO) AS ACCOUNT_NO FROM HUB_MT_DDACMSP) H ON H.ACCOUNT_NO = P.ACCOUNT_NUMBER
+        WHERE H.ACCOUNT_NO IS NULL AND T.ACCOUNT_NO IS NULL
+
+        UNION ALL
+        SELECT 'A3_DUPLICATE_ACCOUNT_HUB' FROM (
+            SELECT ACCOUNT_NO, DEPOSIT_ACCOUNT_CATEGORY
+            FROM (
+                SELECT TRIM(ACCOUNT_NO) AS ACCOUNT_NO, 'DD' AS DEPOSIT_ACCOUNT_CATEGORY FROM HUB_MT_DDACMSP
+                UNION ALL
+                SELECT TRIM(ACCOUNT_NO) AS ACCOUNT_NO, 'TD' AS DEPOSIT_ACCOUNT_CATEGORY FROM HUB_MT_TDACMSP
+            )
+            GROUP BY ACCOUNT_NO, DEPOSIT_ACCOUNT_CATEGORY
+            HAVING COUNT(*) &gt; 1
+        )
+
+        UNION ALL
+        SELECT 'A4_NULL_ACCOUNT_NO_HUB' FROM (
+            SELECT TRIM(TO_CHAR(ACCOUNT_NO)) AS ACCOUNT_NO FROM HUB_MT_DDACMSP
+            UNION ALL
+            SELECT TRIM(TO_CHAR(ACCOUNT_NO)) AS ACCOUNT_NO FROM HUB_MT_TDACMSP
+        )
+        WHERE ACCOUNT_NO IS NULL OR TRIM(ACCOUNT_NO) = ''
+
+        UNION ALL
+        SELECT 'A5_NULL_ACCOUNT_NO_NCIS' FROM NCIS_Deposits
+        WHERE Account_Number IS NULL OR TRIM(TO_CHAR(Account_Number)) = ''
+
+        UNION ALL
+        SELECT 'A6_DUPLICATE_ACCOUNT_NCIS' FROM (
+            SELECT TRIM(Account_Number) AS ACCOUNT_NUMBER
+            FROM NCIS_Deposits
+            GROUP BY TRIM(Account_Number)
+            HAVING COUNT(*) &gt; 1
+        )
+
+        UNION ALL
+        SELECT 'A7_NULL_CUSTOMER_CODE_HUB' FROM (
+            SELECT TO_CHAR(CUSTOMER_CODE) AS CUSTOMER_CODE FROM HUB_MT_DDACMSP
+            UNION ALL
+            SELECT TO_CHAR(CUSTOMER_CODE) AS CUSTOMER_CODE FROM HUB_MT_TDACMSP
+        )
+        WHERE CUSTOMER_CODE IS NULL OR TRIM(CUSTOMER_CODE) = ''
+
+        UNION ALL
+        SELECT 'A8_NULL_CUSTOMER_CODE_NCIS' FROM NCIS_Deposits
+        WHERE Customer_Code IS NULL OR TRIM(TO_CHAR(Customer_Code)) = ''
+
+        UNION ALL
+        SELECT 'A9_ACCOUNT_IN_BOTH_DD_TD' FROM HUB_MT_DDACMSP DF
+        JOIN HUB_MT_TDACMSP TD ON TRIM(TD.ACCOUNT_NO) = TRIM(DF.ACCOUNT_NO)
+
+        UNION ALL
+        SELECT 'A10_NULL_PRODUCT_CODE_HUB' FROM (
+            SELECT DFAPTY AS PRODUCT_CODE FROM HUB_MT_DDACMSP
+            UNION ALL
+            SELECT TDAPTY AS PRODUCT_CODE FROM HUB_MT_TDACMSP
+        )
+        WHERE PRODUCT_CODE IS NULL OR TRIM(PRODUCT_CODE) = ''
+
+        UNION ALL
+        SELECT 'A11_NULL_ACCOUNT_TYPE_NCIS' FROM NCIS_Deposits
+        WHERE Account_Type IS NULL
+
+        UNION ALL
+        SELECT 'A12_NULL_BRANCH_CODE_HUB' FROM (
+            SELECT DFACB AS BRANCH_CODE FROM HUB_MT_DDACMSP
+            UNION ALL
+            SELECT TDACB AS BRANCH_CODE FROM HUB_MT_TDACMSP
+        )
+        WHERE BRANCH_CODE IS NULL
+
+        UNION ALL
+        SELECT 'A13_BRANCH_MISMATCH' FROM (
+            SELECT TRIM(ACCOUNT_NO) AS ACCOUNT_NO, TRIM(TO_CHAR(DFACB)) AS HUB_BRANCH FROM HUB_MT_DDACMSP
+            UNION ALL
+            SELECT TRIM(ACCOUNT_NO) AS ACCOUNT_NO, TRIM(TO_CHAR(TDACB)) AS HUB_BRANCH FROM HUB_MT_TDACMSP
+        ) H
+        JOIN (SELECT TRIM(Account_Number) AS ACCOUNT_NUMBER, TRIM(TO_CHAR(Unit_Code)) AS PROFITS_UNIT_CODE FROM NCIS_Deposits) P
+            ON P.ACCOUNT_NUMBER = H.ACCOUNT_NO
+        WHERE NVL(H.HUB_BRANCH,'x') &lt;&gt; NVL(P.PROFITS_UNIT_CODE,'x')
+
+        UNION ALL
+        SELECT 'G2_UNMAPPED_PRODUCT_CODE' FROM (
+            SELECT NVL(MAP.PRODUCT_TYPE, 'UNMAPPED') AS HUB_PRODUCT_TYPE, TRIM(DF.DFSTUS) AS STATUS
+            FROM HUB_MT_DDACMSP DF
+            LEFT JOIN MG_HGR_DEPOSITS_PRODUCT_MAPPING MAP ON MAP.HSBC_CODE = TRIM(DF.DFAPTY)
+            UNION ALL
+            SELECT NVL(MAP.PRODUCT_TYPE, 'UNMAPPED') AS HUB_PRODUCT_TYPE, TRIM(TD.TDSTUS) AS STATUS
+            FROM HUB_MT_TDACMSP TD
+            LEFT JOIN MG_HGR_DEPOSITS_PRODUCT_MAPPING MAP ON MAP.HSBC_CODE = TRIM(TD.TDAPTY)
+        )
+        WHERE HUB_PRODUCT_TYPE = 'UNMAPPED' AND STATUS = 1
+
+        UNION ALL
+        SELECT 'G3_PRODUCT_TYPE_MISMATCH' FROM (
+            SELECT TRIM(DF.ACCOUNT_NO) AS ACCOUNT_NO, NVL(MAP.PRODUCT_TYPE, 'UNMAPPED') AS HUB_PRODUCT_TYPE
+            FROM HUB_MT_DDACMSP DF
+            LEFT JOIN MG_HGR_DEPOSITS_PRODUCT_MAPPING MAP ON MAP.HSBC_CODE = TRIM(DF.DFAPTY)
+            UNION ALL
+            SELECT TRIM(TD.ACCOUNT_NO) AS ACCOUNT_NO, NVL(MAP.PRODUCT_TYPE, 'UNMAPPED') AS HUB_PRODUCT_TYPE
+            FROM HUB_MT_TDACMSP TD
+            LEFT JOIN MG_HGR_DEPOSITS_PRODUCT_MAPPING MAP ON MAP.HSBC_CODE = TRIM(TD.TDAPTY)
+        ) H
+        JOIN (
+            SELECT TRIM(N.Account_Number) AS ACCOUNT_NUMBER, NVL(MAP.PRODUCT_TYPE, 'OTHER') AS PROFITS_PRODUCT_TYPE
+            FROM NCIS_Deposits N
+            LEFT JOIN (SELECT DISTINCT PROFITS_CODE, PRODUCT_TYPE FROM MG_HGR_DEPOSITS_PRODUCT_MAPPING) MAP
+                ON MAP.PROFITS_CODE = TO_CHAR(N.Account_Type)
+        ) P ON P.ACCOUNT_NUMBER = H.ACCOUNT_NO
+        WHERE NVL(H.HUB_PRODUCT_TYPE, CHR(1)) &lt;&gt; NVL(P.PROFITS_PRODUCT_TYPE, CHR(1))
+
+        UNION ALL
+        SELECT 'G4_CURRENCY_MISMATCH' FROM (
+            SELECT TRIM(ACCOUNT_NO) AS ACCOUNT_NO, TRIM(DFCYCD) AS HUB_CURRENCY FROM HUB_MT_DDACMSP
+            UNION ALL
+            SELECT TRIM(ACCOUNT_NO) AS ACCOUNT_NO, TRIM(TDCYCD) AS HUB_CURRENCY FROM HUB_MT_TDACMSP
+        ) H
+        JOIN (SELECT TRIM(Account_Number) AS ACCOUNT_NUMBER, TRIM(Account_Currency) AS PROFITS_CURRENCY FROM NCIS_Deposits) P
+            ON P.ACCOUNT_NUMBER = H.ACCOUNT_NO
+        WHERE NVL(H.HUB_CURRENCY,'x') &lt;&gt; NVL(P.PROFITS_CURRENCY,'x')
+
+        UNION ALL
+        SELECT 'B1_CUSTOMER_CODE_MISMATCH' FROM (
+            SELECT
+                JR.ACCOUNT_NO, MCI.PRFT_CUST_ID
+            FROM (
+                SELECT
+                    A.ACCOUNT_NO,
+                    CASE WHEN J.CUSTOMER_1 IS NOT NULL THEN TRIM(J.CUSTOMER_BENEF_LIST) ELSE A.HUB_CUSTOMER_CODE END AS EFFECTIVE_CUSTOMER_CODE
+                FROM (
+                    SELECT TRIM(ACCOUNT_NO) AS ACCOUNT_NO, TRIM(CUSTOMER_CODE) AS HUB_CUSTOMER_CODE FROM HUB_MT_DDACMSP
+                    UNION ALL
+                    SELECT TRIM(ACCOUNT_NO) AS ACCOUNT_NO, TRIM(CUSTOMER_CODE) AS HUB_CUSTOMER_CODE FROM HUB_MT_TDACMSP
+                ) A
+                LEFT JOIN HGR_MG_JOINT J ON J.CUSTOMER_1 = A.HUB_CUSTOMER_CODE AND J.SERIAL_NO = 1
+            ) JR
+            LEFT JOIN MG_CUSTOMER_INTER MCI ON TRIM(TO_CHAR(MCI.CUSTOMER_CODE)) = TRIM(TO_CHAR(JR.EFFECTIVE_CUSTOMER_CODE))
+        ) M
+        LEFT JOIN NCIS_Deposits N ON TRIM(TO_CHAR(N.Account_Number)) = TO_CHAR(M.ACCOUNT_NO)
+        WHERE TRIM(TO_CHAR(M.PRFT_CUST_ID)) &lt;&gt; TRIM(TO_CHAR(N.Customer_Code))
+
+        UNION ALL
+        SELECT 'B3_ORPHAN_NO_MAPPING' FROM (
+            SELECT
+                A.ACCOUNT_NO,
+                CASE WHEN J.CUSTOMER_1 IS NOT NULL THEN TRIM(J.CUSTOMER_BENEF_LIST) ELSE A.HUB_CUSTOMER_CODE END AS EFFECTIVE_CUSTOMER_CODE
+            FROM (
+                SELECT TRIM(ACCOUNT_NO) AS ACCOUNT_NO, TRIM(CUSTOMER_CODE) AS HUB_CUSTOMER_CODE FROM HUB_MT_DDACMSP
+                UNION ALL
+                SELECT TRIM(ACCOUNT_NO) AS ACCOUNT_NO, TRIM(CUSTOMER_CODE) AS HUB_CUSTOMER_CODE FROM HUB_MT_TDACMSP
+            ) A
+            LEFT JOIN HGR_MG_JOINT J ON J.CUSTOMER_1 = A.HUB_CUSTOMER_CODE AND J.SERIAL_NO = 1
+        ) JR
+        WHERE NOT EXISTS (
+            SELECT 1 FROM MG_CUSTOMER_INTER MCI
+            WHERE TRIM(TO_CHAR(MCI.CUSTOMER_CODE)) = TRIM(TO_CHAR(JR.EFFECTIVE_CUSTOMER_CODE))
+        )
+
+        UNION ALL
+        SELECT 'B2_BENEFICIARIES_MISMATCH' FROM (
+            SELECT TRIM(ACCOUNT_NO) AS ACCOUNT_NO, TRIM(CUSTOMER_CODE) AS HUB_CUSTOMER_CODE FROM HUB_MT_DDACMSP
+            UNION ALL
+            SELECT TRIM(ACCOUNT_NO) AS ACCOUNT_NO, TRIM(CUSTOMER_CODE) AS HUB_CUSTOMER_CODE FROM HUB_MT_TDACMSP
+        ) H
+        LEFT JOIN (
+            SELECT TRIM(CUSTOMER_1) AS CUSTOMER_1, COUNT(*) AS HUB_BENEF_CNT FROM HGR_MG_JOINT GROUP BY TRIM(CUSTOMER_1)
+        ) B ON B.CUSTOMER_1 = H.HUB_CUSTOMER_CODE
+        JOIN (
+            SELECT TRIM(Account_Number) AS ACCOUNT_NUMBER, Number_Of_Beneficiaries AS PROFITS_BENEF_CNT FROM NCIS_Deposits
+        ) P ON P.ACCOUNT_NUMBER = H.ACCOUNT_NO
+        WHERE CASE WHEN NVL(B.HUB_BENEF_CNT, 0) = 0 THEN 1 ELSE NVL(B.HUB_BENEF_CNT, 0) END &lt;&gt; NVL(P.PROFITS_BENEF_CNT, 0)
+
+        UNION ALL
+        SELECT 'E1_STATUS_MISMATCH' FROM (
+            SELECT TRIM(ACCOUNT_NO) AS ACCOUNT_NO, TRIM(DFSTUS) AS HUB_STATUS FROM HUB_MT_DDACMSP
+            UNION ALL
+            SELECT TRIM(ACCOUNT_NO) AS ACCOUNT_NO, TRIM(TDSTUS) AS HUB_STATUS FROM HUB_MT_TDACMSP
+        ) H
+        JOIN (
+            SELECT TRIM(Account_Number) AS ACCOUNT_NUMBER, TRIM(Account_Status) AS PROFITS_STATUS FROM NCIS_Deposits
+        ) P ON P.ACCOUNT_NUMBER = H.ACCOUNT_NO
+        WHERE NVL(H.HUB_STATUS,'x') &lt;&gt; NVL(P.PROFITS_STATUS,'x')
+
+        UNION ALL
+        SELECT 'E2_OPEN_DATE_MISMATCH' FROM (
+            SELECT TRIM(ACCOUNT_NO) AS ACCOUNT_NO, DFDTAO AS HUB_OPEN_DATE FROM HUB_MT_DDACMSP
+            UNION ALL
+            SELECT TRIM(ACCOUNT_NO) AS ACCOUNT_NO, TDDTAO AS HUB_OPEN_DATE FROM HUB_MT_TDACMSP
+        ) H
+        JOIN (
+            SELECT TRIM(Account_Number) AS ACCOUNT_NUMBER, Open_Date AS PROFITS_OPEN_DATE FROM NCIS_Deposits
+        ) P ON P.ACCOUNT_NUMBER = H.ACCOUNT_NO
+        WHERE TO_DATE(TRIM(TO_CHAR(H.HUB_OPEN_DATE)), 'YYYYMMDD') &lt;&gt; TRUNC(P.PROFITS_OPEN_DATE)
+
+        UNION ALL
+        SELECT 'E4_TD_EXPIRATION_DATE_MISMATCH' FROM (
+            SELECT TRIM(ACCOUNT_NO) AS ACCOUNT_NO, TDDUDT AS HUB_DUE_DATE FROM HUB_MT_TDACMSP
+        ) H
+        JOIN (
+            SELECT TRIM(Account_Number) AS ACCOUNT_NUMBER, TD_Expiration_Date AS PROFITS_EXPIRATION_DATE
+            FROM NCIS_Deposits WHERE TD_Expiration_Date IS NOT NULL
+        ) P ON P.ACCOUNT_NUMBER = H.ACCOUNT_NO
+        WHERE TO_DATE(TRIM(TO_CHAR(H.HUB_DUE_DATE)), 'YYYYMMDD') &lt;&gt; TRUNC(P.PROFITS_EXPIRATION_DATE)
+
+        UNION ALL
+        SELECT 'D1_BOOK_BALANCE_MISMATCH' FROM (
+            SELECT TRIM(ACCOUNT_NO) AS ACCOUNT_NO, DFRLBL AS HUB_LEDGER_BALANCE FROM HUB_MT_DDACMSP
+            UNION ALL
+            SELECT TRIM(ACCOUNT_NO) AS ACCOUNT_NO, TDRLBL AS HUB_LEDGER_BALANCE FROM HUB_MT_TDACMSP
+        ) H
+        JOIN (
+            SELECT TRIM(Account_Number) AS ACCOUNT_NUMBER, Book_Balance AS PROFITS_BOOK_BALANCE FROM NCIS_Deposits
+        ) P ON P.ACCOUNT_NUMBER = H.ACCOUNT_NO
+        WHERE ABS(NVL(H.HUB_LEDGER_BALANCE,0) - NVL(P.PROFITS_BOOK_BALANCE,0)) &gt; 0.01
+
+        UNION ALL
+        SELECT 'D2_BLOCKED_BALANCE_MISMATCH' FROM (
+            SELECT TRIM(ACCOUNT_NO) AS ACCOUNT_NO, DFTTHD AS HUB_TOTAL_HOLDS FROM HUB_MT_DDACMSP
+            UNION ALL
+            SELECT TRIM(ACCOUNT_NO) AS ACCOUNT_NO, TDTTHD AS HUB_TOTAL_HOLDS FROM HUB_MT_TDACMSP
+        ) H
+        JOIN (
+            SELECT TRIM(Account_Number) AS ACCOUNT_NUMBER, Blocked_Balance AS PROFITS_BLOCKED_BALANCE FROM NCIS_Deposits
+        ) P ON P.ACCOUNT_NUMBER = H.ACCOUNT_NO
+        WHERE ABS(NVL(H.HUB_TOTAL_HOLDS,0) - NVL(P.PROFITS_BLOCKED_BALANCE,0)) &gt; 0.01
+
+        UNION ALL
+        SELECT 'D3_AVAILABLE_BALANCE_MISMATCH' FROM (
+            SELECT TRIM(ACCOUNT_NO) AS ACCOUNT_NO, DFVLBL AS HUB_VALUE_BALANCE FROM HUB_MT_DDACMSP
+        ) H
+        JOIN (
+            SELECT TRIM(Account_Number) AS ACCOUNT_NUMBER, Available_Balance AS PROFITS_AVAILABLE_BALANCE FROM NCIS_Deposits
+        ) P ON P.ACCOUNT_NUMBER = H.ACCOUNT_NO
+        WHERE ABS(NVL(H.HUB_VALUE_BALANCE,0) - NVL(P.PROFITS_AVAILABLE_BALANCE,0)) &gt; 0.01
+
+        UNION ALL
+        SELECT 'D4_NEGATIVE_BALANCE_NO_OVERDRAFT_HUB' FROM HUB_MT_DDACMSP
+        WHERE DFAPTY NOT IN ('CA1','CA3','CA7','CA4','C10','CA2','CA8')
+          AND DFVLBL &lt; 0
+
+        UNION ALL
+        SELECT 'D5_NEGATIVE_BALANCE_NCIS_NOT_IN_HUB' FROM (
+            SELECT TRIM(N.Account_Number) AS ACCOUNT_NUMBER, N.Available_Balance,
+                NVL(MAP.PRODUCT_TYPE, 'OTHER') AS PROFITS_PRODUCT_TYPE
+            FROM NCIS_Deposits N
+            LEFT JOIN (SELECT DISTINCT PROFITS_CODE, PRODUCT_TYPE FROM MG_HGR_DEPOSITS_PRODUCT_MAPPING) MAP
+                ON MAP.PROFITS_CODE = TO_CHAR(N.Account_Type)
+            WHERE N.Available_Balance &lt; 0
+        ) P
+        JOIN (
+            SELECT TRIM(ACCOUNT_NO) AS ACCOUNT_NO, DFVLBL AS HUB_VALUE_BALANCE FROM HUB_MT_DDACMSP
+        ) H ON H.ACCOUNT_NO = P.ACCOUNT_NUMBER
+        WHERE P.PROFITS_PRODUCT_TYPE NOT IN (
+            SELECT DISTINCT PRODUCT_TYPE FROM MG_HGR_DEPOSITS_PRODUCT_MAPPING WHERE HSBC_CODE IN ('CA1','CA3','CA7','CA4','C10','CA2','CA8')
+          )
+          AND NVL(H.HUB_VALUE_BALANCE, 0) &gt;= 0
+
+        UNION ALL
+        SELECT 'D6_OVD_UNAUTHORIZED_EXCESS' FROM NCIS_Deposits N
+        LEFT JOIN (SELECT DISTINCT PROFITS_CODE, PRODUCT_TYPE FROM MG_HGR_DEPOSITS_PRODUCT_MAPPING) MAP
+          ON MAP.PROFITS_CODE = TO_CHAR(N.Account_Type)
+        WHERE MAP.PRODUCT_TYPE = 'OVD'
+          AND N.Available_Balance &lt; 0
+          AND ABS(N.Available_Balance) &gt; NVL(N.Overdraft_Limit_Amount, 0)
+
+        UNION ALL
+        SELECT 'D7_OVD_MISSING_LIMIT' FROM NCIS_Deposits N
+        LEFT JOIN (SELECT DISTINCT PROFITS_CODE, PRODUCT_TYPE FROM MG_HGR_DEPOSITS_PRODUCT_MAPPING) MAP
+          ON MAP.PROFITS_CODE = TO_CHAR(N.Account_Type)
+        WHERE MAP.PRODUCT_TYPE = 'OVD'
+          AND NVL(N.Overdraft_Limit_Amount, 0) = 0
+
+        UNION ALL
+        SELECT 'D10_OVD_UNAUTHORIZED_INTEREST' FROM NCIS_Deposits N
+        LEFT JOIN (SELECT DISTINCT PROFITS_CODE, PRODUCT_TYPE FROM MG_HGR_DEPOSITS_PRODUCT_MAPPING) MAP
+          ON MAP.PROFITS_CODE = TO_CHAR(N.Account_Type)
+        WHERE MAP.PRODUCT_TYPE = 'OVD'
+          AND NVL(N.Unauthorized_Interest_Accrued, 0) &lt;&gt; 0
+
+        UNION ALL
+        SELECT 'D11_OVD_NEGATIVE_BALANCE_NO_SPREAD' FROM NCIS_Deposits N
+        LEFT JOIN (SELECT DISTINCT PROFITS_CODE, PRODUCT_TYPE FROM MG_HGR_DEPOSITS_PRODUCT_MAPPING) MAP
+          ON MAP.PROFITS_CODE = TO_CHAR(N.Account_Type)
+        WHERE MAP.PRODUCT_TYPE = 'OVD'
+          AND N.Available_Balance &lt; 0
+          AND N.OVD_Debit_Interest_Spread IS NULL
+
+        UNION ALL
+        SELECT 'D12_OVD_NEGATIVE_BALANCE_NO_ACCRUALS' FROM NCIS_Deposits N
+        LEFT JOIN (SELECT DISTINCT PROFITS_CODE, PRODUCT_TYPE FROM MG_HGR_DEPOSITS_PRODUCT_MAPPING) MAP
+          ON MAP.PROFITS_CODE = TO_CHAR(N.Account_Type)
+        WHERE MAP.PRODUCT_TYPE = 'OVD'
+          AND N.Available_Balance &lt; 0
+          AND NVL(N.Debit_Interest_Accruals, 0) = 0
+
+        UNION ALL
+        SELECT 'D14_OVD_NEGATIVE_BALANCE_NO_INTEREST_CODE' FROM NCIS_Deposits N
+        LEFT JOIN (SELECT DISTINCT PROFITS_CODE, PRODUCT_TYPE FROM MG_HGR_DEPOSITS_PRODUCT_MAPPING) MAP
+          ON MAP.PROFITS_CODE = TO_CHAR(N.Account_Type)
+        WHERE MAP.PRODUCT_TYPE = 'OVD'
+          AND N.Available_Balance &lt; 0
+          AND N.Debit_Interest_Code IS NULL
+    )
+    GROUP BY SUBSTR(CHECK_NAME, 1, INSTR(CHECK_NAME, '_') - 1)
+)
+SELECT
+    CAST(CM.CHECK_ID AS VARCHAR2(10)) AS CHECK_ID,
+    CAST(CM.CHECK_NAME AS VARCHAR2(50)) AS CHECK_NAME,
+    CAST(CM.CATEGORY AS VARCHAR2(30)) AS CATEGORY,
+    CAST(CM.DESCRIPTION AS VARCHAR2(200)) AS DESCRIPTION,
+    (CASE CM.POPULATION_TYPE
+        WHEN 'DD'               THEN P.DD_COUNT
+        WHEN 'TD'                THEN P.TD_COUNT
+        WHEN 'NCIS'             THEN P.NCIS_COUNT
+        WHEN 'HUB_DDTD'         THEN P.HUB_DDTD_COUNT
+        WHEN 'HUB_DDTD_ACTIVE'  THEN P.HUB_DDTD_ACTIVE_COUNT
+        WHEN 'MATCHED'          THEN P.MATCHED_COUNT
+        WHEN 'OVD'              THEN P.OVD_COUNT
+     END) AS TOTAL_RECORDS,
+    (CASE CM.POPULATION_TYPE
+        WHEN 'DD'               THEN P.DD_COUNT
+        WHEN 'TD'                THEN P.TD_COUNT
+        WHEN 'NCIS'             THEN P.NCIS_COUNT
+        WHEN 'HUB_DDTD'         THEN P.HUB_DDTD_COUNT
+        WHEN 'HUB_DDTD_ACTIVE'  THEN P.HUB_DDTD_ACTIVE_COUNT
+        WHEN 'MATCHED'          THEN P.MATCHED_COUNT
+        WHEN 'OVD'              THEN P.OVD_COUNT
+     END) - NVL(FC.INVALID_COUNT, 0) AS VALID_COUNT,
+    NVL(FC.INVALID_COUNT, 0) AS INVALID_COUNT,
+    CASE WHEN NVL(FC.INVALID_COUNT, 0) = 0 THEN 'PASS' ELSE 'FAIL' END AS STATUS,
+    'DC3' AS DC_VERSION,
+    1 AS RUN_VERSION,  -- TESTING ONLY: στο SSIS αντικαθίσταται από @[User::RunVersion] μέσω Derived Column.
+    SYSDATE AS RUN_TIMESTAMP
+FROM CHECK_META CM
+CROSS JOIN POPULATIONS P
+LEFT JOIN FINDINGS_COUNT FC ON FC.CHECK_ID = CM.CHECK_ID
+ORDER BY REGEXP_SUBSTR(CM.CHECK_ID, '[A-Z]+'), TO_NUMBER(REGEXP_SUBSTR(CM.CHECK_ID, '[0-9]+'));</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specify the number of rows fetched per batch."
+                  expressionType="Notify"
+                  name="BatchSize">1000</property>
+                <property
+                  dataType="System.Int32"
+                  description="Determines the chunk size allocation for LOB columns"
+                  expressionType="Notify"
+                  name="LobChunkSize">32768</property>
+                <property
+                  dataType="System.Int32"
+                  description="The code page to use when code page information is unavailable from the data source."
+                  expressionType="Notify"
+                  name="DefaultCodePage">1253</property>
+                <property
+                  dataType="System.Int32"
+                  description="Number of pre-fetched rows."
+                  expressionType="Notify"
+                  name="PrefetchCount">0</property>
+                <property
+                  dataType="System.Int32"
+                  description="The mode used to access the database."
+                  name="AccessMode"
+                  typeConverter="AccessMode">1</property>
+              </properties>
+              <connections>
+                <connection
+                  refId="Package\DFT_Master\Oracle Source 1.Connections[ORACLEConnection]"
+                  connectionManagerID="{ECA91632-834F-4B2F-85DF-6CA637347F58}:external"
+                  connectionManagerRefId="Project.ConnectionManagers[PRE Connection Manager]"
+                  description="The ORACLE runtime connection used to access the database."
+                  name="ORACLEConnection" />
+              </connections>
+              <outputs>
+                <output
+                  refId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Output]"
+                  errorRowDisposition="FailComponent"
+                  name="Oracle Source Output"
+                  truncationRowDisposition="FailComponent">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Output].Columns[CHECK_ID]"
+                      codePage="1253"
+                      dataType="str"
+                      externalMetadataColumnId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Output].ExternalColumns[CHECK_ID]"
+                      length="10"
+                      lineageId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Output].Columns[CHECK_ID]"
+                      name="CHECK_ID" />
+                    <outputColumn
+                      refId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Output].Columns[CHECK_NAME]"
+                      codePage="1253"
+                      dataType="str"
+                      externalMetadataColumnId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Output].ExternalColumns[CHECK_NAME]"
+                      length="50"
+                      lineageId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Output].Columns[CHECK_NAME]"
+                      name="CHECK_NAME" />
+                    <outputColumn
+                      refId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Output].Columns[CATEGORY]"
+                      codePage="1253"
+                      dataType="str"
+                      externalMetadataColumnId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Output].ExternalColumns[CATEGORY]"
+                      length="30"
+                      lineageId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Output].Columns[CATEGORY]"
+                      name="CATEGORY" />
+                    <outputColumn
+                      refId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Output].Columns[DESCRIPTION]"
+                      codePage="1253"
+                      dataType="str"
+                      externalMetadataColumnId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Output].ExternalColumns[DESCRIPTION]"
+                      length="200"
+                      lineageId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Output].Columns[DESCRIPTION]"
+                      name="DESCRIPTION" />
+                    <outputColumn
+                      refId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Output].Columns[TOTAL_RECORDS]"
+                      dataType="r8"
+                      externalMetadataColumnId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Output].ExternalColumns[TOTAL_RECORDS]"
+                      lineageId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Output].Columns[TOTAL_RECORDS]"
+                      name="TOTAL_RECORDS" />
+                    <outputColumn
+                      refId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Output].Columns[VALID_COUNT]"
+                      dataType="r8"
+                      externalMetadataColumnId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Output].ExternalColumns[VALID_COUNT]"
+                      lineageId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Output].Columns[VALID_COUNT]"
+                      name="VALID_COUNT" />
+                    <outputColumn
+                      refId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Output].Columns[INVALID_COUNT]"
+                      dataType="r8"
+                      externalMetadataColumnId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Output].ExternalColumns[INVALID_COUNT]"
+                      lineageId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Output].Columns[INVALID_COUNT]"
+                      name="INVALID_COUNT" />
+                    <outputColumn
+                      refId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Output].Columns[STATUS]"
+                      codePage="1253"
+                      dataType="str"
+                      externalMetadataColumnId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Output].ExternalColumns[STATUS]"
+                      length="4"
+                      lineageId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Output].Columns[STATUS]"
+                      name="STATUS" />
+                    <outputColumn
+                      refId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Output].Columns[DC_VERSION]"
+                      codePage="1253"
+                      dataType="str"
+                      externalMetadataColumnId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Output].ExternalColumns[DC_VERSION]"
+                      length="3"
+                      lineageId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Output].Columns[DC_VERSION]"
+                      name="DC_VERSION" />
+                    <outputColumn
+                      refId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Output].Columns[RUN_VERSION]"
+                      dataType="r8"
+                      externalMetadataColumnId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Output].ExternalColumns[RUN_VERSION]"
+                      lineageId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Output].Columns[RUN_VERSION]"
+                      name="RUN_VERSION" />
+                    <outputColumn
+                      refId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Output].Columns[RUN_TIMESTAMP]"
+                      dataType="dbTimeStamp"
+                      externalMetadataColumnId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Output].ExternalColumns[RUN_TIMESTAMP]"
+                      lineageId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Output].Columns[RUN_TIMESTAMP]"
+                      name="RUN_TIMESTAMP" />
+                  </outputColumns>
+                  <externalMetadataColumns
+                    isUsed="True">
+                    <externalMetadataColumn
+                      refId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Output].ExternalColumns[CHECK_ID]"
+                      codePage="1253"
+                      dataType="str"
+                      length="10"
+                      name="CHECK_ID" />
+                    <externalMetadataColumn
+                      refId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Output].ExternalColumns[CHECK_NAME]"
+                      codePage="1253"
+                      dataType="str"
+                      length="50"
+                      name="CHECK_NAME" />
+                    <externalMetadataColumn
+                      refId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Output].ExternalColumns[CATEGORY]"
+                      codePage="1253"
+                      dataType="str"
+                      length="30"
+                      name="CATEGORY" />
+                    <externalMetadataColumn
+                      refId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Output].ExternalColumns[DESCRIPTION]"
+                      codePage="1253"
+                      dataType="str"
+                      length="200"
+                      name="DESCRIPTION" />
+                    <externalMetadataColumn
+                      refId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Output].ExternalColumns[TOTAL_RECORDS]"
+                      dataType="r8"
+                      name="TOTAL_RECORDS" />
+                    <externalMetadataColumn
+                      refId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Output].ExternalColumns[VALID_COUNT]"
+                      dataType="r8"
+                      name="VALID_COUNT" />
+                    <externalMetadataColumn
+                      refId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Output].ExternalColumns[INVALID_COUNT]"
+                      dataType="r8"
+                      name="INVALID_COUNT" />
+                    <externalMetadataColumn
+                      refId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Output].ExternalColumns[STATUS]"
+                      codePage="1253"
+                      dataType="str"
+                      length="4"
+                      name="STATUS" />
+                    <externalMetadataColumn
+                      refId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Output].ExternalColumns[DC_VERSION]"
+                      codePage="1253"
+                      dataType="str"
+                      length="3"
+                      name="DC_VERSION" />
+                    <externalMetadataColumn
+                      refId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Output].ExternalColumns[RUN_VERSION]"
+                      dataType="r8"
+                      name="RUN_VERSION" />
+                    <externalMetadataColumn
+                      refId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Output].ExternalColumns[RUN_TIMESTAMP]"
+                      dataType="dbTimeStamp"
+                      name="RUN_TIMESTAMP" />
+                  </externalMetadataColumns>
+                </output>
+                <output
+                  refId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Error Output]"
+                  isErrorOut="true"
+                  name="Oracle Source Error Output">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Error Output].Columns[CHECK_ID]"
+                      codePage="1253"
+                      dataType="str"
+                      externalMetadataColumnId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Output].ExternalColumns[CHECK_ID]"
+                      length="10"
+                      lineageId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Error Output].Columns[CHECK_ID]"
+                      name="CHECK_ID" />
+                    <outputColumn
+                      refId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Error Output].Columns[CHECK_NAME]"
+                      codePage="1253"
+                      dataType="str"
+                      externalMetadataColumnId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Output].ExternalColumns[CHECK_NAME]"
+                      length="50"
+                      lineageId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Error Output].Columns[CHECK_NAME]"
+                      name="CHECK_NAME" />
+                    <outputColumn
+                      refId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Error Output].Columns[CATEGORY]"
+                      codePage="1253"
+                      dataType="str"
+                      externalMetadataColumnId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Output].ExternalColumns[CATEGORY]"
+                      length="30"
+                      lineageId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Error Output].Columns[CATEGORY]"
+                      name="CATEGORY" />
+                    <outputColumn
+                      refId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Error Output].Columns[DESCRIPTION]"
+                      codePage="1253"
+                      dataType="str"
+                      externalMetadataColumnId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Output].ExternalColumns[DESCRIPTION]"
+                      length="200"
+                      lineageId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Error Output].Columns[DESCRIPTION]"
+                      name="DESCRIPTION" />
+                    <outputColumn
+                      refId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Error Output].Columns[TOTAL_RECORDS]"
+                      dataType="r8"
+                      externalMetadataColumnId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Output].ExternalColumns[TOTAL_RECORDS]"
+                      lineageId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Error Output].Columns[TOTAL_RECORDS]"
+                      name="TOTAL_RECORDS" />
+                    <outputColumn
+                      refId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Error Output].Columns[VALID_COUNT]"
+                      dataType="r8"
+                      externalMetadataColumnId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Output].ExternalColumns[VALID_COUNT]"
+                      lineageId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Error Output].Columns[VALID_COUNT]"
+                      name="VALID_COUNT" />
+                    <outputColumn
+                      refId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Error Output].Columns[INVALID_COUNT]"
+                      dataType="r8"
+                      externalMetadataColumnId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Output].ExternalColumns[INVALID_COUNT]"
+                      lineageId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Error Output].Columns[INVALID_COUNT]"
+                      name="INVALID_COUNT" />
+                    <outputColumn
+                      refId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Error Output].Columns[STATUS]"
+                      codePage="1253"
+                      dataType="str"
+                      externalMetadataColumnId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Output].ExternalColumns[STATUS]"
+                      length="4"
+                      lineageId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Error Output].Columns[STATUS]"
+                      name="STATUS" />
+                    <outputColumn
+                      refId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Error Output].Columns[DC_VERSION]"
+                      codePage="1253"
+                      dataType="str"
+                      externalMetadataColumnId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Output].ExternalColumns[DC_VERSION]"
+                      length="3"
+                      lineageId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Error Output].Columns[DC_VERSION]"
+                      name="DC_VERSION" />
+                    <outputColumn
+                      refId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Error Output].Columns[RUN_VERSION]"
+                      dataType="r8"
+                      externalMetadataColumnId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Output].ExternalColumns[RUN_VERSION]"
+                      lineageId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Error Output].Columns[RUN_VERSION]"
+                      name="RUN_VERSION" />
+                    <outputColumn
+                      refId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Error Output].Columns[RUN_TIMESTAMP]"
+                      dataType="dbTimeStamp"
+                      externalMetadataColumnId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Output].ExternalColumns[RUN_TIMESTAMP]"
+                      lineageId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Error Output].Columns[RUN_TIMESTAMP]"
+                      name="RUN_TIMESTAMP" />
+                    <outputColumn
+                      refId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Error Output].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Error Output].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Error Output].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Error Output].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+          </components>
+          <paths>
+            <path
+              refId="Package\DFT_Master.Paths[Derived Column Output]"
+              endId="Package\DFT_Master\OLE DB Destination.Inputs[OLE DB Destination Input]"
+              name="Derived Column Output"
+              startId="Package\DFT_Master\Derived Column 1.Outputs[Derived Column Output]" />
+            <path
+              refId="Package\DFT_Master.Paths[Oracle Source Output]"
+              endId="Package\DFT_Master\Derived Column 1.Inputs[Derived Column Input]"
+              name="Oracle Source Output"
+              startId="Package\DFT_Master\Oracle Source 1.Outputs[Oracle Source Output]" />
+          </paths>
+        </pipeline>
+      </DTS:ObjectData>
+    </DTS:Executable>
+  </DTS:Executables>
+  <DTS:PrecedenceConstraints>
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint]"
+      DTS:CreationName=""
+      DTS:DTSID="{44B608BF-38A2-4F86-B9A2-C2E1BD671AE3}"
+      DTS:From="Package\Create Tables"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint"
+      DTS:To="Package\Compute Run Version" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint 1]"
+      DTS:CreationName=""
+      DTS:DTSID="{B04CBE92-27A1-4AB7-830D-B45F3430BE14}"
+      DTS:From="Package\Compute Run Version"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint 1"
+      DTS:To="Package\DFT_Master" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint 2]"
+      DTS:CreationName=""
+      DTS:DTSID="{A329BD52-EE07-4232-87F6-D1156B081265}"
+      DTS:From="Package\DFT_Master"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint 2"
+      DTS:To="Package\DFT_Detail" />
+  </DTS:PrecedenceConstraints>
+  <DTS:DesignTimeProperties><![CDATA[<?xml version="1.0"?>
+<!--This CDATA section contains the layout information of the package. The section includes information such as (x,y) coordinates, width, and height.-->
+<!--If you manually edit this section and make a mistake, you can delete it. -->
+<!--The package will still be able to load normally but the previous layout information will be lost and the designer will automatically re-arrange the elements on the design surface.-->
+<Objects
+  Version="8">
+  <!--Each node below will contain properties that do not affect runtime behavior.-->
+  <Package
+    design-time-name="Package">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="8" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
+        <NodeLayout
+          Size="146.666666666667,42.6666666666667"
+          Id="Package\Create Tables"
+          TopLeft="452.499993257225,60.2105274491033" />
+        <NodeLayout
+          Size="184,42.6666666666667"
+          Id="Package\Compute Run Version"
+          TopLeft="431.249993573874,190.894740435225" />
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint]"
+          TopLeft="524.541660082216,102.87719411577">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,88.0175463194552"
+              Start="0,0"
+              End="0,80.5175463194552">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,80.5175463194552" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <NodeLayout
+          Size="139.333333333334,42.6666666666667"
+          Id="Package\DFT_Master"
+          TopLeft="454.999993219972,303.105268863099" />
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint 1]"
+          TopLeft="523.958326730256,233.561407101892">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,69.5438617612075"
+              Start="0,0"
+              End="0,62.0438617612075">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,62.0438617612075" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <NodeLayout
+          Size="133.333333333334,42.6666666666667"
+          Id="Package\DFT_Detail"
+          TopLeft="458.749993164093,423.526323761306" />
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint 2]"
+          TopLeft="525.041659858699,345.771935529766">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,77.7543882315401"
+              Start="0,0"
+              End="0,70.2543882315401">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,70.2543882315401" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <AnnotationLayout
+          Text="s"
+          ParentId="Package"
+          FontInfo="{assembly:Null}"
+          Size="34.6666666666667,60"
+          Id="2c2b3ecb-3d9a-48bc-98a1-90f06a579976"
+          TopLeft="276.041662553325,247.39766461789" />
+      </GraphLayout>
+    </LayoutInfo>
+  </Package>
+  <TaskHost
+    design-time-name="Package\DFT_Master">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="8" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
+        <NodeLayout
+          Size="156,42.6666666666667"
+          Id="Package\DFT_Master\Oracle Source 1"
+          TopLeft="218.749996740371,127.947370829344" />
+        <NodeLayout
+          Size="165.333333333334,42.6666666666667"
+          Id="Package\DFT_Master\Derived Column 1"
+          TopLeft="422.499993704259,129.315791907733" />
+        <EdgeLayout
+          Id="Package\DFT_Master.Paths[Oracle Source Output]"
+          TopLeft="374.749996740371,149.964914701872">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="47.7499969638882,0"
+              Start="0,0"
+              End="40.2499969638882,0">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="40.2499969638882,0" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <NodeLayout
+          Size="174.666666666667,42.6666666666667"
+          Id="Package\DFT_Master\OLE DB Destination"
+          TopLeft="652.499990276992,129.315791907733" />
+        <EdgeLayout
+          Id="Package\DFT_Master.Paths[Derived Column Output]"
+          TopLeft="587.833327037593,150.649125241066">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="64.6666632393997,0"
+              Start="0,0"
+              End="57.1666632393997,0">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="57.1666632393997,0" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+      </GraphLayout>
+    </LayoutInfo>
+  </TaskHost>
+  <PipelineComponentMetadata
+    design-time-name="Package\DFT_Master\Oracle Source 1">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+  <TaskHost
+    design-time-name="Package\DFT_Detail">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="8" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
+        <NodeLayout
+          Size="156,42.6666666666667"
+          Id="Package\DFT_Detail\Oracle Source 1"
+          TopLeft="60,59" />
+        <NodeLayout
+          Size="165.333333333334,42.6666666666667"
+          Id="Package\DFT_Detail\Derived Column 1"
+          TopLeft="265.124996973202,60.7368421567774" />
+        <EdgeLayout
+          Id="Package\DFT_Detail.Paths[Oracle Source Output]"
+          TopLeft="216,81.2017544117221">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="49.124996973202,0"
+              Start="0,0"
+              End="41.624996973202,0">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="41.624996973202,0" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <NodeLayout
+          Size="174.666666666667,42.6666666666667"
+          Id="Package\DFT_Detail\OLE DB Destination"
+          TopLeft="541,62" />
+        <EdgeLayout
+          Id="Package\DFT_Detail.Paths[Derived Column Output]"
+          TopLeft="430.458330306535,82.7017544117221">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="110.541669693465,0"
+              Start="0,0"
+              End="103.041669693465,0">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="103.041669693465,0" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+      </GraphLayout>
+    </LayoutInfo>
+  </TaskHost>
+  <PipelineComponentMetadata
+    design-time-name="Package\DFT_Detail\Oracle Source 1">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+  <PipelineComponentMetadata
+    design-time-name="Package\DFT_Detail\OLE DB Destination">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+      <Property>
+        <Name>TableInfoObjectType</Name>
+        <Value
+          type="q2:string">Table</Value>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+  <PipelineComponentMetadata
+    design-time-name="Package\DFT_Master\OLE DB Destination">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+      <Property>
+        <Name>TableInfoObjectType</Name>
+        <Value
+          type="q2:string">Table</Value>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+</Objects>]]></DTS:DesignTimeProperties>
+</DTS:Executable>
